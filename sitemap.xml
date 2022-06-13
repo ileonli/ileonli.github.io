@@ -2,20 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://byteflow777.github.io/docs/ProgramLanguage/</loc>
+    <loc>https://byteflow777.github.io/docs/program-language/</loc>
   </url><url>
-    <loc>https://byteflow777.github.io/docs/Paper/</loc>
+    <loc>https://byteflow777.github.io/docs/distributed-system/basic-theory-of-distributed-system/</loc>
   </url><url>
-    <loc>https://byteflow777.github.io/docs/ProgramLanguage/Go/</loc>
+    <loc>https://byteflow777.github.io/docs/distributed-system/consensus-algorithm/</loc>
   </url><url>
-    <loc>https://byteflow777.github.io/docs/ProgramLanguage/Java/</loc>
+    <loc>https://byteflow777.github.io/docs/distributed-system/distributed-transaction/</loc>
   </url><url>
-    <loc>https://byteflow777.github.io/docs/Paper/DistributedSystem/</loc>
+    <loc>https://byteflow777.github.io/docs/database-system/</loc>
+  </url><url>
+    <loc>https://byteflow777.github.io/docs/distributed-system/</loc>
+  </url><url>
+    <loc>https://byteflow777.github.io/docs/papers/</loc>
+  </url><url>
+    <loc>https://byteflow777.github.io/docs/algorithm-training/</loc>
   </url><url>
     <loc>https://byteflow777.github.io/</loc>
   </url><url>
     <loc>https://byteflow777.github.io/docs/</loc>
   </url><url>
-    <loc>https://byteflow777.github.io/docs/Paper/Raft/</loc>
+    <loc>https://byteflow777.github.io/docs/program-language/concurrent-programming-in-java/</loc>
   </url>
 </urlset>
