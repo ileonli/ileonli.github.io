@@ -5,6 +5,10 @@
     <link>https://byteflow777.github.io/docs/algorithm-training/</link>
     <description>Recent content in Algorithm Training on Leon&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language><atom:link href="https://byteflow777.github.io/docs/algorithm-training/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    
+	<atom:link href="https://byteflow777.github.io/docs/algorithm-training/index.xml" rel="self" type="application/rss+xml" />
+    
+    
   </channel>
 </rss>
