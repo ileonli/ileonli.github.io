@@ -3,6 +3,10 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://byteflow777.github.io/docs/data-structure/avl-tree/</loc>
+  </url>
+  
+  <url>
     <loc>https://byteflow777.github.io/docs/lab-report/CMU-15-445/lab1/</loc>
   </url>
   
@@ -11,7 +15,15 @@
   </url>
   
   <url>
+    <loc>https://byteflow777.github.io/docs/data-structure/log-structured-merge-tree/</loc>
+  </url>
+  
+  <url>
     <loc>https://byteflow777.github.io/docs/program-language/</loc>
+  </url>
+  
+  <url>
+    <loc>https://byteflow777.github.io/docs/data-structure/skip-list/</loc>
   </url>
   
   <url>
@@ -56,14 +68,6 @@
   
   <url>
     <loc>https://byteflow777.github.io/docs/data-structure/extendible-hashing-table/</loc>
-  </url>
-  
-  <url>
-    <loc>https://byteflow777.github.io/docs/data-structure/log-structured-merge-tree/</loc>
-  </url>
-  
-  <url>
-    <loc>https://byteflow777.github.io/docs/data-structure/skip-list/</loc>
   </url>
   
   <url>
