@@ -18,10 +18,10 @@
       <guid>https://byteflow777.github.io/docs/lab-report/MIT-6.830/lab1/</guid>
       <description>Lab 1 Exercise 1 Exercise 1 需要我们完成以下文件的代码：
  src/java/simpledb/storage/TupleDesc.java src/java/simpledb/storage/Tuple.java  User 表如下所示：
-id(INT) name(STRING) age(INT) 1 &amp;quot;张三&amp;quot; 12 2 &amp;quot;李四&amp;quot; 22 3 &amp;quot;王二&amp;quot; 54 Tuple.java 表示表中的某一行数据，如：User(1, &amp;ldquo;张三&amp;rdquo;, 12), User(2, &amp;ldquo;李四&amp;rdquo;, 22)
+id(INT) name(STRING) age(INT)1 &amp;quot;张三&amp;quot; 122 &amp;quot;李四&amp;quot; 223 &amp;quot;王二&amp;quot; 54Tuple.java 表示表中的某一行数据，如：User(1, &amp;ldquo;张三&amp;rdquo;, 12), User(2, &amp;ldquo;李四&amp;rdquo;, 22)
 TupleDesc.java 表示表中字段的类型和名称，如：User{id(INT), name(STRING), age(INT)}
 TupleDesc.java TupleDesc.java 中的静态内部类 TDItem 用于表示某字段的类型（Type fieldType）和名称（String fieldName）。
-public static class TDItem implements Serializable { private static final long serialVersionUID = 1L; /** * The type of the field */ public final Type fieldType; /** * The name of the field */ public final String fieldName; public TDItem(Type t, String n) { this.</description>
+public static class TDItem implements Serializable {private static final long serialVersionUID = 1L;/*** The type of the field*/public final Type fieldType;/*** The name of the field*/public final String fieldName;public TDItem(Type t, String n) {this.</description>
     </item>
     
   </channel>

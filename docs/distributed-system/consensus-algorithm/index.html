@@ -23,9 +23,9 @@
 <title>分布式共识算法 | Leon&#39;s Blog</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/book.min.e64941ea1e016857b0671fc48c928b19cfd47ec0fad3e7bb5697d6bb6c74cb7d.css" integrity="sha256-5klB6h4BaFewZx/EjJKLGc/UfsD60&#43;e7VpfWu2x0y30=" crossorigin="anonymous">
+<link rel="stylesheet" href="/book.min.3db87aaef0ea76a271735d8c28313b5d9aab99bec97f1bebef171d1a3b33476e.css" integrity="sha256-Pbh6rvDqdqJxc12MKDE7XZqrmb7Jfxvr7xcdGjszR24=" crossorigin="anonymous">
   <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.0e8b2a358b819f2c0fa2378301fac3e298063ad20df5aa38df5307ffeb9862e0.js" integrity="sha256-DosqNYuBnywPojeDAfrD4pgGOtIN9ao431MH/&#43;uYYuA=" crossorigin="anonymous"></script>
+  <script defer src="/en.search.min.031c3a16d93d2813c4019acf442af86576e3c5657e19dfc38dada55a56040f98.js" integrity="sha256-Axw6Ftk9KBPEAZrPRCr4ZXbjxWV&#43;Gd/Dja2lWlYED5g=" crossorigin="anonymous"></script>
 
   <script defer src="/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js" integrity="sha256-dKi7B/C&#43;6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ=" crossorigin="anonymous"></script>
 
@@ -239,7 +239,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/docs/distributed-system/consensus-algorithm/" class=" active">分布式共识算法</a>
+    <a href="/docs/distributed-system/consensus-algorithm/" class="active">分布式共识算法</a>
   
 
         </li>
@@ -622,7 +622,8 @@ Entry。</p>
 
 
   <script>(function(){function select(element){const selection=window.getSelection();const range=document.createRange();range.selectNodeContents(element);selection.removeAllRanges();selection.addRange(range);}
-document.querySelectorAll("pre code").forEach(code=>{code.addEventListener("click",function(event){select(code.parentElement);if(navigator.clipboard){navigator.clipboard.writeText(code.parentElement.textContent);}});});})();</script>
+document.querySelectorAll("pre code").forEach(code=>{code.addEventListener("click",function(event){if(window.getSelection().toString()){return;}
+select(code.parentElement);if(navigator.clipboard){navigator.clipboard.writeText(code.parentElement.textContent);}});});})();</script>
 
 
  
