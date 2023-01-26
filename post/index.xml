@@ -12,6 +12,7 @@ COMPACT 对每行记录进行压缩操作，相较于 REDUNDANT 记录格式会�
 直接在 /var/lib/mysql 创建名为 user 的目录并不会直接在 MySQL 中新增加一个名为 user 的数据库。 当新建一个数据库后，MySQL 不仅需要创建目录，还需要记录信息到 information_schema 数据库中。
 通过 SELECT * FROM information_schema.schemata; 可以查询到 MySQL 中所有数据库的信息。
 存储划分 InnoDB 表文件会被划分为多种逻辑结构，从小到大分别为：页（page）、区（extent）、段（segment）和表空间（table space）。
-表中的数据会被划分存储在多个页（page）中，页默认大小为 16KB，页是最小的访问单位（从磁盘中一次加载一个页）。
-对于存储空间的申请是以区（extent）为基本单位，提高数据的顺序性（顺序存储）和申请效率。
+表中的数据会被划分存储在多个页（page）中，页默认大小为 16KB，页是最小的访问单位（内存和磁盘交换数据的最小单位）。
+对于存储空间的申请是以区（extent）为基本单位，提高数据的顺序性（保证页的顺序存储）和申请效率（一次申请足量的空间）。
+会把叶子结点和非叶子节点存储到不同区中，区分不同区的方法即段（segment）。
 每个表即为一个表空间（table space），每个表空间都有唯一的 space id 标识，根据 space id 所在的不同的区段划分为多种类型。</description></item><item><title>InnoDB 架构总览</title><link>https://byteflow777.github.io/post/mysql/innodb-architecture/</link><pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-architecture/</guid><description/></item></channel></rss>
