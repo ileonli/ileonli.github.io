@@ -1,14 +1,17 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Leon Li</title><link>https://byteflow777.github.io/post/</link><description>Recent content in Posts on Leon Li</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 10 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://byteflow777.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>InnoDB 行记录结构</title><link>https://byteflow777.github.io/post/mysql/innodb-record-format/</link><pubDate>Tue, 10 Jan 2023 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-record-format/</guid><description>https://dev.mysql.com/doc/refman/8.0/en/innodb-row-format.html
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Leon Li</title><link>https://byteflow777.github.io/post/</link><description>Recent content in Posts on Leon Li</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Sun, 15 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://byteflow777.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>InnoDB 行记录结构</title><link>https://byteflow777.github.io/post/mysql/innodb-record-format/</link><pubDate>Sun, 15 Jan 2023 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-record-format/</guid><description>https://dev.mysql.com/doc/refman/8.0/en/innodb-row-format.html
 行记录结构决定了表中每行数据在磁盘中的格式，会影响增删改查的效率
 InnoDB 存储引擎支持四种行记录结构，分别为：REDUNDANT, COMPACT, DYNAMIC, COMPRESSED。
 默认格式可以通过 show variables like 'innodb_default_row_format'; 进行查询。
 REDUNDANT 对于旧版本的 MySQL 提供兼容性
 COMPACT 对每行记录进行压缩操作，相较于 REDUNDANT 记录格式会节约大概 20% 的空间
 压缩行记录会减少占用空间，节约 IO 成本，提高 Cache 命中率，但会增加 CPU 成本（压缩和解压需要大量 CPU 运算）。
-当 Cache 命中率和磁盘速度为主要影响 MySQL 运行效率的因素时，可以采取 COMPACT 行记录格式。</description></item><item><title>InnoDB 磁盘存储结构</title><link>https://byteflow777.github.io/post/mysql/innodb-storage-format/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-storage-format/</guid><description>https://dev.mysql.com/doc/refman/8.0/en/innodb-on-disk-structures.html
-InnoDB 表中的数据划分存储在多个页（page）中，页默认大小为 16KB
-页可能没有足够的空间存储长度可变的列（如 VARCHAR, TEXT, BLOB 等类型），对于超出页容量的数据会采用溢出页（overflow pages）存储。
-为减少 IO 次数和节省磁盘空间，不超过页存储空间的数据仍然会保存到页中，超过页容量的数据会存放到溢出页中，多个溢出页会采用单链表格式保存。
-InnoDB 对于存储空间的申请是以区为基本单位，提高数据的顺序性和申请效率
-页结构 InnoDB 页大小默认为 16KB，可以通过启动项参数 page size 进行修改， 最小支持 4KB，最大支持 64KB，默认配置定义在 univ.i 文件中。
-/* Define the Min, Max, Default page sizes. */ /** Minimum Page Size Shift (power of 2) */ constexpr uint32_t UNIV_PAGE_SIZE_SHIFT_MIN = 12; /** Maximum Page Size Shift (power of 2) */ constexpr uint32_t UNIV_PAGE_SIZE_SHIFT_MAX = 16; /** Default Page Size Shift (power of 2) */ constexpr uint32_t UNIV_PAGE_SIZE_SHIFT_DEF = 14; /** Original 16k InnoDB Page Size Shift, in case the default changes */ constexpr uint32_t UNIV_PAGE_SIZE_SHIFT_ORIG = 14; /** Original 16k InnoDB Page Size as an ssize (log2 - 9) */ constexpr uint32_t UNIV_PAGE_SSIZE_ORIG = UNIV_PAGE_SIZE_SHIFT_ORIG - 9; /** Minimum page size InnoDB currently supports.</description></item></channel></rss>
+当 Cache 命中率和磁盘速度为主要影响 MySQL 运行效率的因素时，可以采取 COMPACT 行记录格式。</description></item><item><title>InnoDB 磁盘存储结构</title><link>https://byteflow777.github.io/post/mysql/innodb-storage-format/</link><pubDate>Tue, 10 Jan 2023 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-storage-format/</guid><description>https://dev.mysql.com/doc/refman/8.0/en/innodb-on-disk-structures.html
+磁盘文件 配置项 innodb_file_per_table 用于控制是否将每个表独立存储为单个文件。 MySQL 8 以后默认为 true，每个表都会独立存储到一个后缀名为 .ibd 的文件中。
+当通过 create database school; 创建名为 school 的数据库后，会在 /var/lib/mysql 创建一个同名的目录，此数据库所有表的文件都会存储到此目录中。
+当通过 CREATE TABLE student (name varchar(4)); 创建名为 student 的表后，会在 school 目录中新建名为 student.ibd 文件。
+直接在 /var/lib/mysql 创建名为 user 的目录并不会直接在 MySQL 中新增加一个名为 user 的数据库。 当新建一个数据库后，MySQL 不仅需要创建目录，还需要记录信息到 information_schema 数据库中。
+通过 SELECT * FROM information_schema.schemata; 可以查询到 MySQL 中所有数据库的信息。
+存储划分 InnoDB 表文件会被划分为多种逻辑结构，从小到大分别为：页（page）、区（extent）、段（segment）和表空间（table space）。
+表中的数据会被划分存储在多个页（page）中，页默认大小为 16KB，页是最小的访问单位（从磁盘中一次加载一个页）。
+对于存储空间的申请是以区（extent）为基本单位，提高数据的顺序性（顺序存储）和申请效率。
+每个表即为一个表空间（table space），每个表空间都有唯一的 space id 标识，根据 space id 所在的不同的区段划分为多种类型。</description></item><item><title>InnoDB 架构总览</title><link>https://byteflow777.github.io/post/mysql/innodb-architecture/</link><pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate><guid>https://byteflow777.github.io/post/mysql/innodb-architecture/</guid><description/></item></channel></rss>
