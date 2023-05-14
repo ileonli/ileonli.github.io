@@ -1,4 +1,149 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li</title><link>https://netholes.github.io/categories/</link><description>Recent content in Categories on Leon Li</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://netholes.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>tmux 快速简单的实践指南【翻译】</title><link>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</guid><description>&lt;blockquote>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li</title><link>https://netholes.github.io/categories/</link><description>Recent content in Categories on Leon Li</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://netholes.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+&lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="介绍">介绍&lt;/h2>
+&lt;p>这个教程来自于&lt;a href="http://www.wustl.edu/">华盛顿大学&lt;/a>的 CS 342 课程，目前仍由 &lt;a href="http://www.cs.cmu.edu/~gilpin/">Andrew Gilpin&lt;/a> 维护。&lt;/p>
+&lt;h2 id="谁需要此篇教程">谁需要此篇教程？&lt;/h2>
+&lt;p>这篇教程是帮助新接触 Unix 环境的程序员使用 gdb 进行调试的。我们假设你已经知道如何使用 C++ 编程，并且可以编译和执行程序。同样假设你知道什么是调试（debug）并且你曾经在其它系统上使用过调试器（debugger）。&lt;/p>
+&lt;h2 id="源代码">源代码&lt;/h2>
+&lt;p>为了展示一些调试原则（principles），我将使用一个含有 bug 的程序作为例子。当你跟着本教程，你将使用调试器找到并修复代码中的错误。你可以从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/main.cc">此处&lt;/a>下载 C++ 代码（&lt;a href="https://netholes.github.io/file/gdb/main.cc">本站备份&lt;/a>），从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/Makefile">此处&lt;/a>下载 Makefile 文件（&lt;a href="https://netholes.github.io/file/gdb/Makefile">本站备份&lt;/a>）。&lt;/p>
+&lt;p>这是一段非常简单的代码，此代码包含两个类定义，分别是：Node 和 LinkedList。还有一个简单的代码测试用于此链表。所有的代码都放在一个文件中，以便更容易的展示调试过程。&lt;/p>
+&lt;h2 id="准备工作">准备工作&lt;/h2>
+&lt;h3 id="环境配置">环境配置&lt;/h3>
+&lt;p>原文中提到的机器大概率已不再使用，故不再翻译。可以通过 Google 搜索安装方式。&lt;/p>
+&lt;h3 id="调试符号">调试符号&lt;/h3>
+&lt;p>gdb 只能使用 g++ 生成的调试符号（debugging symbols）。对于使用 Sun CC 的用户，可以使用与 gdb 非常相似的 dbx 调试器。&lt;/p>
+&lt;p>但调试链接有调试符号的程序时，gdb 是最有效的（effective）。使用 g++ 编译器时，可以使用 &lt;a href="https://man7.org/linux/man-pages/man1/gcc.1.html#:~:text=%2Dg%20%20Produce%20debugging,(see%20below).">-g&lt;/a> 或 &lt;a href="https://man7.org/linux/man-pages/man1/gcc.1.html#:~:text=%2Dggdb%0A%20%20%20%20%20%20%20%20%20%20%20Produce%20debugging%20information%20for%20use%20by%20GDB.%20%20This%20means%20to%0A%20%20%20%20%20%20%20%20%20%20%20use%20the%20most%20expressive%20format%20available%20(DWARF%2C%20stabs%2C%20or%0A%20%20%20%20%20%20%20%20%20%20%20the%20native%20format%20if%20neither%20of%20those%20are%20supported)%2C%0A%20%20%20%20%20%20%20%20%20%20%20including%20GDB%20extensions%20if%20at%20all%20possible.">-ggdb&lt;/a> 生成调试符号。使用 -ggdb 可以生成更多信息，此教程提供的 Makefile 使用了 -ggdb 参数。&lt;/p>
+&lt;h2 id="调试">调试&lt;/h2>
+&lt;h3 id="何时使用调试器">何时使用调试器&lt;/h3>
+&lt;p>调试是不可避免的事情，所有程序员在他们的职业生涯中都会至少调试一段代码。调试的方法有很多，从向屏幕中打印信息，使用调试器，或者思考程序在做什么并对问题是什么作出有根据的猜测。&lt;/p>
+&lt;h3 id="加载程序">加载程序&lt;/h3>
+&lt;p>当你有一个可执行文件（在我们例子中是 main）并且你想调试时。首先，你必须启动一个调试器。这个调试器叫做 gdb，你可以通过 shell 命令提示符输入调试的文件。输入 &lt;code>$ gdb main&lt;/code> 用于调试 main 程序，输出如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Copyright (C) 2023 Free Software Foundation, Inc.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">License GPLv3+: GNU GPL version 3 or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">This is free software: you are free to change and redistribute it.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">There is NO WARRANTY, to the extent permitted by law.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;show copying&amp;#34; and &amp;#34;show warranty&amp;#34; for details.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">This GDB was configured as &amp;#34;x86_64-redhat-linux-gnu&amp;#34;.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;show configuration&amp;#34; for configuration details.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">For bug reporting instructions, please see:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;https://www.gnu.org/software/gdb/bugs/&amp;gt;.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Find the GDB manual and other documentation resources online at:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;http://www.gnu.org/software/gdb/documentation/&amp;gt;.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">For help, type &amp;#34;help&amp;#34;.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;apropos word&amp;#34; to search for commands related to &amp;#34;word&amp;#34;...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Reading symbols from main...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>gdb 当前正在等待用户输入的命令。我们需要运行程序后，以便调试器帮助我们查看程序崩溃时发生了什么。在命令提示符中输入 &lt;code>$ run&lt;/code> 后，输出如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting program: /home/user/main
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 1 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 2 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 3 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 4 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The fully created list is:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Now removing elements:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 5 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Destroying Node, 4 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program received signal SIGSEGV, Segmentation fault.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>程序崩溃了，让我们看看能收集到什么信息。&lt;/p>
+&lt;h3 id="检查崩溃">检查崩溃&lt;/h3>
+&lt;p>我们可以看到程序的 main.cc 文件中的 30 行，this 指针指向了 0x0。但我们想知道谁调用了这个方法并且检查调用方法中的值。在命令提示符中输入 &lt;code>$ backtrace&lt;/code> 后，输出如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) backtrace
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#0 0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#1 0x00000000004015db in LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:79
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#2 0x00000000004012c7 in main (argc=1, argv=0x7fffffffdef8) at main.cc:122
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>除了知道的当前方法和本地变量，现在还可以看到那个方法调用了我们，以及此次调用的参数。例如：我们可以看到我们被 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法调用， item_to_remove 参数为地址 0x7fffffffddac 所指向的位置。如果我们知道 item_to_remove 的值，会帮助我们理解程序的 bug。可以使用 &lt;code>$ x 0x7fffffffddac&lt;/code> 命令查看值（&amp;ldquo;x&amp;rdquo; 可以被理解为 &amp;ldquo;examine&amp;rdquo; 的缩写）。以下为运行命令后的输入：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) x 0x7fffffffddac
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x7fffffffddac: 0x00000001
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当运行 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法且参数为 1 时，程序会发生崩溃。现在我们已经将问题缩小到具体的函数和参数值。&lt;/p>
+&lt;h3 id="条件断点">条件断点&lt;/h3>
+&lt;p>现在我们已经知道段错误（segmentation fault）在何时何处发生，但我们现在想知道程序崩溃前发生了什么。一种方式是逐步执行程序的每条语句，执行到我们想观察的语句。这行没有任何问题，但有时候你可能想运行程序代码中的一段区域，并且在此处停止执行并查看数据。&lt;/p>
+&lt;p>如果你曾经使用过调试器，你可能非常熟悉断点的概念。断点是源码中的一行，调试器执行时会停在此处。在我们的例子中，我们想查看 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 的代码，因此我们可以在 main.cc 文件的 54 行设置断点。由于你不知道具体的行号，你可以告诉调试器在具体的函数处设置断点。这时我们例子中输入的信息：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) break LinkedList&amp;lt;int&amp;gt;::remove
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Breakpoint 1 at 0x401477: file main.cc, line 54.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>根据需要，断点 1 被设置在了 main.cc 中 54 行（设置断点后会得到一个数字，后续可以通过此数字引用该断点，比如：删除此断点）。当程序每次运行到 54 行时，它会将控制转移给调试器。当方法被调用许多次，但只有当传来某一具体参数（如：1）才会发生问题时，这是不可取的。条件断点将帮我们处理此类问题。在我们的例子中，我们已经知道程序会在调用 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法且参数 为 1 时发生崩溃。如果我们想让调试器仅在 &lt;code>item_to_remove&lt;/code> 等于 1 时在 54 行中断（break），可以通过以下命令执行：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) condition 1 item_to_remove == 1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>可以简单理解为：“仅在 &lt;code>item_to_remove&lt;/code> 等于 1时，才在断点 1 处中断“。现在我们可以运行程序并且知道调试器仅当设定的条件为 true 时才会发生中断。&lt;/p>
+&lt;h3 id="stepping">Stepping&lt;/h3>
+&lt;p>继续上面的例子，我们已经设置了一个条件断点，现在想一行一行地浏览这个方法，看看我们是否能找到错误的源头。我们可以通过 step 命令。gdb 有一个很好的特点，当没有输入命令就按下回车键时，会自动执行上一次执行的一条命令。这样，我们就可以在输入 step 后，简单地按下回车键，就可以执行上一次执行的命令 step。下面是这种情况的样子：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Using host libthread_db library &amp;#34;/home/user/main&amp;#34;.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 1 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 2 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 3 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 4 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The fully created list is:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Now removing elements:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 5 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Destroying Node, 4 are in existence right now
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Breakpoint 1, LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:54
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">54 Node&amp;lt;T&amp;gt; *marker = head_;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb) step
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">55 Node&amp;lt;T&amp;gt; *temp = 0; // temp points to one behind as we iterate
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">57 while (marker != 0) {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">58 if (marker-&amp;gt;value() == item_to_remove) {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Node&amp;lt;int&amp;gt;::value (this=0x417760) at main.cc:32
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">32 const T&amp;amp; value () const { return value_; }
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:77
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">77 marker = 0; // reset the marker
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">78 temp = marker;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">79 marker = marker-&amp;gt;next();
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program received signal SIGSEGV, Segmentation fault.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program terminated with signal SIGSEGV, Segmentation fault.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The program no longer exists.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当输入 &lt;code>$ run&lt;/code> 命令后，gdb 会询问我们是否想重新运行此程序，我们选择”是“。程序会继续运行并中断在指定的位置。然后我们输入 &lt;code>$ step&lt;/code> 并继续按回车键浏览程序。使用 step 命令时，调试器会进入调用的函数内部。如果你不想进入函数内部，可以使用 next 替代 step，这俩命令其它行为则是一致的。&lt;/p>
+&lt;p>程序中的错误是非常明显的，在 77 行 marker 被设置为了 0，但在 79 行通过 marker 指针访问了 next 方法。因为程序不能访问内存为 0 的位置，因此发生了段错误。在我们的代码中，移除 main.cc 文件中 77 行设置 marker 的代码既可以避免错误。&lt;/p>
+&lt;p>如果你看一下运行程序的输出，首先你会看到程序运行时没有崩溃，但是在程序的某个地方存在内存泄漏（提示：是在 &lt;code>LinkedList&amp;lt;T&amp;gt;::remove()&lt;/code> 函数中,remove 的其中一个情况不能正常工作）。读者可以利用调试器来定位和修复这个错误，这是一个练习。(我一直想这么说。;)&lt;/p>
+&lt;p>可以输入 &lt;code>$ quit&lt;/code> 退出 gdb 调试器。&lt;/p>
+&lt;h2 id="更多信息">更多信息&lt;/h2>
+&lt;p>本文件只包括开始使用 gdb 所需的基本命令。关于 gdb 的更多信息见 gdb man 页，或者在&lt;a href="https://www.sourceware.org/gdb/">此处&lt;/a>查看关于 gdb 的更详细的描述。在线帮助可以在运行 gdb 时输入 &lt;code>$ help&lt;/code> 来访问。另外，像往常一样，欢迎在新闻组上提问，或者你可以在实验室时间问我。&lt;/p>
+&lt;h2 id="提示">提示&lt;/h2>
+&lt;ol>
+&lt;li>在本文给出的源代码中还有一个错误，在上述代码中没有提到。对于所提供的测试代码中的插入和删除序列，该错误没有显示出来，但对于其他序列，该错误会显示出来。例如，插入 1、2、3 和 4，然后试图删除 2，就会出现错误。特别感谢 Linda Gu 和 Xiaofeng Chen 找到了这个错误。这个错误的修复是非常简单的，我们把它作为一个练习。&lt;/li>
+&lt;li>特别感谢 Ximmbo da Jazz 为一些错别字和错误的输出提供了宝贵的修正。&lt;/li>
+&lt;li>特别感谢 Raghuprasad Govindarao 发现了一个无效的链接。&lt;/li>
+&lt;/ol></description></item><item><title>tmux 快速简单的实践指南【翻译】</title><link>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/&lt;/p>
 &lt;/blockquote>
 &lt;p>我喜欢使用命令行进行工作。我认为对于软件开发人员来说，没有比终端更高效、更通用的工具了。当你使用终端时，通常感觉是自由的（free），为什么不喜欢呢？&lt;/p>
