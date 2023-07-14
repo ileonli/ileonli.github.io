@@ -1,4 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li (byteflow777 at gmail dot com)</title><link>https://netholes.github.io/</link><description>Recent content on Leon Li (byteflow777 at gmail dot com)</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 09 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://netholes.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li (byteflow777 at gmail dot com)</title><link>https://netholes.github.io/</link><description>Recent content on Leon Li (byteflow777 at gmail dot com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 14 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://netholes.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>设计模式-软件设计原则</title><link>https://netholes.github.io/posts/design-pattern/design-principles/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/design-principles/</guid><description>&lt;h2 id="开闭原则">开闭原则&lt;/h2>
+&lt;p>对&lt;strong>扩展&lt;/strong>开放，对&lt;strong>修改&lt;/strong>关闭。在程序需要进行扩展的时候，不用去修改原有的代码。&lt;/p>
+&lt;p>我们可以使用&lt;strong>接口&lt;/strong>和&lt;strong>抽象类&lt;/strong>实现这样的效果。当我们实现验证码功能时，可以抽象出一个接口，然后为短信提供商提供具体的实现，当新增短信提供商时，只需新增实现即可。&lt;/p>
+&lt;h2 id="里氏代换">里氏代换&lt;/h2>
+&lt;p>任何基类可以出现的地方，子类一定可以出现。子类可以扩展父类的功能，但不要改变父类原有的功能。&lt;/p>
+&lt;p>里氏代换是继承复用的基石，只有当子类可以替换掉基类且软件的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。&lt;/p>
+&lt;p>当我们创建鸟类的时候，由于鸟有可以飞、不可以飞和可以飞和可以走三大类。我们应该更进一步细化，分为：FlyingBirds 和 NonflyingBirds 两种。不同的鸟实现不同的接口，细化功能。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">Bird&lt;/span> &lt;span class="o">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">FlyingBirds&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Bird&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">fly&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">NonflyingBirds&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Bird&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">walk&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 鸭子
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Duck&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">FlyingBirds&lt;/span>&lt;span class="err">，&lt;/span> &lt;span class="n">NonflyingBirds&lt;/span> &lt;span class="o">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 鸵鸟
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Ostrich&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">NonflyingBirds&lt;/span> &lt;span class="o">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">FlyingBirds&lt;/span> &lt;span class="n">fb&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="n">fb&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">fly&lt;/span>&lt;span class="o">();&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">NonflyingBirds&lt;/span> &lt;span class="n">nb&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="n">nb&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">walk&lt;/span>&lt;span class="o">();&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="依赖倒转">依赖倒转&lt;/h2>
+&lt;p>高层模块不应该依赖低层模块，两者都应该依赖其抽象；抽象不应该依赖细节，细节应该依赖抽象。&lt;/p>
+&lt;p>当我们需要计算列表的和时，参数使用 List 父接口，子类可以传入不同的实现，如：ArrayList 和 LinkedList 等。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="nf">sum&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Integer&lt;/span> &lt;span class="n">n&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">n&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="接口隔离">接口隔离&lt;/h2>
+&lt;p>客户端不应该被强迫使用不应该被使用的方法，一个类多另一个类的依赖应该建立在最小的接口上。&lt;/p>
+&lt;p>当我们需要实现安全门类的时候，不同的安全门有不同的功能，应该细化接口。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">SafetyDoor&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">open&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">close&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>带有密码锁的安全门应该只包含与密码锁功能相关的接口，不应该包含其它的功能，具有其它功能的安全门，我们应该单独设置新的接口。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">PasswordSafetyDoor&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">SafetyDoor&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">inputPassword&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">setPassword&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">oldPassword&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">FireproofSafetyDoor&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">protect&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="迪米特法则">迪米特法则&lt;/h2>
+&lt;p>也称为最少知识原则，一个类对于其他类知道的越少越好，用于降低类之间的耦合。&lt;/p>
+&lt;p>软件之间的通信通过第三方转发调用。&lt;/p>
+&lt;h2 id="合成复用">合成复用&lt;/h2>
+&lt;p>优先使用组合或聚合等关联关系来实现，其次才考虑使用继承关系来实现。&lt;/p>
+&lt;p>继承破环了类的封装性，导致子类和父类之间的耦合度高，限制了灵活性。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="介绍">介绍&lt;/h2>
