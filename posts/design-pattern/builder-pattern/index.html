@@ -1,0 +1,73 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://netholes.github.io/favicon.ico><link rel=stylesheet href=/css/style.min.css><link rel=canonical href=https://netholes.github.io/posts/design-pattern/builder-pattern/><title>设计模式-建造者模式</title></head><body><header id=banner></header><main id=content><article><header id=post-header><h1>设计模式-建造者模式</h1><div><time>2023-07-14</time></div></header><p>建造者模式关注如何创建对象，将对象的创建和使用进行分离，使用者不需要关心对象的创建细节。</p><h2 id=单例模式>单例模式</h2><h3 id=饿汉式>饿汉式</h3><p>根据 <a href=https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.3.1.1>JLS 8.3.1.1</a> 可知类初始化时就会创建该单例对象。</p><h4 id=静态变量>静态变量</h4><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>final</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=n>SINGLETON</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Singleton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=nf>Singleton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=nf>getInstance</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>SINGLETON</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h4 id=静态方法块>静态方法块</h4><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=n>singleton</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>static</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>singleton</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Singleton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=nf>Singleton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=nf>getInstance</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>singleton</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p>静态变量会在编译时收集起来，收集到静态方法块中初始化。</p><p>通过 <code>javap -v</code> 反编译字节码文件，可以发现上边两段代码在字节码层面是一致的。</p><pre tabindex=0><code>static {};
+  descriptor: ()V
+  flags: (0x0008) ACC_STATIC
+  Code:
+    stack=2, locals=0, args_size=0
+       0: new           #8                  // class org/example/Singleton
+       3: dup
+       4: invokespecial #13                 // Method &#34;&lt;init&gt;&#34;:()V
+       7: putstatic     #7                  // Field SINGLETON:Lorg/example/Singleton;
+      10: return
+    LineNumberTable:
+      line 4: 0
+</code></pre><h3 id=懒汉式>懒汉式</h3><p>类加载时不会创建该单例对象，首次使用的时候才会创建此对象。</p><h4 id=双重检查>双重检查</h4><p>使用 <a href=https://en.wikipedia.org/wiki/Double-checked_locking>Double-checked locking</a> 实现线程安全的单例模式。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 添加 volatile 防止指令重排序
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>private</span> <span class=kd>volatile</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=n>singleton</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=nf>Singleton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=nf>getInstance</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>(</span><span class=n>singleton</span> <span class=o>==</span> <span class=kc>null</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=kd>synchronized</span> <span class=o>(</span><span class=n>singleton</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=o>(</span><span class=n>singleton</span> <span class=o>==</span> <span class=kc>null</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                    <span class=n>singleton</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Singleton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>                <span class=o>}</span>
+</span></span><span class=line><span class=cl>            <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>singleton</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h4 id=静态内部类>静态内部类</h4><p>外部类加载时，不会直接加载内部类，当第一次使用内部类时才会加载类。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=nf>Singleton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=kd>class</span> <span class=nc>SingletonHolder</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>static</span> <span class=kd>final</span> <span class=n>Singleton</span> <span class=n>singleton</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Singleton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>Singleton</span> <span class=nf>getInstance</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>SingletonHolder</span><span class=o>.</span><span class=na>singleton</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h3 id=枚举类单例>枚举类单例</h3><p>使用反射和序列化可以破坏单例模式，推荐使用枚举类实现单例模式。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>Singleton</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>SINGLETON</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>f</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div></article></main><footer id=footer></footer></body></html>
