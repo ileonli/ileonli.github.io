@@ -70,4 +70,43 @@
 </span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>f</span><span class=o>()</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h2 id=工厂模式>工厂模式</h2><p>定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method使一个类的实例化延迟到其子类。工厂方法的目的是使得创建对象和使用对象是分离的。</p><p>创建对象可能会导致大量的重复代码，可能会需要复合对象访问不到的信息，也可能提供不了足够级别的抽象，还可能并不是复合对象概念的一部分。工厂方法模式通过定义一个单独的创建对象的方法来解决这些问题。由子类实现这个方法来创建具体类别的对象。</p><p>有一个Button类别表示按钮，另有它的两个子类 WinButton 和 MacButton 分别代表 Windows 和 Mac 风格的按钮，那么这几个类别和用于创建它们的工厂类别在 Java 中可以如下实现。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// Button
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>class</span> <span class=nc>Button</span><span class=o>{</span><span class=cm>/* ...*/</span><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=kd>class</span> <span class=nc>WinButton</span> <span class=kd>extends</span> <span class=n>Button</span><span class=o>{</span><span class=cm>/* ...*/</span><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=kd>class</span> <span class=nc>MacButton</span> <span class=kd>extends</span> <span class=n>Button</span><span class=o>{</span><span class=cm>/* ...*/</span><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 工厂类
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>interface</span> <span class=nc>ButtonFactory</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Button</span> <span class=nf>createButton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=kd>class</span> <span class=nc>WinButtonFactory</span> <span class=kd>implements</span> <span class=n>ButtonFactory</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Button</span> <span class=nf>createButton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>WinButton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=kd>class</span> <span class=nc>MacButtonFactory</span> <span class=kd>implements</span> <span class=n>ButtonFactory</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Button</span> <span class=nf>createButton</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>MacButton</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h3 id=静态工厂方法>静态工厂方法</h3><p>JDK 中的 <code>List.of(1, 2, 3);</code> 和 <code>Integer.valueOf(10);</code> 都属于静态工厂方法。</p><p>使用者调用 <code>List.of</code> 方法后总是返回 <code>List</code> 接口，使用者无需关心返回的实际类型，隐藏了细节。此思想也是里氏替换原则的体现，返回实现接口的任意子类都可以满足该方法的要求，且不影响调用方。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// List.of 有很多重载方法，此处省略其它实现
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>static</span> <span class=o>&lt;</span><span class=n>E</span><span class=o>&gt;</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>E</span><span class=o>&gt;</span> <span class=nf>of</span><span class=o>(</span><span class=n>E</span><span class=o>...</span> <span class=n>elements</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>switch</span> <span class=o>(</span><span class=n>elements</span><span class=o>.</span><span class=na>length</span><span class=o>)</span> <span class=o>{</span> <span class=c1>// implicit null check of elements
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>case</span> <span class=mi>0</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=nd>@SuppressWarnings</span><span class=o>(</span><span class=s>&#34;unchecked&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>var</span> <span class=n>list</span> <span class=o>=</span> <span class=o>(</span><span class=n>List</span><span class=o>&lt;</span><span class=n>E</span><span class=o>&gt;)</span> <span class=n>ImmutableCollections</span><span class=o>.</span><span class=na>EMPTY_LIST</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>list</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=mi>1</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>new</span> <span class=n>ImmutableCollections</span><span class=o>.</span><span class=na>List12</span><span class=o>&lt;&gt;(</span><span class=n>elements</span><span class=o>[</span><span class=mi>0</span><span class=o>]);</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=mi>2</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>new</span> <span class=n>ImmutableCollections</span><span class=o>.</span><span class=na>List12</span><span class=o>&lt;&gt;(</span><span class=n>elements</span><span class=o>[</span><span class=mi>0</span><span class=o>],</span> <span class=n>elements</span><span class=o>[</span><span class=mi>1</span><span class=o>]);</span>
+</span></span><span class=line><span class=cl>        <span class=k>default</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>ImmutableCollections</span><span class=o>.</span><span class=na>listFromArray</span><span class=o>(</span><span class=n>elements</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p><code>Integer.valueOf</code> 采用了缓存机制，可以提升性能，但调用者无需关心创建的具体细节，向用户隐藏具体细节，减少调用者的负担。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>static</span> <span class=n>Integer</span> <span class=nf>valueOf</span><span class=o>(</span><span class=kt>int</span> <span class=n>i</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>(</span><span class=n>i</span> <span class=o>&gt;=</span> <span class=n>IntegerCache</span><span class=o>.</span><span class=na>low</span> <span class=o>&amp;&amp;</span> <span class=n>i</span> <span class=o>&lt;=</span> <span class=n>IntegerCache</span><span class=o>.</span><span class=na>high</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>IntegerCache</span><span class=o>.</span><span class=na>cache</span><span class=o>[</span><span class=n>i</span> <span class=o>+</span> <span class=o>(-</span><span class=n>IntegerCache</span><span class=o>.</span><span class=na>low</span><span class=o>)];</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>new</span> <span class=n>Integer</span><span class=o>(</span><span class=n>i</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
 </span></span></code></pre></div></article></main><footer id=footer></footer></body></html>
