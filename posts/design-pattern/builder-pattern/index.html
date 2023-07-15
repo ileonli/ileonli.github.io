@@ -52,7 +52,7 @@
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>singleton</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><h4 id=静态内部类>静态内部类</h4><p>外部类加载时，不会直接加载内部类，当第一次使用内部类时才会加载类。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
+</span></span></code></pre></div><h4 id=静态内部类>静态内部类</h4><p>外部类加载时，不会直接加载内部类，当第一次使用内部类时才会进行加载。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Singleton</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=nf>Singleton</span><span class=o>()</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
@@ -65,7 +65,7 @@
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>SingletonHolder</span><span class=o>.</span><span class=na>singleton</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><h3 id=枚举类单例>枚举类单例</h3><p>使用反射和序列化可以破坏单例模式，推荐使用枚举类实现单例模式。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>Singleton</span> <span class=o>{</span>
+</span></span></code></pre></div><h3 id=枚举类单例>枚举类单例</h3><p>使用反射和序列化等方法可以破坏单例模式，推荐使用枚举类实现单例模式。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>Singleton</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>SINGLETON</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>f</span><span class=o>()</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
