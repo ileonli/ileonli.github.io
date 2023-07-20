@@ -476,7 +476,109 @@ line 4: 0
 &lt;li>tmux 是基于客户端-服务器架构的。虽然这很少有关系，但对了解东西的工作原理有帮助。tmux 服务器会跟踪所有正在运行的会话。你将只在 tmux 客户端工作，创建新的会话或连接到现有的会话。&lt;/li>
 &lt;li>也可以是 &lt;code>M-&lt;/code>，这只对 &lt;code>Meta&lt;/code> 键（即大多数键盘上的 Alt）来说是一样的。&lt;/li>
 &lt;li>这是个有趣的问题。你的前缀需要 ctrl，也需要你的命令键。我发现最简单的方法是在前缀键之后只释放 b 键，并在反复敲击方向键时一直按着 ctrl。实验一下，找点感觉。&lt;/li>
-&lt;/ol></description></item><item><title>Java SPI 机制</title><link>https://netholes.github.io/posts/java/spi/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/spi/</guid><description>&lt;h2 id="简单使用">简单使用&lt;/h2>
+&lt;/ol></description></item><item><title>Java 模块化</title><link>https://netholes.github.io/posts/java/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
+&lt;p>使用 Java 模块有以下优势：&lt;/p>
+&lt;h2 id="使用模块">使用模块&lt;/h2>
+&lt;p>我们使用 Maven 创建项目，项目结构如下。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Bash" data-lang="Bash">&lt;span class="line">&lt;span class="cl">untitled/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">├── pom.xml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">└── src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ├── main
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   ├── java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   ├── io
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── github
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── ileonli
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── Main.java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   └── module-info.java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   └── resources
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └── &lt;span class="nb">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └── java
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以在 &lt;code>module-info.java&lt;/code> 里设置模块名、添加或导出模块。&lt;/p>
+&lt;p>本项目的模块名设为：&lt;code>io.github.ileonli.untitled&lt;/code>，&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">module&lt;/span> &lt;span class="n">io&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">github&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ileonli&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">untitled&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>java --list-modules&lt;/code> 可以列出 JDK 的模块集。其中包括实现 Java 语言 SE 规范的标准模块（以 java 开头的名称）、JavaFX 模块（以 javafx 开头的名称）、特定于 JDK 的模块（以 jdk 开头的名称）和特定于 Oracle 的模块（以 oracle 开头的名称）。每个模块名称后都接着一个版本字符串 — @17 表示该模块属于 Java 17。&lt;/p>
+&lt;pre tabindex="0">&lt;code>java.base@17.0.7
+java.compiler@17.0.7
+java.datatransfer@17.0.7
+java.desktop@17.0.7
+java.instrument@17.0.7
+java.logging@17.0.7
+java.management@17.0.7
+java.management.rmi@17.0.7
+java.naming@17.0.7
+java.net.http@17.0.7
+java.prefs@17.0.7
+java.rmi@17.0.7
+java.scripting@17.0.7
+java.se@17.0.7
+java.security.jgss@17.0.7
+java.security.sasl@17.0.7
+java.smartcardio@17.0.7
+java.sql@17.0.7
+java.sql.rowset@17.0.7
+java.transaction.xa@17.0.7
+java.xml@17.0.7
+java.xml.crypto@17.0.7
+jdk.accessibility@17.0.7
+jdk.attach@17.0.7
+jdk.charsets@17.0.7
+jdk.compiler@17.0.7
+jdk.crypto.cryptoki@17.0.7
+jdk.crypto.ec@17.0.7
+jdk.dynalink@17.0.7
+jdk.editpad@17.0.7
+jdk.hotspot.agent@17.0.7
+jdk.httpserver@17.0.7
+jdk.incubator.foreign@17.0.7
+jdk.incubator.vector@17.0.7
+jdk.internal.ed@17.0.7
+jdk.internal.jvmstat@17.0.7
+jdk.internal.le@17.0.7
+jdk.internal.opt@17.0.7
+jdk.internal.vm.ci@17.0.7
+jdk.internal.vm.compiler@17.0.7
+jdk.internal.vm.compiler.management@17.0.7
+jdk.jartool@17.0.7
+jdk.javadoc@17.0.7
+jdk.jcmd@17.0.7
+jdk.jconsole@17.0.7
+jdk.jdeps@17.0.7
+jdk.jdi@17.0.7
+jdk.jdwp.agent@17.0.7
+jdk.jfr@17.0.7
+jdk.jlink@17.0.7
+jdk.jpackage@17.0.7
+jdk.jshell@17.0.7
+jdk.jsobject@17.0.7
+jdk.jstatd@17.0.7
+jdk.localedata@17.0.7
+jdk.management@17.0.7
+jdk.management.agent@17.0.7
+jdk.management.jfr@17.0.7
+jdk.naming.dns@17.0.7
+jdk.naming.rmi@17.0.7
+jdk.net@17.0.7
+jdk.nio.mapmode@17.0.7
+jdk.random@17.0.7
+jdk.sctp@17.0.7
+jdk.security.auth@17.0.7
+jdk.security.jgss@17.0.7
+jdk.unsupported@17.0.7
+jdk.unsupported.desktop@17.0.7
+jdk.xml.dom@17.0.7
+jdk.zipfs@17.0.7
+&lt;/code>&lt;/pre>&lt;h2 id="模块关键字">模块关键字&lt;/h2>
+&lt;h3 id="requires">requires&lt;/h3>
+&lt;p>requires 用于导入其它模块，&lt;code>requires 模块名&lt;/code>&lt;/p>
+&lt;p>默认情况下，所有其他模块都依赖于 &lt;code>java.base&lt;/code> 模块。&lt;/p>
+&lt;h3 id="exports">exports&lt;/h3>
+&lt;p>exports 用于指定模块下的哪些包对外可见，&lt;code>exports 包名&lt;/code>&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://www.oracle.com/corporate/features/understanding-java-9-modules.html">https://www.oracle.com/corporate/features/understanding-java-9-modules.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://openjdk.org/projects/jigsaw/">https://openjdk.org/projects/jigsaw/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://jenkov.com/tutorials/java/modules.html">https://jenkov.com/tutorials/java/modules.html&lt;/a>&lt;/p>
+&lt;/blockquote></description></item><item><title>Java SPI 机制</title><link>https://netholes.github.io/posts/java/spi/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/spi/</guid><description>&lt;h2 id="简单使用">简单使用&lt;/h2>
 &lt;p>为使用 Java 操作数据库，我们需要提供驱动程序。为支持多种数据库（如：MySQL、PostgreSQL、Oracle），提供 &lt;code>DatabaseBaseDriver&lt;/code> 接口。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
@@ -570,17 +672,17 @@ line 4: 0
 &lt;hr>
 &lt;p>Java 6 引入了 SPI（Service Provider Interface）机制，用于加载服务的实现，使用步骤具体如下：&lt;/p>
 &lt;ol>
-&lt;li>在 resources 文件夹中新建 &lt;a href="https://docs.oracle.com/javase/7/docs/technotes/guides/jar/jar.html">META-INF&lt;/a> 文件夹。&lt;/li>
+&lt;li>在 resources 文件夹中新建 &lt;a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html">META-INF&lt;/a> 文件夹。&lt;/li>
 &lt;li>在 META-INF 文件夹中创建 services 文件夹。&lt;/li>
 &lt;li>在 services 文件夹中创建名为接口全类名的文件，并在此文件中添加提供服务实现的类的全类名。&lt;/li>
 &lt;/ol>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">resources
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └─META-INF
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └─services
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └─org.example.DatabaseBaseDriver
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> org.example.MysqlDriver
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> org.example.PostgresqlDriver
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>改造 &lt;code>DatabaseBaseDriverManager&lt;/code> 类，在获取驱动实例前，通过 &lt;code>ensureInitialized&lt;/code> 方法确保驱动实例已经初始化。&lt;/p>
+&lt;pre tabindex="0">&lt;code>resources
+└─META-INF
+└─services
+└─org.example.DatabaseBaseDriver
+org.example.MysqlDriver
+org.example.PostgresqlDriver
+&lt;/code>&lt;/pre>&lt;p>改造 &lt;code>DatabaseBaseDriverManager&lt;/code> 类，在获取驱动实例前，通过 &lt;code>ensureInitialized&lt;/code> 方法确保驱动实例已经初始化。&lt;/p>
 &lt;p>&lt;code>ServiceLoader&lt;/code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。&lt;/p>
 &lt;p>通过 &lt;code>Iterator&lt;/code> 调用 &lt;code>next()&lt;/code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 &lt;code>java.util.ServiceLoader.ProviderImpl#newInstance&lt;/code> 方法中。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
@@ -666,8 +768,8 @@ line 4: 0
 &lt;p>插件只需要实现系统所提供的插件接口，再通过 SPI 技术即可方便的装载。&lt;/p>
 &lt;h3 id="数据库驱动">数据库驱动&lt;/h3>
 &lt;p>JDK 中提供了 &lt;code>java.sql.Driver&lt;/code> 接口，所有的驱动类必须实现，同时提供了 &lt;code>java.sql.DriverManager&lt;/code> 管理所有的驱动。&lt;/p>
-&lt;p>可以看到 MySQL 驱动使用了 SPI 机制，java.sql.Driver 文件中内容为 com.mysql.cj.jdbc.Driver。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/post/java/mysql-driver-spi.png" alt="">&lt;/p>
+&lt;p>可以看到 MySQL 驱动使用了 SPI 机制，&lt;code>java.sql.Driver&lt;/code> 文件中内容为 &lt;code>com.mysql.cj.jdbc.Driver&lt;/code>。&lt;/p>
+&lt;p>&lt;img src="https://netholes.github.io/img/java/spi/mysql-driver-spi.png" alt="">&lt;/p>
 &lt;p>&lt;code>com.mysql.cj.jdbc.Driver&lt;/code> 类使用静态代码块注册到 &lt;code>java.sql.DriverManager&lt;/code> 中，在第一次类加载时运行。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Driver&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">NonRegisteringDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">Driver&lt;/span> &lt;span class="o">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">//
@@ -691,7 +793,9 @@ line 4: 0
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Required for Class.forName().newInstance()
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="总结">总结&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>PostgreSQL 驱动同样如此。&lt;/p>
+&lt;p>&lt;img src="https://netholes.github.io/img/java/spi/postgresql-driver-spi.png" alt="">&lt;/p>
+&lt;h2 id="总结">总结&lt;/h2>
 &lt;p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。&lt;/p>
 &lt;blockquote>
 &lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">https://docs.oracle.com/javase/tutorial/ext/basics/spi.html&lt;/a>&lt;/p>

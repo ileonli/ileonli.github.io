@@ -77,13 +77,13 @@
 </span></span><span class=line><span class=cl>        <span class=n>run</span><span class=o>(</span><span class=s>&#34;SELECT * FROM `user`&#34;</span><span class=o>);</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>此时的代码耦合度很高，当添加或删除驱动时，就需要更改代码。有没有机制可以允许我们不直接在程序里直接指明，而由具体的实现动态装配呢？</p><hr><p>Java 6 引入了 SPI（Service Provider Interface）机制，用于加载服务的实现，使用步骤具体如下：</p><ol><li>在 resources 文件夹中新建 <a href=https://docs.oracle.com/javase/7/docs/technotes/guides/jar/jar.html>META-INF</a> 文件夹。</li><li>在 META-INF 文件夹中创建 services 文件夹。</li><li>在 services 文件夹中创建名为接口全类名的文件，并在此文件中添加提供服务实现的类的全类名。</li></ol><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>resources
-</span></span><span class=line><span class=cl>    └─META-INF
-</span></span><span class=line><span class=cl>        └─services
-</span></span><span class=line><span class=cl>            └─org.example.DatabaseBaseDriver
-</span></span><span class=line><span class=cl>                org.example.MysqlDriver
-</span></span><span class=line><span class=cl>                org.example.PostgresqlDriver
-</span></span></code></pre></div><p>改造 <code>DatabaseBaseDriverManager</code> 类，在获取驱动实例前，通过 <code>ensureInitialized</code> 方法确保驱动实例已经初始化。</p><p><code>ServiceLoader</code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。</p><p>通过 <code>Iterator</code> 调用 <code>next()</code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 <code>java.util.ServiceLoader.ProviderImpl#newInstance</code> 方法中。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
+</span></span></code></pre></div><p>此时的代码耦合度很高，当添加或删除驱动时，就需要更改代码。有没有机制可以允许我们不直接在程序里直接指明，而由具体的实现动态装配呢？</p><hr><p>Java 6 引入了 SPI（Service Provider Interface）机制，用于加载服务的实现，使用步骤具体如下：</p><ol><li>在 resources 文件夹中新建 <a href=https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html>META-INF</a> 文件夹。</li><li>在 META-INF 文件夹中创建 services 文件夹。</li><li>在 services 文件夹中创建名为接口全类名的文件，并在此文件中添加提供服务实现的类的全类名。</li></ol><pre tabindex=0><code>resources
+    └─META-INF
+        └─services
+            └─org.example.DatabaseBaseDriver
+                org.example.MysqlDriver
+                org.example.PostgresqlDriver
+</code></pre><p>改造 <code>DatabaseBaseDriverManager</code> 类，在获取驱动实例前，通过 <code>ensureInitialized</code> 方法确保驱动实例已经初始化。</p><p><code>ServiceLoader</code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。</p><p>通过 <code>Iterator</code> 调用 <code>next()</code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 <code>java.util.ServiceLoader.ProviderImpl#newInstance</code> 方法中。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>DatabaseBaseDriverManager</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>
@@ -157,7 +157,7 @@
 </span></span><span class=line><span class=cl>    <span class=c1>// Do nothing
 </span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=k>return</span> <span class=kc>null</span><span class=o>;</span>
-</span></span></code></pre></div><h2 id=具体应用>具体应用</h2><h3 id=插件>插件</h3><p>插件只需要实现系统所提供的插件接口，再通过 SPI 技术即可方便的装载。</p><h3 id=数据库驱动>数据库驱动</h3><p>JDK 中提供了 <code>java.sql.Driver</code> 接口，所有的驱动类必须实现，同时提供了 <code>java.sql.DriverManager</code> 管理所有的驱动。</p><p>可以看到 MySQL 驱动使用了 SPI 机制，java.sql.Driver 文件中内容为 com.mysql.cj.jdbc.Driver。</p><p><img src=/img/post/java/mysql-driver-spi.png alt></p><p><code>com.mysql.cj.jdbc.Driver</code> 类使用静态代码块注册到 <code>java.sql.DriverManager</code> 中，在第一次类加载时运行。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Driver</span> <span class=kd>extends</span> <span class=n>NonRegisteringDriver</span> <span class=kd>implements</span> <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>Driver</span> <span class=o>{</span>
+</span></span></code></pre></div><h2 id=具体应用>具体应用</h2><h3 id=插件>插件</h3><p>插件只需要实现系统所提供的插件接口，再通过 SPI 技术即可方便的装载。</p><h3 id=数据库驱动>数据库驱动</h3><p>JDK 中提供了 <code>java.sql.Driver</code> 接口，所有的驱动类必须实现，同时提供了 <code>java.sql.DriverManager</code> 管理所有的驱动。</p><p>可以看到 MySQL 驱动使用了 SPI 机制，<code>java.sql.Driver</code> 文件中内容为 <code>com.mysql.cj.jdbc.Driver</code>。</p><p><img src=/img/java/spi/mysql-driver-spi.png alt></p><p><code>com.mysql.cj.jdbc.Driver</code> 类使用静态代码块注册到 <code>java.sql.DriverManager</code> 中，在第一次类加载时运行。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Driver</span> <span class=kd>extends</span> <span class=n>NonRegisteringDriver</span> <span class=kd>implements</span> <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>Driver</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=c1>//
 </span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// Register ourselves with the DriverManager
 </span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//
@@ -179,4 +179,4 @@
 </span></span><span class=line><span class=cl>        <span class=c1>// Required for Class.forName().newInstance()
 </span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><h2 id=总结>总结</h2><p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。</p><blockquote><p><a href=https://docs.oracle.com/javase/tutorial/ext/basics/spi.html>https://docs.oracle.com/javase/tutorial/ext/basics/spi.html</a></p><p><a href=https://www.baeldung.com/java-spi>https://www.baeldung.com/java-spi</a></p></blockquote></article></main><footer id=footer></footer></body></html>
+</span></span></code></pre></div><p>PostgreSQL 驱动同样如此。</p><p><img src=/img/java/spi/postgresql-driver-spi.png alt></p><h2 id=总结>总结</h2><p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。</p><blockquote><p><a href=https://docs.oracle.com/javase/tutorial/ext/basics/spi.html>https://docs.oracle.com/javase/tutorial/ext/basics/spi.html</a></p><p><a href=https://www.baeldung.com/java-spi>https://www.baeldung.com/java-spi</a></p></blockquote></article></main><footer id=footer></footer></body></html>
