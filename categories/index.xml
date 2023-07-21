@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://netholes.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://netholes.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>设计模式 - 抽象工厂</title><link>https://netholes.github.io/posts/design-pattern/creational-patterns/abstract-factory/</link><pubDate>Thu, 20 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/creational-patterns/abstract-factory/</guid><description/></item><item><title>设计模式 - 创建型模式</title><link>https://netholes.github.io/posts/design-pattern/creational-patterns/builder-pattern/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/creational-patterns/builder-pattern/</guid><description>&lt;p>建造者模式关注如何创建对象，将对象的创建和使用进行分离，使用者不需要关心对象的创建细节。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>设计模式 - 抽象工厂</title><link>https://ileonli.github.io/posts/design-pattern/creational-patterns/abstract-factory/</link><pubDate>Thu, 20 Jul 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/design-pattern/creational-patterns/abstract-factory/</guid><description/></item><item><title>设计模式 - 创建型模式</title><link>https://ileonli.github.io/posts/design-pattern/creational-patterns/builder-pattern/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/design-pattern/creational-patterns/builder-pattern/</guid><description>&lt;p>建造者模式关注如何创建对象，将对象的创建和使用进行分离，使用者不需要关心对象的创建细节。&lt;/p>
 &lt;h2 id="单例模式">单例模式&lt;/h2>
 &lt;h3 id="饿汉式">饿汉式&lt;/h3>
 &lt;p>根据 &lt;a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.3.1.1">JLS 8.3.1.1&lt;/a> 可知类初始化时就会创建该单例对象。&lt;/p>
@@ -184,7 +184,7 @@ line 4: 0
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">FORMATTER&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>设计模式 - 面向对象设计原则</title><link>https://netholes.github.io/posts/design-pattern/design-principles/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/design-principles/</guid><description>&lt;blockquote>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>设计模式 - 面向对象设计原则</title><link>https://ileonli.github.io/posts/design-pattern/design-principles/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/design-pattern/design-principles/</guid><description>&lt;blockquote>
 &lt;p>每一个模式描述了一个在我们周围不断重复发生以及该问题的解决方法的核心。这样，你就能一次有一次地使用该方案而不必做重复劳动。
 &amp;ndash; Alexa Christopher&lt;/p>
 &lt;/blockquote>
@@ -256,7 +256,7 @@ line 4: 0
 &lt;p>软件之间的通信通过第三方转发调用。&lt;/p>
 &lt;h2 id="针对接口编程">针对接口编程&lt;/h2>
 &lt;p>不将变量设置为具体类型，而是使用抽象接口。&lt;/p>
-&lt;p>客户不需要获知对象的具体类型，只需要知道暴露出的接口即可。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+&lt;p>客户不需要获知对象的具体类型，只需要知道暴露出的接口即可。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="介绍">介绍&lt;/h2>
@@ -264,7 +264,7 @@ line 4: 0
 &lt;h2 id="谁需要此篇教程">谁需要此篇教程？&lt;/h2>
 &lt;p>这篇教程是帮助新接触 Unix 环境的程序员使用 gdb 进行调试的。我们假设你已经知道如何使用 C++ 编程，并且可以编译和执行程序。同样假设你知道什么是调试（debug）并且你曾经在其它系统上使用过调试器（debugger）。&lt;/p>
 &lt;h2 id="源代码">源代码&lt;/h2>
-&lt;p>为了展示一些调试原则（principles），我将使用一个含有 bug 的程序作为例子。当你跟着本教程，你将使用调试器找到并修复代码中的错误。你可以从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/main.cc">此处&lt;/a>下载 C++ 代码（&lt;a href="https://netholes.github.io/file/gdb/main.cc">本站备份&lt;/a>），从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/Makefile">此处&lt;/a>下载 Makefile 文件（&lt;a href="https://netholes.github.io/file/gdb/Makefile">本站备份&lt;/a>）。&lt;/p>
+&lt;p>为了展示一些调试原则（principles），我将使用一个含有 bug 的程序作为例子。当你跟着本教程，你将使用调试器找到并修复代码中的错误。你可以从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/main.cc">此处&lt;/a>下载 C++ 代码（&lt;a href="https://ileonli.github.io/file/gdb/main.cc">本站备份&lt;/a>），从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/Makefile">此处&lt;/a>下载 Makefile 文件（&lt;a href="https://ileonli.github.io/file/gdb/Makefile">本站备份&lt;/a>）。&lt;/p>
 &lt;p>这是一段非常简单的代码，此代码包含两个类定义，分别是：Node 和 LinkedList。还有一个简单的代码测试用于此链表。所有的代码都放在一个文件中，以便更容易的展示调试过程。&lt;/p>
 &lt;h2 id="准备工作">准备工作&lt;/h2>
 &lt;h3 id="环境配置">环境配置&lt;/h3>
@@ -401,12 +401,12 @@ line 4: 0
 &lt;li>在本文给出的源代码中还有一个错误，在上述代码中没有提到。对于所提供的测试代码中的插入和删除序列，该错误没有显示出来，但对于其他序列，该错误会显示出来。例如，插入 1、2、3 和 4，然后试图删除 2，就会出现错误。特别感谢 Linda Gu 和 Xiaofeng Chen 找到了这个错误。这个错误的修复是非常简单的，我们把它作为一个练习。&lt;/li>
 &lt;li>特别感谢 Ximmbo da Jazz 为一些错别字和错误的输出提供了宝贵的修正。&lt;/li>
 &lt;li>特别感谢 Raghuprasad Govindarao 发现了一个无效的链接。&lt;/li>
-&lt;/ol></description></item><item><title>tmux 快速简单的实践指南【翻译】</title><link>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</guid><description>&lt;blockquote>
+&lt;/ol></description></item><item><title>tmux 快速简单的实践指南【翻译】</title><link>https://ileonli.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/&lt;/p>
 &lt;/blockquote>
 &lt;p>我喜欢使用命令行进行工作。我认为对于软件开发人员来说，没有比终端更高效、更通用的工具了。当你使用终端时，通常感觉是自由的（free），为什么不喜欢呢？&lt;/p>
 &lt;p>过去的这些年里，我一直在尝试精简和自定义我的命令行，使其变得更易于使用、更有趣或仅仅看起来不错。tmux 是让我日常使用命令行时，有良好体验的最重要工具之一。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/tmux/tmux-1.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-1.png" alt="">&lt;/p>
 &lt;p>这张截图展示的东西简直是自面包切片以来最好的事情（译者注：&lt;a href="https://www.plansponsor.com/tuesday-trivia-origin-phrase-best-thing-since-sliced-bread/">面包切片&lt;/a>表示对某事或物的赞许）。这就是被叫做终端复用器（terminal multiplexer）的 &lt;a href="https://github.com/tmux/tmux/wiki">tmux&lt;/a>。简单来说，tmux 就是终端中的窗口管理器（脚注 1），该管理器允许你在一个终端窗口中创建多个窗口（windows）和面板（panes）。&lt;/p>
 &lt;p>这篇文章将告诉你一些关于 tmux 的介绍和它的潜力，随后是大约 10 分钟的手把手教程，用于设置和了解 tmux。如果你有 10 分钟的空闲时间，并想与你的“书呆子”朋友们赚取街头信誉（译者注：使用 tmux 可以用于&lt;del>装逼&lt;/del>）&lt;/p>
 &lt;h2 id="关于-tmux">关于 tmux&lt;/h2>
@@ -429,13 +429,13 @@ line 4: 0
 &lt;p>对于你的第一个会话，简单的使用 &lt;code>tmux&lt;/code> 命令即可创建新会话。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ tmux
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这将创建一个新的 tmux 会话，会话底部会有一个绿色的状态栏。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/tmux/tmux-2.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-2.png" alt="">&lt;/p>
 &lt;p>状态栏是 tmux 非常重要的一部分，除了当前打开的窗口信息（左边），它还展示了一些系统信息，如：日期和时间（右边）。状态栏也可以定制，我看过一些非常漂亮（即将到来的日历事件、电池状态等），但这些是我们后续需要做的。&lt;/p>
 &lt;h2 id="分离面板">分离面板&lt;/h2>
 &lt;p>我们已经创建了第一个对话，可以了解一下面板的使用感觉。当你创建了一个新对话后，tmux 默认打开包含一个面板的窗口。但我们想要一个漂亮的分屏，让我们把它分开吧！&lt;/p>
 &lt;p>在 tmux 中的所有命令都前缀键（prefix key）和命令键（command key）组成（emacs 使用者会比较熟悉）。默认情况，tmux 使用 &lt;code>C-b&lt;/code> 作为前缀键。如果你不习惯，这个符号读起来会很奇怪。在 emacs 中， &lt;code>C-&lt;/code> 符号表示长按 ctrl 键（脚注 3）。因此，&lt;code>C-b&lt;/code> 表示同时按下 ctrl 和 b 键。&lt;/p>
 &lt;p>将面板分离为左右面板的快捷键是 &lt;code>C-b %&lt;/code>。此快捷键的意思是：同时按下 ctrl 和 b 键，然后松手，随后按下 % 键。你刚刚使用第一个 tmux 命令把你的面板分离为两个。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/tmux/tmux-3.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-3.png" alt="">&lt;/p>
 &lt;p>有左右分割，也有上下分割。要将窗格分割为顶部窗格和底部窗格，请使用 &lt;code>C-b &amp;quot;&lt;/code> 快捷键。&lt;/p>
 &lt;h2 id="切换面板">切换面板&lt;/h2>
 &lt;p>现在我们被困在新创建的窗口中，但我们很想回到左边面板。十分简单，切换到不同面板可以使用 &lt;code>C-b &amp;lt;方向键&amp;gt;&lt;/code> 快捷键， &lt;code>&amp;lt;方向键&amp;gt;&lt;/code> 表示想要切换到的窗口的方向。在我们的例子中，我们想要切换到左边的面板所以留给我们的是 &lt;code>C-b left&lt;/code>。再重复一遍，以便我们完全理解: 这意味着你按 ctrl 和 b 键（前缀命令），然后按左箭头键以到达左侧的面板。&lt;/p>
@@ -445,7 +445,7 @@ line 4: 0
 &lt;h2 id="创建窗口">创建窗口&lt;/h2>
 &lt;p>tmux 中的窗口可以被比作创建新的虚拟桌面。如果你曾经使用过一个主要的 Linux 桌面环境（KDE，Gnome）或 Mac，希望你会发现这个比喻很有帮助。&lt;/p>
 &lt;p>创建新窗口就像输入 &lt;code>C-b c&lt;/code>（最后一次：就是 ctrl 和 b 一次，然后是 c）一样简单。新的窗口将在 tmux 的状态栏中呈现给你。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/tmux/tmux-4.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-4.png" alt="">&lt;/p>
 &lt;p>现在你可以在你的新窗口中随意划分窗格，或者不做。这由你决定。&lt;/p>
 &lt;p>要切换到上一个窗口（根据你状态栏中的顺序），使用 &lt;code>C-b p&lt;/code>，要切换到下一个窗口，使用 &lt;code>C-b n&lt;/code>。
 如果你已经创建了许多窗口，你会发现直接输入一个窗口的编号（状态栏会告诉你哪个窗口有哪个编号）是很有用的，只要使用 &lt;code>C-b &amp;lt;编号&amp;gt;&lt;/code>，其中 &lt;code>&amp;lt;编号&amp;gt;&lt;/code> 是状态栏中窗口名称前面的数字。&lt;/p>
@@ -492,7 +492,7 @@ line 4: 0
 &lt;li>tmux 是基于客户端-服务器架构的。虽然这很少有关系，但对了解东西的工作原理有帮助。tmux 服务器会跟踪所有正在运行的会话。你将只在 tmux 客户端工作，创建新的会话或连接到现有的会话。&lt;/li>
 &lt;li>也可以是 &lt;code>M-&lt;/code>，这只对 &lt;code>Meta&lt;/code> 键（即大多数键盘上的 Alt）来说是一样的。&lt;/li>
 &lt;li>这是个有趣的问题。你的前缀需要 ctrl，也需要你的命令键。我发现最简单的方法是在前缀键之后只释放 b 键，并在反复敲击方向键时一直按着 ctrl。实验一下，找点感觉。&lt;/li>
-&lt;/ol></description></item><item><title>Java 模块化</title><link>https://netholes.github.io/posts/java/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
+&lt;/ol></description></item><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
 &lt;p>使用 Java 模块有以下优势：&lt;/p>
 &lt;h2 id="使用模块">使用模块&lt;/h2>
 &lt;p>我们使用 Maven 创建项目，项目结构如下。&lt;/p>
@@ -594,7 +594,7 @@ jdk.zipfs@17.0.7
 &lt;p>&lt;a href="https://www.oracle.com/corporate/features/understanding-java-9-modules.html">https://www.oracle.com/corporate/features/understanding-java-9-modules.html&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://openjdk.org/projects/jigsaw/">https://openjdk.org/projects/jigsaw/&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://jenkov.com/tutorials/java/modules.html">https://jenkov.com/tutorials/java/modules.html&lt;/a>&lt;/p>
-&lt;/blockquote></description></item><item><title>Java SPI 机制</title><link>https://netholes.github.io/posts/java/spi/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/spi/</guid><description>&lt;h2 id="简单使用">简单使用&lt;/h2>
+&lt;/blockquote></description></item><item><title>Java SPI 机制</title><link>https://ileonli.github.io/posts/java/spi/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/spi/</guid><description>&lt;h2 id="简单使用">简单使用&lt;/h2>
 &lt;p>为使用 Java 操作数据库，我们需要提供驱动程序。为支持多种数据库（如：MySQL、PostgreSQL、Oracle），提供 &lt;code>DatabaseBaseDriver&lt;/code> 接口。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
@@ -785,7 +785,7 @@ org.example.PostgresqlDriver
 &lt;h3 id="数据库驱动">数据库驱动&lt;/h3>
 &lt;p>JDK 中提供了 &lt;code>java.sql.Driver&lt;/code> 接口，所有的驱动类必须实现，同时提供了 &lt;code>java.sql.DriverManager&lt;/code> 管理所有的驱动。&lt;/p>
 &lt;p>可以看到 MySQL 驱动使用了 SPI 机制，&lt;code>java.sql.Driver&lt;/code> 文件中内容为 &lt;code>com.mysql.cj.jdbc.Driver&lt;/code>。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/java/spi/mysql-driver-spi.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/java/spi/mysql-driver-spi.png" alt="">&lt;/p>
 &lt;p>&lt;code>com.mysql.cj.jdbc.Driver&lt;/code> 类使用静态代码块注册到 &lt;code>java.sql.DriverManager&lt;/code> 中，在第一次类加载时运行。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Driver&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">NonRegisteringDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">Driver&lt;/span> &lt;span class="o">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">//
@@ -810,13 +810,13 @@ org.example.PostgresqlDriver
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>PostgreSQL 驱动同样如此。&lt;/p>
-&lt;p>&lt;img src="https://netholes.github.io/img/java/spi/postgresql-driver-spi.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/java/spi/postgresql-driver-spi.png" alt="">&lt;/p>
 &lt;h2 id="总结">总结&lt;/h2>
 &lt;p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。&lt;/p>
 &lt;blockquote>
 &lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">https://docs.oracle.com/javase/tutorial/ext/basics/spi.html&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://www.baeldung.com/java-spi">https://www.baeldung.com/java-spi&lt;/a>&lt;/p>
-&lt;/blockquote></description></item><item><title>Java 泛型</title><link>https://netholes.github.io/posts/java/generic/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/generic/</guid><description>&lt;p>泛型本质即把内部数据类型参数化，可以减少额外代码的编写。&lt;/p>
+&lt;/blockquote></description></item><item><title>Java 泛型</title><link>https://ileonli.github.io/posts/java/generic/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/generic/</guid><description>&lt;p>泛型本质即把内部数据类型参数化，可以减少额外代码的编写。&lt;/p>
 &lt;p>尖括号之间的叫做类型参数（type parameter），通常采用单字母，大写的方式。&lt;/p>
 &lt;p>类型参数常用的字母包括：E（集合框架内元素）、K（key）、V（value）、N（number）、T（type）、&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">{&lt;/span>
@@ -881,7 +881,7 @@ org.example.PostgresqlDriver
 &lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/java/generics/types.html">https://docs.oracle.com/javase/tutorial/java/generics/types.html&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://openjdk.org/projects/valhalla/">https://openjdk.org/projects/valhalla/&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://openjdk.org/jeps/218">https://openjdk.org/jeps/218&lt;/a>&lt;/p>
-&lt;/blockquote></description></item><item><title>Java 枚举类型</title><link>https://netholes.github.io/posts/java/enum/</link><pubDate>Tue, 07 Feb 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/java/enum/</guid><description>&lt;blockquote>
+&lt;/blockquote></description></item><item><title>Java 枚举类型</title><link>https://ileonli.github.io/posts/java/enum/</link><pubDate>Tue, 07 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/enum/</guid><description>&lt;blockquote>
 &lt;p>枚举类型（enum type）是由一组常量组合而成&lt;/p>
 &lt;/blockquote>
 &lt;p>在引入枚举类型之前，通常用一组 int 常量表示每种类型。&lt;/p>
