@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://netholes.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://netholes.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>设计模式 - 创建型模式</title><link>https://netholes.github.io/posts/design-pattern/builder-pattern/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/builder-pattern/</guid><description>&lt;p>建造者模式关注如何创建对象，将对象的创建和使用进行分离，使用者不需要关心对象的创建细节。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://netholes.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://netholes.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>设计模式 - 抽象工厂</title><link>https://netholes.github.io/posts/design-pattern/creational-patterns/abstract-factory/</link><pubDate>Thu, 20 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/creational-patterns/abstract-factory/</guid><description/></item><item><title>设计模式 - 创建型模式</title><link>https://netholes.github.io/posts/design-pattern/creational-patterns/builder-pattern/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/creational-patterns/builder-pattern/</guid><description>&lt;p>建造者模式关注如何创建对象，将对象的创建和使用进行分离，使用者不需要关心对象的创建细节。&lt;/p>
 &lt;h2 id="单例模式">单例模式&lt;/h2>
 &lt;h3 id="饿汉式">饿汉式&lt;/h3>
 &lt;p>根据 &lt;a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.3.1.1">JLS 8.3.1.1&lt;/a> 可知类初始化时就会创建该单例对象。&lt;/p>
@@ -184,15 +184,36 @@ line 4: 0
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">FORMATTER&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>设计模式 - 软件设计原则</title><link>https://netholes.github.io/posts/design-pattern/design-principles/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/design-principles/</guid><description>&lt;blockquote>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>设计模式 - 面向对象设计原则</title><link>https://netholes.github.io/posts/design-pattern/design-principles/</link><pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/design-pattern/design-principles/</guid><description>&lt;blockquote>
 &lt;p>每一个模式描述了一个在我们周围不断重复发生以及该问题的解决方法的核心。这样，你就能一次有一次地使用该方案而不必做重复劳动。
 &amp;ndash; Alexa Christopher&lt;/p>
 &lt;/blockquote>
-&lt;h2 id="开闭原则">开闭原则&lt;/h2>
-&lt;p>对&lt;strong>扩展&lt;/strong>开放，对&lt;strong>修改&lt;/strong>关闭。在程序需要进行扩展的时候，不用去修改原有的代码。&lt;/p>
+&lt;h2 id="面向对象">面向对象&lt;/h2>
+&lt;p>对象封装了代码和数据，是某种责任的抽象。&lt;/p>
+&lt;p>面向对象更加强调各个类的责任。&lt;/p>
+&lt;p>变化是复用的天敌，面向对象设计最大的优势在于&lt;strong>抵御变化&lt;/strong>（使得变化带来的影响最小）。&lt;/p>
+&lt;h2 id="依赖倒置">依赖倒置&lt;/h2>
+&lt;p>高层模块（稳定）不应该依赖低层模块（变化），两者都应该依赖其抽象（稳定）。&lt;/p>
+&lt;p>抽象（稳定）不应该依赖于实现细节（变化），实现细节应该依赖抽象。&lt;/p>
+&lt;p>当我们需要计算列表的和时，参数使用 List 父接口，子类可以传入不同的实现，如：ArrayList 和 LinkedList 等。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="nf">sum&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Integer&lt;/span> &lt;span class="n">n&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">n&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="开闭原则">开闭原则&lt;/h2>
+&lt;p>对&lt;strong>扩展&lt;/strong>开放，对&lt;strong>更改&lt;/strong>封闭。&lt;/p>
+&lt;p>类模块应该是可扩展的，但是不可修改。&lt;/p>
+&lt;p>在程序需要进行扩展的时候，不用去修改原有的代码。&lt;/p>
 &lt;p>我们可以使用&lt;strong>接口&lt;/strong>和&lt;strong>抽象类&lt;/strong>实现这样的效果。当我们实现验证码功能时，可以抽象出一个接口，然后为短信提供商提供具体的实现，当新增短信提供商时，只需新增实现即可。&lt;/p>
+&lt;h2 id="单一职责">单一职责&lt;/h2>
+&lt;p>一个类应该仅有一个引起它变化的原因。&lt;/p>
+&lt;p>变化的方向隐含着类的责任。&lt;/p>
 &lt;h2 id="里氏代换">里氏代换&lt;/h2>
-&lt;p>任何基类可以出现的地方，子类一定可以出现。子类可以扩展父类的功能，但不要改变父类原有的功能。&lt;/p>
+&lt;p>子类必须能够替换它们的基类（IS-A）。&lt;/p>
+&lt;p>子类可以扩展父类的功能，但不要改变父类原有的功能。&lt;/p>
 &lt;p>里氏代换是继承复用的基石，只有当子类可以替换掉基类且软件的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。&lt;/p>
 &lt;p>当我们创建鸟类的时候，由于鸟有可以飞、不可以飞和可以飞和可以走三大类。我们应该更进一步细化，分为：FlyingBirds 和 NonflyingBirds 两种。不同的鸟实现不同的接口，细化功能。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">Bird&lt;/span> &lt;span class="o">{}&lt;/span>
@@ -210,18 +231,9 @@ line 4: 0
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">FlyingBirds&lt;/span> &lt;span class="n">fb&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="n">fb&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">fly&lt;/span>&lt;span class="o">();&lt;/span> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">NonflyingBirds&lt;/span> &lt;span class="n">nb&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="n">nb&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">walk&lt;/span>&lt;span class="o">();&lt;/span> &lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="依赖倒转">依赖倒转&lt;/h2>
-&lt;p>高层模块不应该依赖低层模块，两者都应该依赖其抽象；抽象不应该依赖细节，细节应该依赖抽象。&lt;/p>
-&lt;p>当我们需要计算列表的和时，参数使用 List 父接口，子类可以传入不同的实现，如：ArrayList 和 LinkedList 等。&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="nf">sum&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="o">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Integer&lt;/span> &lt;span class="n">n&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">n&lt;/span>&lt;span class="o">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="接口隔离">接口隔离&lt;/h2>
-&lt;p>客户端不应该被强迫使用不应该被使用的方法，一个类多另一个类的依赖应该建立在最小的接口上。&lt;/p>
+&lt;p>不应该强迫客户端使用不应该被使用的方法，&lt;/p>
+&lt;p>一个类多另一个类的依赖应该建立在最小的接口上。&lt;/p>
 &lt;p>当我们需要实现安全门类的时候，不同的安全门有不同的功能，应该细化接口。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">SafetyDoor&lt;/span> &lt;span class="o">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">open&lt;/span>&lt;span class="o">();&lt;/span>
@@ -235,12 +247,16 @@ line 4: 0
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">FireproofSafetyDoor&lt;/span> &lt;span class="o">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">protect&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="迪米特法则">迪米特法则&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="优先使用组合">优先使用组合&lt;/h2>
+&lt;p>优先使用组合，而不是继承。&lt;/p>
+&lt;p>类继承破坏了父类的封装，子类和父类耦合度高。&lt;/p>
+&lt;p>组合只要求组合的对象暴露出设计好的接口（API）即可。&lt;/p>
+&lt;h2 id="迪米特法则">迪米特法则&lt;/h2>
 &lt;p>也称为最少知识原则，一个类对于其他类知道的越少越好，用于降低类之间的耦合。&lt;/p>
 &lt;p>软件之间的通信通过第三方转发调用。&lt;/p>
-&lt;h2 id="合成复用">合成复用&lt;/h2>
-&lt;p>优先使用组合或聚合等关联关系来实现，其次才考虑使用继承关系来实现。&lt;/p>
-&lt;p>继承破环了类的封装性，导致子类和父类之间的耦合度高，限制了灵活性。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+&lt;h2 id="针对接口编程">针对接口编程&lt;/h2>
+&lt;p>不将变量设置为具体类型，而是使用抽象接口。&lt;/p>
+&lt;p>客户不需要获知对象的具体类型，只需要知道暴露出的接口即可。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://netholes.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="介绍">介绍&lt;/h2>
