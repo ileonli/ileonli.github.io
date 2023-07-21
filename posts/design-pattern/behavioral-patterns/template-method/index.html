@@ -29,4 +29,4 @@
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>i</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p><code>read(byte b[], int off, int len)</code> 方法会调用无参的 <code>read()</code> 方法，不同类型的 <code>InputStream</code> 读取一个字节的流程也有所不同，但读取多个字节保存到字节数组中的操作是一致的。</p><p>因此，在 <code>InputStream</code> 类中无法定义 <code>read()</code> 方法的具体代码逻辑，将方法设为抽象方法，推迟到子类中实现。将 <code>read(byte b[], int off, int len)</code> 方法设置为模板方法，该方法定义了算法的基本骨架。</p></article></main><footer id=footer></footer></body></html>
+</span></span></code></pre></div><p><code>read(byte b[], int off, int len)</code> 方法会调用无参的 <code>read()</code> 方法，不同类型的 <code>InputStream</code> 读取一个字节的流程也有所不同，但读取多个字节保存到字节数组中的操作是一致的。</p><p>因此，在 <code>InputStream</code> 类中无法定义 <code>read()</code> 方法的具体代码逻辑，将方法设为抽象方法，推迟到子类中实现。将 <code>read(byte b[], int off, int len)</code> 方法设置为模板方法，该方法定义了算法的基本骨架，便于子类复用此逻辑。</p></article></main><footer id=footer></footer></body></html>
