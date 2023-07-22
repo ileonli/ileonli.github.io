@@ -1,0 +1,54 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://ileonli.github.io/favicon.ico><link rel=stylesheet href=/css/style.min.css><link rel=canonical href=https://ileonli.github.io/posts/design-pattern/behavioral-patterns/strategy/><title>行为模式 - 策略模式</title></head><body><header id=banner></header><main id=content><article><header id=post-header><h1>行为模式 - 策略模式</h1><div><time>2023-07-22</time></div></header><p>定义一系列算法，把它们一个个封装起来，并且使他们可互相替换（变化）。该模式使得算法可独立于使用它的客户程序（稳定）而变化（扩展，子类化）。</p><p>可以用于消除 <code>if - else</code>。</p><h2 id=案例>案例</h2><p>但我们计算不同国家的税收时，<code>Tax</code> 类的 <code>compute</code> 方法根据 <code>TaxType</code> 的不同，进行不同的计算标准。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>enum</span> <span class=n>TaxType</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>CN</span><span class=o>,</span> <span class=n>US</span><span class=o>,</span> <span class=n>USA</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Tax</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kt>double</span> <span class=n>income</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>Tax</span><span class=o>(</span><span class=kt>double</span> <span class=n>income</span><span class=o>)</span> <span class=o>{</span> <span class=k>this</span><span class=o>.</span><span class=na>income</span> <span class=o>=</span> <span class=n>income</span><span class=o>;</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>double</span> <span class=nf>compute</span><span class=o>(</span><span class=n>TaxType</span> <span class=n>type</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>switch</span> <span class=o>(</span><span class=n>type</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=n>CN</span> <span class=o>-&gt;</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=n>US</span> <span class=o>-&gt;</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=n>USA</span> <span class=o>-&gt;</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>default</span> <span class=o>-&gt;</span> <span class=k>throw</span> <span class=k>new</span> <span class=n>RuntimeException</span><span class=o>(</span><span class=s>&#34;Unknown tax type: &#34;</span> <span class=o>+</span> <span class=n>type</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p>但我们需要计算的 <code>TaxType</code> 是经常需要变动的，我们需要频繁的改动 <code>compute</code> 方法。此做法违法了开闭原则（对扩展开放，对修改关闭）。</p><p>我们通过策略模式进行重构，抽象出 <code>TaxStrategy</code> 接口，当需要计算税收时，调用 <code>compute</code> 方法传入不同国家的税收策略即可。</p><p>但需要支持新的国家时，只需新增 <code>TaxStrategy</code> 接口的实现即可。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>interface</span> <span class=nc>TaxStrategy</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=nf>compute</span><span class=o>(</span><span class=kt>double</span> <span class=n>income</span><span class=o>);</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>ChinaTaxStrategy</span> <span class=kd>implements</span> <span class=n>TaxStrategy</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>double</span> <span class=nf>compute</span><span class=o>(</span><span class=kt>double</span> <span class=n>income</span><span class=o>)</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>UnitedStatedTaxStrategy</span> <span class=kd>implements</span> <span class=n>TaxStrategy</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>double</span> <span class=nf>compute</span><span class=o>(</span><span class=kt>double</span> <span class=n>income</span><span class=o>)</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Tax</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kt>double</span> <span class=n>income</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>Tax</span><span class=o>(</span><span class=kt>double</span> <span class=n>income</span><span class=o>)</span> <span class=o>{</span> <span class=k>this</span><span class=o>.</span><span class=na>income</span> <span class=o>=</span> <span class=n>income</span><span class=o>;</span> <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>double</span> <span class=nf>compute</span><span class=o>(</span><span class=n>TaxStrategy</span> <span class=n>strategy</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>strategy</span><span class=o>.</span><span class=na>compute</span><span class=o>(</span><span class=k>this</span><span class=o>.</span><span class=na>income</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h2 id=jdk-中的应用>JDK 中的应用</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Arrays</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=kt>void</span> <span class=nf>sort</span><span class=o>(</span><span class=n>T</span><span class=o>[]</span> <span class=n>a</span><span class=o>,</span> <span class=n>Comparator</span><span class=o>&lt;?</span> <span class=kd>super</span> <span class=n>T</span><span class=o>&gt;</span> <span class=n>c</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>(</span><span class=n>c</span> <span class=o>==</span> <span class=kc>null</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>sort</span><span class=o>(</span><span class=n>a</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span> <span class=k>else</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=o>(</span><span class=n>LegacyMergeSort</span><span class=o>.</span><span class=na>userRequested</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>                <span class=n>legacyMergeSort</span><span class=o>(</span><span class=n>a</span><span class=o>,</span> <span class=n>c</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>else</span>
+</span></span><span class=line><span class=cl>                <span class=n>TimSort</span><span class=o>.</span><span class=na>sort</span><span class=o>(</span><span class=n>a</span><span class=o>,</span> <span class=mi>0</span><span class=o>,</span> <span class=n>a</span><span class=o>.</span><span class=na>length</span><span class=o>,</span> <span class=n>c</span><span class=o>,</span> <span class=kc>null</span><span class=o>,</span> <span class=mi>0</span><span class=o>,</span> <span class=mi>0</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p><code>java.util.Arrays</code> 类的 <code>sort</code> 方法就是策略模式，用户可以根据不同的排序需求而传入不同的 <code>Comparator</code> 作为排序策略。</p></article></main><footer id=footer></footer></body></html>
