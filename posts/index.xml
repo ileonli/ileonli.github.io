@@ -3,17 +3,17 @@
 &lt;/blockquote>
 &lt;p>&lt;code>asm&lt;/code> 关键字允许你在 C 代码中嵌入汇编指令。GCC 提供了两种形式的内联 &lt;code>asm&lt;/code> 语句。最基本的 &lt;code>asm&lt;/code> 语句是没有操作数的，扩展的 &lt;code>asm&lt;/code> 语句包含一个或多个操作数。若在函数中混合 C 代码和汇编代码，优先采用扩展形式；如果在顶层包含汇编语言，你必须使用 &lt;code>asm&lt;/code>。&lt;/p>
 &lt;p>你也可以使用 &lt;code>asm&lt;/code> 关键字来覆盖 C 符号（C symbol）的汇编名称，或将 C 变量放在特定寄存器中。&lt;/p>
-&lt;h2 id="基本汇编---不包含操作数的汇编指令">基本汇编 - 不包含操作数的汇编指令&lt;/h2>
+&lt;h2 id="基本-asm---不包含操作数的汇编指令">基本 &lt;code>asm&lt;/code> - 不包含操作数的汇编指令&lt;/h2>
 &lt;p>最基本的 &lt;code>asm&lt;/code> 语句语法形式如下：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-asm" data-lang="asm">&lt;span class="line">&lt;span class="cl">&lt;span class="nf">asm&lt;/span> &lt;span class="no">asm-qualifiers&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="no">AssemblerInstructions&lt;/span> &lt;span class="p">)&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-C" data-lang="C">&lt;span class="line">&lt;span class="cl">&lt;span class="k">asm&lt;/span> &lt;span class="k">asm&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nf">qualifiers&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="n">AssemblerInstructions&lt;/span> &lt;span class="p">)&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>对于 C 语言来说，&lt;code>asm&lt;/code> 关键字是 GNU 扩展。在编写可使用 &lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/options-controlling-c-dialect.html#cmdoption-ansi">-ansi&lt;/a> 和 &lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/options-controlling-c-dialect.html#cmdoption-std">-std&lt;/a> 选项编译的 C 代码时，这些选项选择了不带 GNU 扩展的 C 语言方言，请使用 &lt;code>__asm__&lt;/code> 代替 &lt;code>asm&lt;/code>（&lt;a href="https://gcc.gnu.org/onlinedocs/gcc/extensions-to-the-c-language-family/alternate-keywords.html#alternate-keywords">Alternate Keywords&lt;/a>）。对于 C++ 语言来说，&lt;code>asm&lt;/code> 是关键字，但 &lt;code>__asm__&lt;/code> 可以使用参数 &lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/options-controlling-c-dialect.html#cmdoption-fno-asm">-fno-asm&lt;/a>。&lt;/p>
-&lt;h2 id="修饰符qualifiers">修饰符（Qualifiers）&lt;/h2>
+&lt;h3 id="修饰符qualifiers">修饰符（Qualifiers）&lt;/h3>
 &lt;p>&lt;code>volatile&lt;/code>：可选的 &lt;code>volatile&lt;/code> 没有任何影响（no effect），所有基本的 &lt;code>asm&lt;/code> 块都隐含使用 &lt;code>volatile&lt;/code> 修饰。&lt;/p>
 &lt;p>&lt;code>inline&lt;/code>：如果你使用 &lt;code>inline&lt;/code> 修饰符，出于内联目的，&lt;code>asm&lt;/code> 语句的大小被视为可能的最小。&lt;/p>
-&lt;h2 id="参数parameters">参数（Parameters）&lt;/h2>
+&lt;h3 id="参数parameters">参数（Parameters）&lt;/h3>
 &lt;p>&lt;code>AssemblerInstructions&lt;/code>：用于指定汇编代码的字符串，该字符串可以包含汇编器识别的任何指令。GCC 本身不会解析汇编指令，也不知道它们的含义，甚至不知道它们是否是有效的汇编输入。&lt;/p>
 &lt;p>你可以将多个汇编指令放到一个 &lt;code>asm&lt;/code> 字符串中，用系统汇编常用的分割符进行分割。在大多数情况下，换行符加上制表符（书写为 &lt;code>\n\t&lt;/code>）是一个有效的组合。一些汇编器（assemblers）允许使用分号作为换行符。请注意某些汇编语言使用分号作为注释。&lt;/p>
-&lt;h2 id="备注remarks">备注（Remarks）&lt;/h2>
+&lt;h3 id="备注remarks">备注（Remarks）&lt;/h3>
 &lt;p>使用扩展 &lt;code>asm&lt;/code> 产生更小、更安全和更高效的代码。在大多数情况下，扩展 &lt;code>asm&lt;/code> 比标准 &lt;code>asm&lt;/code> 更好。然而，以下两种情况只能使用标准 &lt;code>asm&lt;/code>：&lt;/p>
 &lt;ul>
 &lt;li>扩展 &lt;code>asm&lt;/code> 语句必须在 C 函数内，为了在文件范围内（top-level）C 语言函数外，你必须使用标准 &lt;code>asm&lt;/code>。你可以使用此技术来发出汇编程序指令，定义可以在其他文件中执行的汇编语言宏，或者使用汇编语言写整个方法。函数之外的标准 &lt;code>asm&lt;/code> 语句不得使用任何修饰符。&lt;/li>
@@ -27,7 +27,27 @@
 &lt;p>C 语言标准没有制定 &lt;code>asm&lt;/code> 的语义，可能是不同编译器不兼容的潜在来源。这些不兼容可能不会产生编译警告或者错误。&lt;/p>
 &lt;/blockquote>
 &lt;p>GCC 不会解析 &lt;code>asm&lt;/code> 的 &lt;code>AssemblerInstructions&lt;/code>，这意味着无法与编译器沟通内部发生的情况。GCC 在 &lt;code>asm&lt;/code> 中没有符号可见性，并且可能将他们作为未引用（unreferenced）而抛弃。GCC 不知道汇编代码的副作用，比如修改内存或者寄存器。和一些编译器不一样的是，GCC 假设通用寄存器没有发生改变。这个假设可能在未来发生变化。&lt;/p>
-&lt;p>为了避免未来语义变化和编译器之间的兼容性问题带来的复杂性，考虑使用扩展 &lt;code>asm&lt;/code> 替换标准 &lt;code>asm&lt;/code>。查看 &lt;a href="https://gcc.gnu.org/wiki/ConvertBasicAsmToExtended">How to convert from basic asm to extended asm&lt;/a> 查看更多执行此种转换的信息。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+&lt;p>为了避免未来语义变化和编译器之间的兼容性问题带来的复杂性，考虑使用扩展 &lt;code>asm&lt;/code> 替换标准 &lt;code>asm&lt;/code>。查看 &lt;a href="https://gcc.gnu.org/wiki/ConvertBasicAsmToExtended">How to convert from basic asm to extended asm&lt;/a> 查看更多执行此种转换的信息。&lt;/p>
+&lt;p>编译器将基本 &lt;code>asm&lt;/code> 中的汇编指令逐字复制到汇编语言输出文件中，不会处理方言（dialects）或任何在扩展 &lt;code>asm&lt;/code> 中可见的 % 操作符。这会导致在基本 &lt;code>asm&lt;/code> 字符串和扩展 &lt;code>asm&lt;/code> 模板中产生一些细微的变化。例如：要引用寄存器，可以在基本 &lt;code>asm&lt;/code> 中使用 &lt;code>%eax&lt;/code>，在扩展 &lt;code>asm&lt;/code> 中使用 &lt;code>%%eax&lt;/code>。&lt;/p>
+&lt;p>在支持多种汇编语言的 x86 等架构（targets）上，所有的标准 &lt;code>asm&lt;/code> 块使用通过 &lt;code>-masm&lt;/code> 命令行选项指定的汇编语言（&lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/machine-dependent-options/x86-options.html#x86-options">x86&lt;/a>）。基本 &lt;code>asm&lt;/code> 没有提供任何机制支持不同方言的不同汇编字符串。&lt;/p>
+&lt;p>对于具有非空汇编字符串的标准 &lt;code>asm&lt;/code>，GCC 假设汇编块不会改变任何通用寄存器，但是它可以读写任何全局可访问的变量。&lt;/p>
+&lt;p>下边是 i386 基本 &lt;code>asm&lt;/code> 的示例：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-C" data-lang="C">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* Note that this code will not compile with -masm=intel */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#define DebugBreak() asm(&amp;#34;int $3&amp;#34;)
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="扩展-asm---带有-c-表达式操作数的汇编指令">扩展 &lt;code>asm&lt;/code> - 带有 C 表达式操作数的汇编指令&lt;/h2>
+&lt;p>使用扩展 &lt;code>asm&lt;/code>，你可以从汇编程序读取和写入 C 变量，并执行从汇编程序代码到 C 标签的跳转。扩展 &lt;code>asm&lt;/code> 语法在汇编其模板之后使用冒号（:）分割操作数参数：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-C" data-lang="C">&lt;span class="line">&lt;span class="cl">&lt;span class="k">asm&lt;/span> &lt;span class="k">asm&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nf">qualifiers&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="nl">AssemblerTemplate&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">:&lt;/span> &lt;span class="n">OutputOperands&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">InputOperands&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">[&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">Clobbers&lt;/span> &lt;span class="p">]&lt;/span> &lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">asm&lt;/span> &lt;span class="k">asm&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nf">qualifiers&lt;/span> &lt;span class="p">(&lt;/span> &lt;span class="nl">AssemblerTemplate&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">:&lt;/span> &lt;span class="nl">OutputOperands&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">:&lt;/span> &lt;span class="nl">InputOperands&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">:&lt;/span> &lt;span class="nl">Clobbers&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">:&lt;/span> &lt;span class="n">GotoLabels&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>在最后一种形式中，&lt;code>asm-qualifiers&lt;/code> 包含 &lt;code>goto&lt;/code>（在第一种形式中，不是）。
+&lt;code>asm&lt;/code> 关键词是 GNU 扩展。当编写可以使用 &lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/options-controlling-c-dialect.html#cmdoption-ansi">-ansi&lt;/a> 和各种 &lt;a href="https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/options-controlling-c-dialect.html#cmdoption-std">-std&lt;/a> 选项编译的代码时，请使用 &lt;code>__asm__&lt;/code> 而不是 &lt;code>asm&lt;/code>（&lt;a href="https://gcc.gnu.org/onlinedocs/gcc/extensions-to-the-c-language-family/alternate-keywords.html#alternate-keywords">Alternate Keywords&lt;/a>）。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="介绍">介绍&lt;/h2>
