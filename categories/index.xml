@@ -11,7 +11,23 @@
 &lt;p>&lt;code>volatile&lt;/code>：可选的 &lt;code>volatile&lt;/code> 没有任何影响（no effect），所有基本的 &lt;code>asm&lt;/code> 块都隐含使用 &lt;code>volatile&lt;/code> 修饰。&lt;/p>
 &lt;p>&lt;code>inline&lt;/code>：如果你使用 &lt;code>inline&lt;/code> 修饰符，出于内联目的，&lt;code>asm&lt;/code> 语句的大小被视为可能的最小。&lt;/p>
 &lt;h2 id="参数parameters">参数（Parameters）&lt;/h2>
-&lt;p>&lt;code>AssemblerInstructions&lt;/code>：用于指定汇编代码的文字字符串，该字符串可以包含汇编器识别的任何指令。GCC 本身不会解析汇编指令，也不知道它们的含义，甚至不知道它们是否是有效的汇编输入。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
+&lt;p>&lt;code>AssemblerInstructions&lt;/code>：用于指定汇编代码的字符串，该字符串可以包含汇编器识别的任何指令。GCC 本身不会解析汇编指令，也不知道它们的含义，甚至不知道它们是否是有效的汇编输入。&lt;/p>
+&lt;p>你可以将多个汇编指令放到一个 &lt;code>asm&lt;/code> 字符串中，用系统汇编常用的分割符进行分割。在大多数情况下，换行符加上制表符（书写为 &lt;code>\n\t&lt;/code>）是一个有效的组合。一些汇编器（assemblers）允许使用分号作为换行符。请注意某些汇编语言使用分号作为注释。&lt;/p>
+&lt;h2 id="备注remarks">备注（Remarks）&lt;/h2>
+&lt;p>使用扩展 &lt;code>asm&lt;/code> 产生更小、更安全和更高效的代码。在大多数情况下，扩展 &lt;code>asm&lt;/code> 比标准 &lt;code>asm&lt;/code> 更好。然而，以下两种情况只能使用标准 &lt;code>asm&lt;/code>：&lt;/p>
+&lt;ul>
+&lt;li>扩展 &lt;code>asm&lt;/code> 语句必须在 C 函数内，为了在文件范围内（top-level）C 语言函数外，你必须使用标准 &lt;code>asm&lt;/code>。你可以使用此技术来发出汇编程序指令，定义可以在其他文件中执行的汇编语言宏，或者使用汇编语言写整个方法。函数之外的标准 &lt;code>asm&lt;/code> 语句不得使用任何修饰符。&lt;/li>
+&lt;li>带有 &lt;code>naked&lt;/code> 属性的函数声明同样需要基本 &lt;code>asm&lt;/code>（&lt;a href="https://gcc.gnu.org/onlinedocs/gcc/extensions-to-the-c-language-family/declaring-attributes-of-functions.html#function-attributes">Declaring Attributes of Functions&lt;/a>）。&lt;/li>
+&lt;/ul>
+&lt;p>从基本 &lt;code>asm&lt;/code> 安全地访问 C 数据和调用函数比看起来更加复杂。为了访问 C 数据，最好使用扩展 &lt;code>asm&lt;/code>。&lt;/p>
+&lt;p>不要期望一系列 &lt;code>asm&lt;/code> 语句在编译后保持完全连续（perfectly consecutive）。如果具体的指令在输出中需要保持连续（consecutive），请把他们放到一个多指令 &lt;code>asm&lt;/code> 语句中。请注意，GCC 的优化器可以相对于其他代码移动 &lt;code>asm&lt;/code> 语句，包括跨跳转（jumps）。&lt;/p>
+&lt;p>&lt;code>asm&lt;/code> 语句可能不能执行跳转到其它 &lt;code>asm&lt;/code> 语句中的操作。GCC 不知道这些跳转（jumps），因此在决定如何优化时不能考虑这些跳转。从 &lt;code>asm&lt;/code> 跳转到 C标签仅支持扩展 &lt;code>asm&lt;/code>。&lt;/p>
+&lt;p>在具体环境下，GCC 在优化时可能复制你的汇编代码（或者删除重复的汇编代码）。如果您的汇编代码定义了符号或标签，这可能会导致编译期间出现意外的重复符号错误。&lt;/p>
+&lt;blockquote>
+&lt;p>C 语言标准没有制定 &lt;code>asm&lt;/code> 的语义，可能是不同编译器不兼容的潜在来源。这些不兼容可能不会产生编译警告或者错误。&lt;/p>
+&lt;/blockquote>
+&lt;p>GCC 不会解析 &lt;code>asm&lt;/code> 的 &lt;code>AssemblerInstructions&lt;/code>，这意味着无法与编译器沟通内部发生的情况。GCC 在 &lt;code>asm&lt;/code> 中没有符号可见性，并且可能将他们作为未引用（unreferenced）而抛弃。GCC 不知道汇编代码的副作用，比如修改内存或者寄存器。和一些编译器不一样的是，GCC 假设通用寄存器没有发生改变。这个假设可能在未来发生变化。&lt;/p>
+&lt;p>为了避免未来语义变化和编译器之间的兼容性问题带来的复杂性，考虑使用扩展 &lt;code>asm&lt;/code> 替换标准 &lt;code>asm&lt;/code>。查看 &lt;a href="https://gcc.gnu.org/wiki/ConvertBasicAsmToExtended">How to convert from basic asm to extended asm&lt;/a> 查看更多执行此种转换的信息。&lt;/p></description></item><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
 &lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="介绍">介绍&lt;/h2>
