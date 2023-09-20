@@ -1,237 +1,697 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tags on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/tags/</link><description>Recent content in Tags on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Unix 系统下的调试：gdb 教程【翻译】</title><link>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</link><pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/gdb/debugging-under-unix-gdb-tutorial/</guid><description>&lt;blockquote>
-&lt;p>原文地址：https://www.cs.cmu.edu/~gilpin/tutorial/&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tags on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/tags/</link><description>Recent content in Tags on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Java database connectivity (JDBC)</title><link>https://ileonli.github.io/posts/java/jdbc/</link><pubDate>Tue, 19 Sep 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/jdbc/</guid><description>&lt;h2 id="使用-jdbc-处理-sql">使用 JDBC 处理 SQL&lt;/h2>
+&lt;p>一般来说，使用 JDBC 处理 SQL 语句需要以下步骤：&lt;/p>
+&lt;ol>
+&lt;li>Establishing a connection.&lt;/li>
+&lt;li>Create a statement.&lt;/li>
+&lt;li>Execute the query.&lt;/li>
+&lt;li>Process the ResultSet object.&lt;/li>
+&lt;li>Close the connection.&lt;/li>
+&lt;/ol>
+&lt;h2 id="建立连接">建立连接&lt;/h2>
+&lt;p>首先，你需要与你使用的数据源建立连接。数据源可以是 DBMS、遗留（legacy）的文件系统或具有相应 JDBC 驱动的其它数据源。通常，一个 JDBC 应用使用下面两个类中的一个连接到目标数据源：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>DriverManager&lt;/code>：通过这个完全实现的类可将应用程序连接到数据源，数据源由数据库 URL 指定。当此类第一次尝试建立连接时，会自动加载类路径下所有的 JDBC 4.0 驱动。请注意，你的程序必须手动加载 4.0 版本之前的 JDBC 驱动。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>DataSource&lt;/code>：该接口优于 &lt;code>DriverManager&lt;/code>，对于底层数据源的细节对应用透明。设置 &lt;code>DataSource&lt;/code> 对象的属性以使其代表特定的数据源。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="使用-drivermanager-类">使用 DriverManager 类&lt;/h2>
+&lt;p>使用 &lt;code>DeriverManager&lt;/code> 类连接到 DBMS 涉及调用 &lt;code>DriverManager.getConnection&lt;/code> 方法。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="n">Connection&lt;/span> &lt;span class="nf">getConnection&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Connection&lt;/span> &lt;span class="n">conn&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Properties&lt;/span> &lt;span class="n">connectionProps&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">Properties&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">connectionProps&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;user&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">userName&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">connectionProps&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">password&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbms&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;mysql&amp;#34;&lt;/span>&lt;span class="o">))&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">DriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getConnection&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;jdbc:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbms&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;://&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">serverName&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">portNumber&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;/&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">connectionProps&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbms&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;derby&amp;#34;&lt;/span>&lt;span class="o">))&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">DriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getConnection&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;jdbc:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbms&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbName&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;;create=true&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">connectionProps&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Connected to database&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>DriverManager.getConnection&lt;/code> 方法建立了数据库连接。此方法需要数据库 URL，取决于你的 DBMS。下边是一些数据库 URL 的例子：&lt;/p>
+&lt;ol>
+&lt;li>MySQL：&lt;code>jdbc:mysql://localhost:3306/&lt;/code>，其中 &lt;code>localhost&lt;/code> 是托管数据库服务器的名称，3306 是端口。&lt;/li>
+&lt;li>Java DB：&lt;code>jdbc:derby:testdb;create=true&lt;/code>，其中 &lt;code>testdb&lt;/code> 是要连接的数据库名称，&lt;code>create=true&lt;/code> 指明 DBMS 创建数据库。
+&lt;blockquote>
+&lt;p>注意：此 URL 可与 Java DB 嵌入式驱动程序建立数据库连接。Java DB 还包括一个网络客户端驱动程序，它使用不同的 URL。&lt;/p>
 &lt;/blockquote>
-&lt;h2 id="介绍">介绍&lt;/h2>
-&lt;p>这个教程来自于&lt;a href="http://www.wustl.edu/">华盛顿大学&lt;/a>的 CS 342 课程，目前仍由 &lt;a href="http://www.cs.cmu.edu/~gilpin/">Andrew Gilpin&lt;/a> 维护。&lt;/p>
-&lt;h2 id="谁需要此篇教程">谁需要此篇教程？&lt;/h2>
-&lt;p>这篇教程是帮助新接触 Unix 环境的程序员使用 gdb 进行调试的。我们假设你已经知道如何使用 C++ 编程，并且可以编译和执行程序。同样假设你知道什么是调试（debug）并且你曾经在其它系统上使用过调试器（debugger）。&lt;/p>
-&lt;h2 id="源代码">源代码&lt;/h2>
-&lt;p>为了展示一些调试原则（principles），我将使用一个含有 bug 的程序作为例子。当你跟着本教程，你将使用调试器找到并修复代码中的错误。你可以从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/main.cc">此处&lt;/a>下载 C++ 代码（&lt;a href="https://ileonli.github.io/file/gdb/main.cc">本站备份&lt;/a>），从&lt;a href="https://www.cs.cmu.edu/~gilpin/tutorial/Makefile">此处&lt;/a>下载 Makefile 文件（&lt;a href="https://ileonli.github.io/file/gdb/Makefile">本站备份&lt;/a>）。&lt;/p>
-&lt;p>这是一段非常简单的代码，此代码包含两个类定义，分别是：Node 和 LinkedList。还有一个简单的代码测试用于此链表。所有的代码都放在一个文件中，以便更容易的展示调试过程。&lt;/p>
-&lt;h2 id="准备工作">准备工作&lt;/h2>
-&lt;h3 id="环境配置">环境配置&lt;/h3>
-&lt;p>原文中提到的机器大概率已不再使用，故不再翻译。可以通过 Google 搜索安装方式。&lt;/p>
-&lt;h3 id="调试符号">调试符号&lt;/h3>
-&lt;p>gdb 只能使用 g++ 生成的调试符号（debugging symbols）。对于使用 Sun CC 的用户，可以使用与 gdb 非常相似的 dbx 调试器。&lt;/p>
-&lt;p>但调试链接有调试符号的程序时，gdb 是最有效的（effective）。使用 g++ 编译器时，可以使用 &lt;a href="https://man7.org/linux/man-pages/man1/gcc.1.html#:~:text=%2Dg%20%20Produce%20debugging,(see%20below).">-g&lt;/a> 或 &lt;a href="https://man7.org/linux/man-pages/man1/gcc.1.html#:~:text=%2Dggdb%0A%20%20%20%20%20%20%20%20%20%20%20Produce%20debugging%20information%20for%20use%20by%20GDB.%20%20This%20means%20to%0A%20%20%20%20%20%20%20%20%20%20%20use%20the%20most%20expressive%20format%20available%20(DWARF%2C%20stabs%2C%20or%0A%20%20%20%20%20%20%20%20%20%20%20the%20native%20format%20if%20neither%20of%20those%20are%20supported)%2C%0A%20%20%20%20%20%20%20%20%20%20%20including%20GDB%20extensions%20if%20at%20all%20possible.">-ggdb&lt;/a> 生成调试符号。使用 -ggdb 可以生成更多信息，此教程提供的 Makefile 使用了 -ggdb 参数。&lt;/p>
-&lt;h2 id="调试">调试&lt;/h2>
-&lt;h3 id="何时使用调试器">何时使用调试器&lt;/h3>
-&lt;p>调试是不可避免的事情，所有程序员在他们的职业生涯中都会至少调试一段代码。调试的方法有很多，从向屏幕中打印信息，使用调试器，或者思考程序在做什么并对问题是什么作出有根据的猜测。&lt;/p>
-&lt;h3 id="加载程序">加载程序&lt;/h3>
-&lt;p>当你有一个可执行文件（在我们例子中是 main）并且你想调试时。首先，你必须启动一个调试器。这个调试器叫做 gdb，你可以通过 shell 命令提示符输入调试的文件。输入 &lt;code>$ gdb main&lt;/code> 用于调试 main 程序，输出如下：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Copyright (C) 2023 Free Software Foundation, Inc.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">License GPLv3+: GNU GPL version 3 or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">This is free software: you are free to change and redistribute it.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">There is NO WARRANTY, to the extent permitted by law.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;show copying&amp;#34; and &amp;#34;show warranty&amp;#34; for details.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">This GDB was configured as &amp;#34;x86_64-redhat-linux-gnu&amp;#34;.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;show configuration&amp;#34; for configuration details.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">For bug reporting instructions, please see:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;https://www.gnu.org/software/gdb/bugs/&amp;gt;.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Find the GDB manual and other documentation resources online at:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;http://www.gnu.org/software/gdb/documentation/&amp;gt;.
+&lt;/li>
+&lt;/ol>
+&lt;p>此方法使用 &lt;code>Properties&lt;/code> 对象指定访问 DBMS 所需的用户名和密码。&lt;/p>
+&lt;p>注意：&lt;/p>
+&lt;ul>
+&lt;li>通常，在数据库 URL 中，你还需要指定想要连接的现存数据库名称。例如：&lt;code>jdbc:mysql://localhost:3306/mysql&lt;/code> 展示了连接到数据库名为 &lt;code>mysql&lt;/code> 的 MySQL 数据库 URL。本教程中的示例使用的 URL 未指定特定数据库，因为示例创建了一个新数据库。&lt;/li>
+&lt;li>在 JDBC 之前的版本中，为获得连接，你首先需要调用 &lt;code>Class.forName&lt;/code> 方法初始化 JDBC 驱动。此方法需要类型为 &lt;code>java.sql.Driver&lt;/code> 的对象。每个 JDBC 驱动都包含一个或多个实现 &lt;code>java.sql.Driver&lt;/code> 接口的类。Java DB 的驱动是 &lt;code>org.apache.derby.jdbc.EmbeddedDriver&lt;/code> 和 &lt;code>org.apache.derby.jdbc.ClientDriver&lt;/code>。MySQL Connector/J 之一是 &lt;code>com.mysql.cj.jdbc.Driver&lt;/code>。查阅你使用的 DBMS 驱动的文档来获取实现 &lt;code>java.sql.Driver&lt;/code> 接口的类名。在类路径找到的 JDBC 4.0 驱动会被自动加载。（然而，你需要通过 &lt;code>Class.forName&lt;/code> 方法手动加载 JDBC 4.0 之前的所有驱动）。&lt;/li>
+&lt;/ul>
+&lt;p>此方法返回 &lt;code>Connection&lt;/code> 对象，此对象表示与 DBMS 或指定数据库的连接。通过此对象查询数据库。&lt;/p>
+&lt;h2 id="指定数据库连接-url">指定数据库连接 URL&lt;/h2>
+&lt;p>数据库连接 URL 是 DBMS JDBC 驱动连接到数据库所使用的字符串。它可以包含一些信息，如搜索数据库的位置、要连接的数据库名称以及配置属性等。数据库连接 URL 的语法由 DBMS 规定。&lt;/p>
+&lt;h3 id="java-db-数据库连接-url">Java DB 数据库连接 URL&lt;/h3>
+&lt;p>下边是 Java DB 数据库连接 URL 的语法：&lt;/p>
+&lt;pre tabindex="0">&lt;code>jdbc:derby:[subsubprotocol:][databaseName][;attribute=value]*
+&lt;/code>&lt;/pre>&lt;ul>
+&lt;li>&lt;code>subsubprotocol&lt;/code>：指定 Java DB 应在何处搜索数据库，在目录、内存、类路径或者 JAR 文件中。该部分通常被省略。&lt;/li>
+&lt;li>&lt;code>databaseName&lt;/code> 是应该连接到的数据库名称。&lt;/li>
+&lt;li>&lt;code>attribute=value&lt;/code> 代表是可选的，以分号分割的符号列表。这些属性允许你指导 Java DB 执行各种任务：包括：
+&lt;ul>
+&lt;li>创建在连接 URL 指定的数据库。&lt;/li>
+&lt;li>加密在连接 URL 指定的数据库。&lt;/li>
+&lt;li>指定存储日志和追踪信息的目录。&lt;/li>
+&lt;li>指定连接到数据库的用户名和密码。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="mysql-connectorj-数据库-url">MySQL Connector/J 数据库 URL&lt;/h3>
+&lt;p>下边是 MySQL Connector/J 数据库连接 URL 的语法：&lt;/p>
+&lt;pre tabindex="0">&lt;code>jdbc:mysql://[host][,failoverhost...]
+[:port]/[database]
+[?propertyName1][=propertyValue1]
+[&amp;amp;propertyName2][=propertyValue2]...
+&lt;/code>&lt;/pre>&lt;ul>
+&lt;li>&lt;code>host:port&lt;/code>：是数据库所在计算机的主机名和端口号。如果未指定，默认的 &lt;code>host&lt;/code> 和 &lt;code>port&lt;/code> 分别是 127.0.0.1 和 3306。&lt;/li>
+&lt;li>&lt;code>database&lt;/code>：是数据库连接的名称。如果未指定，建立连接时不使用任何数据库。&lt;/li>
+&lt;li>&lt;code>failover&lt;/code>：是备用数据库的名称（MySQL Connector/J 支持故障转移）。&lt;/li>
+&lt;li>&lt;code>propertyName=propertyValue&lt;/code>：是可选的，使用 &amp;amp; 分割的属性列表。这些属性允许你指导 MySQL Connector/J 执行各种任务。&lt;/li>
+&lt;/ul></description></item><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
+&lt;p>使用 Java 模块有以下优势：&lt;/p>
+&lt;h2 id="使用模块">使用模块&lt;/h2>
+&lt;p>我们使用 Maven 创建项目，项目结构如下。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Bash" data-lang="Bash">&lt;span class="line">&lt;span class="cl">untitled/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">├── pom.xml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">└── src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ├── main
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   ├── java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   ├── io
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── github
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── ileonli
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   │   └── Main.java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   │   └── module-info.java
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> │   └── resources
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └── &lt;span class="nb">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └── java
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>我们可以在 &lt;code>module-info.java&lt;/code> 里设置模块名、添加或导出模块。&lt;/p>
+&lt;p>本项目的模块名设为：&lt;code>io.github.ileonli.untitled&lt;/code>，&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">module&lt;/span> &lt;span class="n">io&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">github&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ileonli&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">untitled&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>java --list-modules&lt;/code> 可以列出 JDK 的模块集。其中包括实现 Java 语言 SE 规范的标准模块（以 java 开头的名称）、JavaFX 模块（以 javafx 开头的名称）、特定于 JDK 的模块（以 jdk 开头的名称）和特定于 Oracle 的模块（以 oracle 开头的名称）。每个模块名称后都接着一个版本字符串 — @17 表示该模块属于 Java 17。&lt;/p>
+&lt;pre tabindex="0">&lt;code>java.base@17.0.7
+java.compiler@17.0.7
+java.datatransfer@17.0.7
+java.desktop@17.0.7
+java.instrument@17.0.7
+java.logging@17.0.7
+java.management@17.0.7
+java.management.rmi@17.0.7
+java.naming@17.0.7
+java.net.http@17.0.7
+java.prefs@17.0.7
+java.rmi@17.0.7
+java.scripting@17.0.7
+java.se@17.0.7
+java.security.jgss@17.0.7
+java.security.sasl@17.0.7
+java.smartcardio@17.0.7
+java.sql@17.0.7
+java.sql.rowset@17.0.7
+java.transaction.xa@17.0.7
+java.xml@17.0.7
+java.xml.crypto@17.0.7
+jdk.accessibility@17.0.7
+jdk.attach@17.0.7
+jdk.charsets@17.0.7
+jdk.compiler@17.0.7
+jdk.crypto.cryptoki@17.0.7
+jdk.crypto.ec@17.0.7
+jdk.dynalink@17.0.7
+jdk.editpad@17.0.7
+jdk.hotspot.agent@17.0.7
+jdk.httpserver@17.0.7
+jdk.incubator.foreign@17.0.7
+jdk.incubator.vector@17.0.7
+jdk.internal.ed@17.0.7
+jdk.internal.jvmstat@17.0.7
+jdk.internal.le@17.0.7
+jdk.internal.opt@17.0.7
+jdk.internal.vm.ci@17.0.7
+jdk.internal.vm.compiler@17.0.7
+jdk.internal.vm.compiler.management@17.0.7
+jdk.jartool@17.0.7
+jdk.javadoc@17.0.7
+jdk.jcmd@17.0.7
+jdk.jconsole@17.0.7
+jdk.jdeps@17.0.7
+jdk.jdi@17.0.7
+jdk.jdwp.agent@17.0.7
+jdk.jfr@17.0.7
+jdk.jlink@17.0.7
+jdk.jpackage@17.0.7
+jdk.jshell@17.0.7
+jdk.jsobject@17.0.7
+jdk.jstatd@17.0.7
+jdk.localedata@17.0.7
+jdk.management@17.0.7
+jdk.management.agent@17.0.7
+jdk.management.jfr@17.0.7
+jdk.naming.dns@17.0.7
+jdk.naming.rmi@17.0.7
+jdk.net@17.0.7
+jdk.nio.mapmode@17.0.7
+jdk.random@17.0.7
+jdk.sctp@17.0.7
+jdk.security.auth@17.0.7
+jdk.security.jgss@17.0.7
+jdk.unsupported@17.0.7
+jdk.unsupported.desktop@17.0.7
+jdk.xml.dom@17.0.7
+jdk.zipfs@17.0.7
+&lt;/code>&lt;/pre>&lt;h2 id="模块关键字">模块关键字&lt;/h2>
+&lt;h3 id="requires">requires&lt;/h3>
+&lt;p>requires 用于导入其它模块，&lt;code>requires 模块名&lt;/code>&lt;/p>
+&lt;p>默认情况下，所有其他模块都依赖于 &lt;code>java.base&lt;/code> 模块。&lt;/p>
+&lt;h3 id="exports">exports&lt;/h3>
+&lt;p>exports 用于指定模块下的哪些包对外可见，&lt;code>exports 包名&lt;/code>&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://www.oracle.com/corporate/features/understanding-java-9-modules.html">https://www.oracle.com/corporate/features/understanding-java-9-modules.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://openjdk.org/projects/jigsaw/">https://openjdk.org/projects/jigsaw/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://jenkov.com/tutorials/java/modules.html">https://jenkov.com/tutorials/java/modules.html&lt;/a>&lt;/p>
+&lt;/blockquote></description></item><item><title>Java SPI 机制</title><link>https://ileonli.github.io/posts/java/spi/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/spi/</guid><description>&lt;h2 id="简单使用">简单使用&lt;/h2>
+&lt;p>为使用 Java 操作数据库，我们需要提供驱动程序。为支持多种数据库（如：MySQL、PostgreSQL、Oracle），提供 &lt;code>DatabaseBaseDriver&lt;/code> 接口。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">For help, type &amp;#34;help&amp;#34;.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Type &amp;#34;apropos word&amp;#34; to search for commands related to &amp;#34;word&amp;#34;...
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Reading symbols from main...
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>gdb 当前正在等待用户输入的命令。我们需要运行程序后，以便调试器帮助我们查看程序崩溃时发生了什么。在命令提示符中输入 &lt;code>$ run&lt;/code> 后，输出如下：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting program: /home/user/main
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 1 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 2 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 3 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 4 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The fully created list is:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">interface&lt;/span> &lt;span class="nc">DatabaseBaseDriver&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">open&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">void&lt;/span> &lt;span class="nf">close&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="nf">getName&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>通过实现 &lt;code>DatabaseBaseDriver&lt;/code> 接口，分别创建了操作 &lt;code>MySQL&lt;/code> 和 &lt;code>PostgreSQL&lt;/code> 数据库的驱动。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Now removing elements:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 5 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Destroying Node, 4 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">MysqlDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">open&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;open MySQL connection&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">close&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;close MySQL connection&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program received signal SIGSEGV, Segmentation fault.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>程序崩溃了，让我们看看能收集到什么信息。&lt;/p>
-&lt;h3 id="检查崩溃">检查崩溃&lt;/h3>
-&lt;p>我们可以看到程序的 main.cc 文件中的 30 行，this 指针指向了 0x0。但我们想知道谁调用了这个方法并且检查调用方法中的值。在命令提示符中输入 &lt;code>$ backtrace&lt;/code> 后，输出如下：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) backtrace
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#0 0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#1 0x00000000004015db in LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:79
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#2 0x00000000004012c7 in main (argc=1, argv=0x7fffffffdef8) at main.cc:122
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>除了知道的当前方法和本地变量，现在还可以看到那个方法调用了我们，以及此次调用的参数。例如：我们可以看到我们被 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法调用， item_to_remove 参数为地址 0x7fffffffddac 所指向的位置。如果我们知道 item_to_remove 的值，会帮助我们理解程序的 bug。可以使用 &lt;code>$ x 0x7fffffffddac&lt;/code> 命令查看值（&amp;ldquo;x&amp;rdquo; 可以被理解为 &amp;ldquo;examine&amp;rdquo; 的缩写）。以下为运行命令后的输入：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) x 0x7fffffffddac
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x7fffffffddac: 0x00000001
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当运行 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法且参数为 1 时，程序会发生崩溃。现在我们已经将问题缩小到具体的函数和参数值。&lt;/p>
-&lt;h3 id="条件断点">条件断点&lt;/h3>
-&lt;p>现在我们已经知道段错误（segmentation fault）在何时何处发生，但我们现在想知道程序崩溃前发生了什么。一种方式是逐步执行程序的每条语句，执行到我们想观察的语句。这行没有任何问题，但有时候你可能想运行程序代码中的一段区域，并且在此处停止执行并查看数据。&lt;/p>
-&lt;p>如果你曾经使用过调试器，你可能非常熟悉断点的概念。断点是源码中的一行，调试器执行时会停在此处。在我们的例子中，我们想查看 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 的代码，因此我们可以在 main.cc 文件的 54 行设置断点。由于你不知道具体的行号，你可以告诉调试器在具体的函数处设置断点。这时我们例子中输入的信息：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) break LinkedList&amp;lt;int&amp;gt;::remove
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Breakpoint 1 at 0x401477: file main.cc, line 54.
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>根据需要，断点 1 被设置在了 main.cc 中 54 行（设置断点后会得到一个数字，后续可以通过此数字引用该断点，比如：删除此断点）。当程序每次运行到 54 行时，它会将控制转移给调试器。当方法被调用许多次，但只有当传来某一具体参数（如：1）才会发生问题时，这是不可取的。条件断点将帮我们处理此类问题。在我们的例子中，我们已经知道程序会在调用 &lt;code>LinkedList&amp;lt;int&amp;gt;::remove&lt;/code> 方法且参数 为 1 时发生崩溃。如果我们想让调试器仅在 &lt;code>item_to_remove&lt;/code> 等于 1 时在 54 行中断（break），可以通过以下命令执行：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) condition 1 item_to_remove == 1
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>可以简单理解为：“仅在 &lt;code>item_to_remove&lt;/code> 等于 1时，才在断点 1 处中断“。现在我们可以运行程序并且知道调试器仅当设定的条件为 true 时才会发生中断。&lt;/p>
-&lt;h3 id="stepping">Stepping&lt;/h3>
-&lt;p>继续上面的例子，我们已经设置了一个条件断点，现在想一行一行地浏览这个方法，看看我们是否能找到错误的源头。我们可以通过 step 命令。gdb 有一个很好的特点，当没有输入命令就按下回车键时，会自动执行上一次执行的一条命令。这样，我们就可以在输入 step 后，简单地按下回车键，就可以执行上一次执行的命令 step。下面是这种情况的样子：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(gdb) run
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Using host libthread_db library &amp;#34;/home/user/main&amp;#34;.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 1 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 2 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 3 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 4 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The fully created list is:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="n">String&lt;/span> &lt;span class="nf">getName&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="s">&amp;#34;mysql&amp;#34;&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Now removing elements:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating Node, 5 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Destroying Node, 4 are in existence right now
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">4
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">PostgresqlDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">open&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;open PostgreSQL connection&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">close&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;close PostgreSQL connection&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Breakpoint 1, LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:54
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">54 Node&amp;lt;T&amp;gt; *marker = head_;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb) step
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">55 Node&amp;lt;T&amp;gt; *temp = 0; // temp points to one behind as we iterate
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">57 while (marker != 0) {
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">58 if (marker-&amp;gt;value() == item_to_remove) {
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Node&amp;lt;int&amp;gt;::value (this=0x417760) at main.cc:32
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">32 const T&amp;amp; value () const { return value_; }
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">LinkedList&amp;lt;int&amp;gt;::remove (this=0x4172b0, item_to_remove=@0x7fffffffddac: 1) at main.cc:77
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">77 marker = 0; // reset the marker
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">78 temp = marker;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">79 marker = marker-&amp;gt;next();
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="n">String&lt;/span> &lt;span class="nf">getName&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="s">&amp;#34;postgresql&amp;#34;&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>为方便对数据库驱动的管理和使用，对驱动的所有操作均使用 &lt;code>DatabaseBaseDriverManager&lt;/code> 类。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>getDrivers&lt;/code> 方法用于获取注册到 Manager 中的所有驱动。&lt;/li>
+&lt;li>&lt;code>getDriverByName&lt;/code> 方法通过保存的名称获取保存到 Manager 中的驱动。&lt;/li>
+&lt;li>&lt;code>registerDriver&lt;/code> 方法用于注册驱动到 Manager 中。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program received signal SIGSEGV, Segmentation fault.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">0x00000000004016cc in Node&amp;lt;int&amp;gt;::next (this=0x0) at main.cc:30
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">30 Node&amp;lt;T&amp;gt;* next () const { return next_; }
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">(gdb)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">DatabaseBaseDriverManager&lt;/span> &lt;span class="o">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Program terminated with signal SIGSEGV, Segmentation fault.
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The program no longer exists.
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当输入 &lt;code>$ run&lt;/code> 命令后，gdb 会询问我们是否想重新运行此程序，我们选择”是“。程序会继续运行并中断在指定的位置。然后我们输入 &lt;code>$ step&lt;/code> 并继续按回车键浏览程序。使用 step 命令时，调试器会进入调用的函数内部。如果你不想进入函数内部，可以使用 next 替代 step，这俩命令其它行为则是一致的。&lt;/p>
-&lt;p>程序中的错误是非常明显的，在 77 行 marker 被设置为了 0，但在 79 行通过 marker 指针访问了 next 方法。因为程序不能访问内存为 0 的位置，因此发生了段错误。在我们的代码中，移除 main.cc 文件中 77 行设置 marker 的代码既可以避免错误。&lt;/p>
-&lt;p>如果你看一下运行程序的输出，首先你会看到程序运行时没有崩溃，但是在程序的某个地方存在内存泄漏（提示：是在 &lt;code>LinkedList&amp;lt;T&amp;gt;::remove()&lt;/code> 函数中,remove 的其中一个情况不能正常工作）。读者可以利用调试器来定位和修复这个错误，这是一个练习。(我一直想这么说。;)&lt;/p>
-&lt;p>可以输入 &lt;code>$ quit&lt;/code> 退出 gdb 调试器。&lt;/p>
-&lt;h2 id="更多信息">更多信息&lt;/h2>
-&lt;p>本文件只包括开始使用 gdb 所需的基本命令。关于 gdb 的更多信息见 gdb man 页，或者在&lt;a href="https://www.sourceware.org/gdb/">此处&lt;/a>查看关于 gdb 的更详细的描述。在线帮助可以在运行 gdb 时输入 &lt;code>$ help&lt;/code> 来访问。另外，像往常一样，欢迎在新闻组上提问，或者你可以在实验室时间问我。&lt;/p>
-&lt;h2 id="提示">提示&lt;/h2>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">Map&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">drivers&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">ConcurrentHashMap&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="nf">getDrivers&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Collection&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">storedDrivers&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">values&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">ArrayList&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">storedDrivers&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="nf">getDriverByName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">SDatabaseBaseDriver&lt;/span> &lt;span class="n">driver&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">driver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getName&lt;/span>&lt;span class="o">(),&lt;/span> &lt;span class="n">driver&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当我们需要使用 MySQL 时，需要在使用驱动前通过 &lt;code>registerDriver&lt;/code> 方法注册 MySQL 驱动实例。&lt;/p>
+&lt;p>在使用数据库时，先通过 &lt;code>getDriverByName&lt;/code> 获取驱动实例，再通过获取到的驱动实例操作数据库。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Main&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">sql&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="n">mysql&lt;/span> &lt;span class="o">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DatabaseBaseDriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getDriverByName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;mysql&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mysql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">open&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// use given sql to operate db
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">mysql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">close&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="o">[]&lt;/span> &lt;span class="n">args&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DatabaseBaseDriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">MysqlDriver&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">run&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SELECT * FROM `user`&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>此时的代码耦合度很高，当添加或删除驱动时，就需要更改代码。有没有机制可以允许我们不直接在程序里直接指明，而由具体的实现动态装配呢？&lt;/p>
+&lt;hr>
+&lt;p>Java 6 引入了 SPI（Service Provider Interface）机制，用于加载服务的实现，使用步骤具体如下：&lt;/p>
 &lt;ol>
-&lt;li>在本文给出的源代码中还有一个错误，在上述代码中没有提到。对于所提供的测试代码中的插入和删除序列，该错误没有显示出来，但对于其他序列，该错误会显示出来。例如，插入 1、2、3 和 4，然后试图删除 2，就会出现错误。特别感谢 Linda Gu 和 Xiaofeng Chen 找到了这个错误。这个错误的修复是非常简单的，我们把它作为一个练习。&lt;/li>
-&lt;li>特别感谢 Ximmbo da Jazz 为一些错别字和错误的输出提供了宝贵的修正。&lt;/li>
-&lt;li>特别感谢 Raghuprasad Govindarao 发现了一个无效的链接。&lt;/li>
-&lt;/ol></description></item><item><title>tmux 快速简单的实践指南【翻译】</title><link>https://ileonli.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/tmux/a-quick-and-easy-guide-to-tmux/</guid><description>&lt;blockquote>
-&lt;p>原文地址：https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/&lt;/p>
+&lt;li>在 resources 文件夹中新建 &lt;a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html">META-INF&lt;/a> 文件夹。&lt;/li>
+&lt;li>在 META-INF 文件夹中创建 services 文件夹。&lt;/li>
+&lt;li>在 services 文件夹中创建名为接口全类名的文件，并在此文件中添加提供服务实现的类的全类名。&lt;/li>
+&lt;/ol>
+&lt;pre tabindex="0">&lt;code>resources
+└─META-INF
+└─services
+└─org.example.DatabaseBaseDriver
+org.example.MysqlDriver
+org.example.PostgresqlDriver
+&lt;/code>&lt;/pre>&lt;p>改造 &lt;code>DatabaseBaseDriverManager&lt;/code> 类，在获取驱动实例前，通过 &lt;code>ensureInitialized&lt;/code> 方法确保驱动实例已经初始化。&lt;/p>
+&lt;p>&lt;code>ServiceLoader&lt;/code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。&lt;/p>
+&lt;p>通过 &lt;code>Iterator&lt;/code> 调用 &lt;code>next()&lt;/code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 &lt;code>java.util.ServiceLoader.ProviderImpl#newInstance&lt;/code> 方法中。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">DatabaseBaseDriverManager&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">Map&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">drivers&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">ConcurrentHashMap&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">AtomicBoolean&lt;/span> &lt;span class="n">isInit&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">AtomicBoolean&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">ensureInitialized&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(!&lt;/span>&lt;span class="n">isInit&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="c1">// drivers have not initialize
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">loader&lt;/span> &lt;span class="o">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">load&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Iterator&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">itr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">loader&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">iterator&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">itr&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">hasNext&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="n">driver&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">itr&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">driver&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">isInit&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">compareAndSet&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="nf">getDrivers&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ensureInitialized&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Collection&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">storedDrivers&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">values&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">ArrayList&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">storedDrivers&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="nf">getDriverByName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ensureInitialized&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="n">driver&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">drivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">putIfAbsent&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">driver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getName&lt;/span>&lt;span class="o">(),&lt;/span> &lt;span class="n">driver&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>在使用 SPI 技术后，可以直接获取驱动，无需使用代码添加驱动。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nn">org.example&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Main&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="o">[]&lt;/span> &lt;span class="n">args&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DatabaseBaseDriver&lt;/span> &lt;span class="n">mysql&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">=&lt;/span> &lt;span class="n">DatabaseBaseDriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getDriverByName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;mysql&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mysql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">open&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// do something
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">mysql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">close&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="jdk-中的-drivermanager">JDK 中的 DriverManager&lt;/h2>
+&lt;p>第二种改进的方法正是 JDK 中 &lt;code>java.sql.DriverManager&lt;/code> 类所作的操作。&lt;/p>
+&lt;p>代码片段截取自 &lt;code>java.sql.DriverManager&lt;/code> 类中 &lt;code>ensureDriversInitialized&lt;/code> 方法，省略非关键代码。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">loadedDrivers&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">load&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Iterator&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">driversIterator&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">loadedDrivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">iterator&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/* Load these drivers, so that they can be instantiated.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * It may be the case that the driver class may not be there
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * i.e. there may be a packaged driver with the service class
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * as implementation of java.sql.Driver but the actual class
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * may be missing. In that case a java.util.ServiceConfigurationError
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * will be thrown at runtime by the VM trying to locate
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * and load the service.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Adding a try catch block to catch those runtime errors
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * if driver not available in classpath but it&amp;#39;s
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * packaged as service and that service is there in classpath.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">try&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">driversIterator&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">hasNext&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">driversIterator&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Throwable&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Do nothing
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="具体应用">具体应用&lt;/h2>
+&lt;h3 id="插件">插件&lt;/h3>
+&lt;p>插件只需要实现系统所提供的插件接口，再通过 SPI 技术即可方便的装载。&lt;/p>
+&lt;h3 id="数据库驱动">数据库驱动&lt;/h3>
+&lt;p>JDK 中提供了 &lt;code>java.sql.Driver&lt;/code> 接口，所有的驱动类必须实现，同时提供了 &lt;code>java.sql.DriverManager&lt;/code> 管理所有的驱动。&lt;/p>
+&lt;p>可以看到 MySQL 驱动使用了 SPI 机制，&lt;code>java.sql.Driver&lt;/code> 文件中内容为 &lt;code>com.mysql.cj.jdbc.Driver&lt;/code>。&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/java/spi/mysql-driver-spi.png" alt="">&lt;/p>
+&lt;p>&lt;code>com.mysql.cj.jdbc.Driver&lt;/code> 类使用静态代码块注册到 &lt;code>java.sql.DriverManager&lt;/code> 中，在第一次类加载时运行。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Driver&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">NonRegisteringDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">Driver&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// Register ourselves with the DriverManager
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">DriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">Driver&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">SQLException&lt;/span> &lt;span class="n">E&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">throw&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">RuntimeException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Can&amp;#39;t register driver!&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Construct a new driver and register it with DriverManager
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @throws SQLException
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * if a database error occurs.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="nf">Driver&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Required for Class.forName().newInstance()
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>PostgreSQL 驱动同样如此。&lt;/p>
+&lt;p>&lt;img src="https://ileonli.github.io/img/java/spi/postgresql-driver-spi.png" alt="">&lt;/p>
+&lt;h2 id="总结">总结&lt;/h2>
+&lt;p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">https://docs.oracle.com/javase/tutorial/ext/basics/spi.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.baeldung.com/java-spi">https://www.baeldung.com/java-spi&lt;/a>&lt;/p>
+&lt;/blockquote></description></item><item><title>Java 泛型</title><link>https://ileonli.github.io/posts/java/generic/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/generic/</guid><description>&lt;p>泛型本质即把内部数据类型参数化，可以减少额外代码的编写。&lt;/p>
+&lt;p>尖括号之间的叫做类型参数（type parameter），通常采用单字母，大写的方式。&lt;/p>
+&lt;p>类型参数常用的字母包括：E（集合框架内元素）、K（key）、V（value）、N（number）、T（type）、&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">K&lt;/span> &lt;span class="n">k&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="n">V&lt;/span> &lt;span class="n">v&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="nf">Pair&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">K&lt;/span> &lt;span class="n">k&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span> &lt;span class="n">v&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">k&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">k&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">v&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">v&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="泛型方法">泛型方法&lt;/h2>
+&lt;p>泛型方法拥有独立泛型参数，可以有非静态和静态两种方式。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Util&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// non-static method
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">public&lt;/span> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">compare&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">p2&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">k&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">p2&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">k&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">v&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">p2&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">v&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Util&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// static method
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">compare&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">K&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">p2&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">k&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">p2&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">k&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="n">p1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">v&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">p2&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">v&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Util&lt;/span>&lt;span class="o">.&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="n">compare&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">),&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Util&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">compare&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">),&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">Pair&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">));&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="参数限定">参数限定&lt;/h2>
+&lt;p>使用 &lt;code>extends&lt;/code> 限定传入的泛型参数必须“继承”或“实现”自指定的“类”或“接口”。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Box&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Comparable&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&amp;gt;&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">T&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>可以采用 &lt;code>&amp;lt;T extends A &amp;amp; B &amp;amp; C&amp;gt;&lt;/code> 的方法指定多个类型参数限定。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Box&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Number&lt;/span> &lt;span class="o">&amp;amp;&lt;/span> &lt;span class="n">Comparable&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">&amp;amp;&lt;/span> &lt;span class="n">Cloneable&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">T&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>类型参数限定支持多接口，由于 Java 只支持单继承，因此，只能有一个类限定，且必须放在首位。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Error: Interface expected here
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Box&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Comparable&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">&amp;amp;&lt;/span> &lt;span class="n">Cloneable&lt;/span> &lt;span class="o">&amp;amp;&lt;/span> &lt;span class="n">Number&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">T&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="通配符">通配符&lt;/h2>
+&lt;p>通配符（?）可以用来表示未知类型。&lt;/p>
+&lt;p>&lt;code>extends&lt;/code> 允许传入类型为 &lt;code>Number&lt;/code> 或 &lt;code>Number&lt;/code> 子类的 &lt;code>List&lt;/code> 类型。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">sumOfList&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;?&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Number&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">double&lt;/span> &lt;span class="n">sum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">0&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">0&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Number&lt;/span> &lt;span class="n">number&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">number&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">doubleValue&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>supper&lt;/code> 运算符允许传入类型为 &lt;code>Integer&lt;/code> 或 &lt;code>Integer&lt;/code> 父类的 &lt;code>List&lt;/code> 类型。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">addNumbers&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">List&lt;/span>&lt;span class="o">&amp;lt;?&lt;/span> &lt;span class="kd">super&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">list&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;=&lt;/span> &lt;span class="n">10&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">list&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="类型擦除">类型擦除&lt;/h2>
+&lt;p>&lt;code>Number&lt;/code> 是 &lt;code>Integer&lt;/code> 的父类，但 &lt;code>ArrayList&amp;lt;Number&amp;gt;&lt;/code> 不是 &lt;code>ArrayList&amp;lt;Integer&amp;gt;&lt;/code> 的父类，而是同一种类型。&lt;/p>
+&lt;p>&lt;code>List&amp;lt;Number&amp;gt;&lt;/code> 是 &lt;code>ArrayList&amp;lt;Number&amp;gt;&lt;/code> 的父类，而不是 &lt;code>ArrayList&amp;lt;Integer&amp;gt;&lt;/code> 的父类。&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/java/generics/types.html">https://docs.oracle.com/javase/tutorial/java/generics/types.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://openjdk.org/projects/valhalla/">https://openjdk.org/projects/valhalla/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://openjdk.org/jeps/218">https://openjdk.org/jeps/218&lt;/a>&lt;/p>
+&lt;/blockquote></description></item><item><title>Java 枚举类型</title><link>https://ileonli.github.io/posts/java/enum/</link><pubDate>Tue, 07 Feb 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/enum/</guid><description>&lt;blockquote>
+&lt;p>枚举类型（enum type）是由一组常量组合而成&lt;/p>
 &lt;/blockquote>
-&lt;p>我喜欢使用命令行进行工作。我认为对于软件开发人员来说，没有比终端更高效、更通用的工具了。当你使用终端时，通常感觉是自由的（free），为什么不喜欢呢？&lt;/p>
-&lt;p>过去的这些年里，我一直在尝试精简和自定义我的命令行，使其变得更易于使用、更有趣或仅仅看起来不错。tmux 是让我日常使用命令行时，有良好体验的最重要工具之一。&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-1.png" alt="">&lt;/p>
-&lt;p>这张截图展示的东西简直是自面包切片以来最好的事情（译者注：&lt;a href="https://www.plansponsor.com/tuesday-trivia-origin-phrase-best-thing-since-sliced-bread/">面包切片&lt;/a>表示对某事或物的赞许）。这就是被叫做终端复用器（terminal multiplexer）的 &lt;a href="https://github.com/tmux/tmux/wiki">tmux&lt;/a>。简单来说，tmux 就是终端中的窗口管理器（脚注 1），该管理器允许你在一个终端窗口中创建多个窗口（windows）和面板（panes）。&lt;/p>
-&lt;p>这篇文章将告诉你一些关于 tmux 的介绍和它的潜力，随后是大约 10 分钟的手把手教程，用于设置和了解 tmux。如果你有 10 分钟的空闲时间，并想与你的“书呆子”朋友们赚取街头信誉（译者注：使用 tmux 可以用于&lt;del>装逼&lt;/del>）&lt;/p>
-&lt;h2 id="关于-tmux">关于 tmux&lt;/h2>
-&lt;p>tmux 的作者将其描述为终端复用器，在这个华丽的词语下隐藏着一个简单的概念：在一个终端中你可以打开多个窗口和分屏视图（split-views），分屏视图在 tmux 中也被叫做面板（panes）。每个面板都有其独立运行的 shell 实例（bash, zhs, 或其它）。这可以让你在一个终端中运行多个终端命令和应用程序，而不需要打开其它终端。&lt;/p>
-&lt;p>更重要的是，tmux 会把所有的窗口和面板都会被保存到一个会话中（session）。你可以在任何时间退出一个会话，这被叫做分离（detaching）。tmux 会使所有的会话一直存活，除非主动结束 tmux 服务，比如：重启电脑（脚注 2）。此功能非常有用，因为在后续的任何时间点，你都可以附加（attaching）到离开的对话中。&lt;/p>
-&lt;p>如果你曾经通过 ssh 连接到远程服务器或者树莓派（Raspberry Pi）中，你就会知道保留会话的功能非常有用。当 ssh 连接断开后（lose ssh connection），此 tmux 会话将会被分离，但会话仍会在服务其中运行，包括在会话中运行的进程。要继续此会话，只需再次 ssh 到服务器并附加到正在运行的会话。&lt;/p>
-&lt;p>当在远程机器上工作时，tmux 将非常有用。当然，在本地工作时，它也非常有用。不仅仅是窗口管理功能，还以为其会话处理功能。就我个人而言，当我切换上下文时，发现自己会脱离会话。当我想继续运行旧任务时，我仅为我的新任务启动一个新会话，并附加到旧会话。&lt;/p>
-&lt;p>你可以看到 tmux 基本上提供了两个基本功能：&lt;/p>
+&lt;p>在引入枚举类型之前，通常用一组 int 常量表示每种类型。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Color&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="n">RED&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">1&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="n">GREEN&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">2&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="n">BLACK&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">3&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>用 int 常量表示的方法不具有类型安全性。方法只能接收 int 类型，不同 int 值表示不同的 &lt;code>Color&lt;/code>，此时无法严格控制入参，很容易出现类型错误。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">color&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// do something
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Java SE 1.5 版本引用了枚举类型，使用 &lt;code>enum&lt;/code> 关键字修饰。在编译期间，编译器会对枚举类型进行修改和扩展。&lt;/p>
+&lt;p>枚举常量（如：RED）会隐式使用 &lt;code>public static final&lt;/code> 修饰（编译器修改），按照 Java 命名规范，所有名称都应该采用大写的形式。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">enum&lt;/span> &lt;span class="n">Color&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">RED&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">GREEN&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">BLACK&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>枚举常量可以额外增加属性，只需声明成员属性，并添加具有所有属性的构造器。&lt;/p>
+&lt;p>枚举常量是不可变的，因此，推荐使用 final 和 private 修饰成员属性。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">enum&lt;/span> &lt;span class="n">Color&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">RED&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;#FF0000&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;红色&amp;#34;&lt;/span>&lt;span class="o">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">GREEN&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;#008000&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;绿色&amp;#34;&lt;/span>&lt;span class="o">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">BLACK&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;#000000&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;黑色&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">String&lt;/span> &lt;span class="n">rgb&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">String&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Color&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">rgb&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">String&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">rgb&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rgb&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="常用方法">常用方法&lt;/h2>
+&lt;blockquote>
+&lt;p>values() 和 valueOf(String name) 方法都由编译器在编译期间生成&lt;/p>
+&lt;/blockquote>
+&lt;p>通过 &lt;code>values()&lt;/code> 方法获取到当前枚举类型内声明的所有枚举常量，会按照声明的顺序返回数组。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Color&lt;/span>&lt;span class="o">[]&lt;/span> &lt;span class="n">values&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">values&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span> &lt;span class="n">color&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">color&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>通过 &lt;code>valueOf(String name)&lt;/code> 返回具有指定名称的枚举常量。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Color&lt;/span> &lt;span class="n">red&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">valueOf&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;RED&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>通过 &lt;code>ordinal()&lt;/code> 方法可以获取与枚举常量相关联的 int 值，该值是在枚举类型内声明的位置（从 0 开始）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Operation&lt;/span> &lt;span class="n">op&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">Operation&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">values&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">ord&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">op&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>应该尽量避免直接使用关联的值，当新增或删除枚举常量后，会导致其它枚举常量的关联值发生变化。该方法设计的目的是供 &lt;code>EnumMap&lt;/code> 和 &lt;code>EnumSet&lt;/code> 使用。&lt;/p>
+&lt;p>我们可以通过位置相对大小来确定额外的信息，如：根据声明位置的大小判断是否具有管理员权限。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">enum&lt;/span> &lt;span class="n">Role&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">USER&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">VIP&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">ADMIN&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">SUPER_ADMIN&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">hasAdminRole&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Role&lt;/span> &lt;span class="n">role&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">role&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">role&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">&amp;gt;=&lt;/span> &lt;span class="n">Role&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ADMIN&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="方法绑定">方法绑定&lt;/h2>
+&lt;p>当我们需要将不同的方法与每个枚举常量关联起来时，常见的做法是使用 &lt;code>switch&lt;/code> 进行判断。&lt;/p>
+&lt;p>当在枚举中添加新的类型时，很容易忘记在 &lt;code>color&lt;/code> 方法中添加新的分支。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">color&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">switch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">color&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="n">RED&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;red&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="n">GREEN&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;green&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">case&lt;/span> &lt;span class="n">BLACK&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;black&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">throw&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">IllegalArgumentException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Unknown color&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Java SE 1.6 版本引入了类主体（class body），可以将不同方法与枚举关联起来。&lt;/p>
+&lt;p>当枚举中添加新的类型而不添加类主体，编译器会拒绝编译。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">enum&lt;/span> &lt;span class="n">Operation&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">PLUS&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="o">}&lt;/span> &lt;span class="o">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">MINUS&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="o">}&lt;/span> &lt;span class="o">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">TIMES&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="o">}&lt;/span> &lt;span class="o">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">DIVIDED_BY&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">;&lt;/span> &lt;span class="o">}&lt;/span> &lt;span class="o">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Each constant supports an arithmetic operation
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">abstract&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>编译后枚举类型内的每个类主体都会生成一个独立类。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">Operation$1.class
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Operation$2.class
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Operation$3.class
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Operation$4.class
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>通过 javap 命令反编译生成的字节码文件。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">enum&lt;/span> &lt;span class="n">Operation$1&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="nf">Operation$1&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">double&lt;/span> &lt;span class="nf">eval&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">double&lt;/span> &lt;span class="n">var1&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">double&lt;/span> &lt;span class="n">var3&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">var1&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">var3&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Java 8 之后可以结合 lambda 表达式进行简化。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">java.util.function.BiFunction&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">enum&lt;/span> &lt;span class="n">Operation&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ADD&lt;/span>&lt;span class="o">((&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">SUBTRACT&lt;/span>&lt;span class="o">((&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">MULTIPLY&lt;/span>&lt;span class="o">((&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">private&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="n">BiFunction&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Operation&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">BiFunction&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Integer&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">operation&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="nf">apply&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="kt">int&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">apply&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="比较">比较&lt;/h2>
+&lt;p>如 JLS 所说，保证枚举类型只会被实例化一次，采取以下三种方法确保枚举类型无法被实例化多次。&lt;/p>
 &lt;ol>
-&lt;li>终端中的管理窗口&lt;/li>
-&lt;li>会话管理&lt;/li>
+&lt;li>&lt;code>Enum&lt;/code> 类中继承自 Object 类的 &lt;code>clone&lt;/code> 方法会被设置为 final，无法重写。&lt;/li>
+&lt;li>禁止利用反射方法实例化。&lt;/li>
+&lt;li>对于序列化机制的特殊处理，确保不会通过反序列化实例化。&lt;/li>
 &lt;/ol>
-&lt;p>如果你熟悉 &lt;a href="https://www.gnu.org/software/screen/">GNU Screen&lt;/a>，会发现功能很相似。可以把 tmux 看作是 Screen 的一个更容易使用和更强大的替代品（显然我在这里有些固执己见）。&lt;/p>
-&lt;p>概念足够了，让我们开始动手实践！&lt;/p>
-&lt;h2 id="入门">入门&lt;/h2>
-&lt;p>这个实践指南将帮助你很快上手使用 tmux。它将只涵盖基本的功能，这些功能应该足以让您入门并使用 tmux 提高工作效率。只需打开您的终端并按照说明操作即可。&lt;/p>
-&lt;h2 id="安装">安装&lt;/h2>
-&lt;p>幸运的是，在大多数操作系统中安装 tmux 是非常简单的。一个简单的 &lt;code>sudo apt-get install tmux&lt;/code>（Ubuntu, WSL 和其衍生版本） 或 &lt;code>brew install tmux&lt;/code>（Mac） 就可以了。&lt;/p>
-&lt;h2 id="创建第一个会话">创建第一个会话&lt;/h2>
-&lt;p>对于你的第一个会话，简单的使用 &lt;code>tmux&lt;/code> 命令即可创建新会话。&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ tmux
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这将创建一个新的 tmux 会话，会话底部会有一个绿色的状态栏。&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-2.png" alt="">&lt;/p>
-&lt;p>状态栏是 tmux 非常重要的一部分，除了当前打开的窗口信息（左边），它还展示了一些系统信息，如：日期和时间（右边）。状态栏也可以定制，我看过一些非常漂亮（即将到来的日历事件、电池状态等），但这些是我们后续需要做的。&lt;/p>
-&lt;h2 id="分离面板">分离面板&lt;/h2>
-&lt;p>我们已经创建了第一个对话，可以了解一下面板的使用感觉。当你创建了一个新对话后，tmux 默认打开包含一个面板的窗口。但我们想要一个漂亮的分屏，让我们把它分开吧！&lt;/p>
-&lt;p>在 tmux 中的所有命令都前缀键（prefix key）和命令键（command key）组成（emacs 使用者会比较熟悉）。默认情况，tmux 使用 &lt;code>C-b&lt;/code> 作为前缀键。如果你不习惯，这个符号读起来会很奇怪。在 emacs 中， &lt;code>C-&lt;/code> 符号表示长按 ctrl 键（脚注 3）。因此，&lt;code>C-b&lt;/code> 表示同时按下 ctrl 和 b 键。&lt;/p>
-&lt;p>将面板分离为左右面板的快捷键是 &lt;code>C-b %&lt;/code>。此快捷键的意思是：同时按下 ctrl 和 b 键，然后松手，随后按下 % 键。你刚刚使用第一个 tmux 命令把你的面板分离为两个。&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-3.png" alt="">&lt;/p>
-&lt;p>有左右分割，也有上下分割。要将窗格分割为顶部窗格和底部窗格，请使用 &lt;code>C-b &amp;quot;&lt;/code> 快捷键。&lt;/p>
-&lt;h2 id="切换面板">切换面板&lt;/h2>
-&lt;p>现在我们被困在新创建的窗口中，但我们很想回到左边面板。十分简单，切换到不同面板可以使用 &lt;code>C-b &amp;lt;方向键&amp;gt;&lt;/code> 快捷键， &lt;code>&amp;lt;方向键&amp;gt;&lt;/code> 表示想要切换到的窗口的方向。在我们的例子中，我们想要切换到左边的面板所以留给我们的是 &lt;code>C-b left&lt;/code>。再重复一遍，以便我们完全理解: 这意味着你按 ctrl 和 b 键（前缀命令），然后按左箭头键以到达左侧的面板。&lt;/p>
-&lt;p>现在，你可以继续并进一步拆分每个新面板。你可以自由地尝试，像疯子一样分裂你的窗格来感受它。&lt;/p>
-&lt;h2 id="关闭面板">关闭面板&lt;/h2>
-&lt;p>关闭窗格就像关闭常规终端会话一样简单。键入 &lt;code>$ exit&lt;/code> 或按 &lt;code>ctrl-d&lt;/code>，它就消失了。&lt;/p>
-&lt;h2 id="创建窗口">创建窗口&lt;/h2>
-&lt;p>tmux 中的窗口可以被比作创建新的虚拟桌面。如果你曾经使用过一个主要的 Linux 桌面环境（KDE，Gnome）或 Mac，希望你会发现这个比喻很有帮助。&lt;/p>
-&lt;p>创建新窗口就像输入 &lt;code>C-b c&lt;/code>（最后一次：就是 ctrl 和 b 一次，然后是 c）一样简单。新的窗口将在 tmux 的状态栏中呈现给你。&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/img/tmux/tmux-4.png" alt="">&lt;/p>
-&lt;p>现在你可以在你的新窗口中随意划分窗格，或者不做。这由你决定。&lt;/p>
-&lt;p>要切换到上一个窗口（根据你状态栏中的顺序），使用 &lt;code>C-b p&lt;/code>，要切换到下一个窗口，使用 &lt;code>C-b n&lt;/code>。
-如果你已经创建了许多窗口，你会发现直接输入一个窗口的编号（状态栏会告诉你哪个窗口有哪个编号）是很有用的，只要使用 &lt;code>C-b &amp;lt;编号&amp;gt;&lt;/code>，其中 &lt;code>&amp;lt;编号&amp;gt;&lt;/code> 是状态栏中窗口名称前面的数字。&lt;/p>
-&lt;h2 id="会话处理">会话处理&lt;/h2>
-&lt;p>如果你完成了你的会话，你可以通过简单地退出里面的所有面板来摆脱它，或者你可以将会话保留在后台以便以后再使用。&lt;/p>
-&lt;p>可以使用 &lt;code>C-b d&lt;/code> 分离当前对话。你也可以用 &lt;code>C-b D&lt;/code> 来让 tmux 给你选择，选择从哪个会话中分离出来。脱离一个会话将使你在该会话中所做的一切在后台运行。你可以在以后的某个时间点回到这个会话中。&lt;/p>
-&lt;p>要重新连接到一个会话并继续你离开的地方，你需要弄清楚你想先连接到哪个会话，通过使用以下方法列出当前正在运行的会话：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tmux ls
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这将给你一个所有正在运行的会话的列表，在我们的例子中，它应该是这样的：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">0: 2 windows (created Mon May 8 19:41:37 2023)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>要连接到这个会话，你需要再次启动 tmux，但这次要告诉它要连接到哪个会话：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tmux attach -t &lt;span class="m">0&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>-t 0&lt;/code> 是告诉 tmux 要附加到哪个会话的参数。&lt;code>0&lt;/code> 是你的 &lt;code>tmux ls&lt;/code> 输出的第一部分。&lt;/p>
-&lt;p>如果你喜欢给你的会话起一个更有意义的名字（而不是以 0 开头的数字），你可以用以下方式创建你的下一个会话：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tmux new -s database
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这将创建一个名称为 &amp;ldquo;database&amp;rdquo; 新的会话。&lt;/p>
-&lt;p>你也可以重新命名你现有的会话：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tmux rename-session -t &lt;span class="m">0&lt;/span> database
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>下次你附加到该会话时，只需使用 &lt;code>tmux attach -t database&lt;/code> 。如果你同时使用多个会话，这可能是一个很重要的功能。&lt;/p>
-&lt;p>就这样了! 恭喜你，你刚刚完成了你的第一个 tmux 会话，并且亲自使用了它的窗口和会话管理功能呢个。tmux 还有更多功能，但你刚刚学到的东西应该是未来开始使用 tmux 的一切。&lt;/p>
-&lt;h2 id="为什么使用">为什么使用&lt;/h2>
-&lt;p>我经常得到的一个答复是：&amp;ldquo;很好，我明白了。但我为什么要使用 tmux 和它奇怪的组合键，而不是直接使用 iTerm2 呢？&amp;rdquo;&lt;/p>
-&lt;p>你是对的，当它只是基本的窗口管理时，Mac 的 &lt;a href="https://iterm2.com/">iTerm&lt;/a> 也支持标签和窗格。对于 Linux 来说，有 &lt;a href="https://gnome-terminator.org/">Terminator&lt;/a>。那么，在这个时代，为什么会有人觉得有必要去学习一些古老的技术呢？&lt;/p>
-&lt;p>好吧，很明显，这是一种吹牛的权利。如果这还不能说服你，还有一些实际的理由，我为什么喜欢 tmux 而不是 iTerm 等：&lt;/p>
+&lt;p>基于以上机制，我们可以直接使用 == 比较枚举常量，&lt;code>Enum&lt;/code> 类中的 &lt;code>equals&lt;/code> 方法也是直接采用 == 比较。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// java.lang.Enum#equals
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">public&lt;/span> &lt;span class="kd">final&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Object&lt;/span> &lt;span class="n">other&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="n">other&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>推荐直接使用 == 判断枚举常量是否相同，此方法不会发生空指针异常。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Color&lt;/span> &lt;span class="n">c&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kt">boolean&lt;/span> &lt;span class="n">b1&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">c&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equals&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">BLACK&lt;/span>&lt;span class="o">);&lt;/span> &lt;span class="c1">// NPE
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kt">boolean&lt;/span> &lt;span class="n">b2&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">c&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">BLACK&lt;/span>&lt;span class="o">);&lt;/span> &lt;span class="c1">// false
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="enum-类">Enum 类&lt;/h2>
+&lt;p>Java 中所有的枚举类型都会隐式的继承 &lt;code>java.lang.Enum&lt;/code> 类。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">abstract&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Enum&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Enum&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">implements&lt;/span> &lt;span class="n">Constable&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Comparable&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;,&lt;/span> &lt;span class="n">Serializable&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="枚举集合">枚举集合&lt;/h2>
+&lt;h3 id="enummap">EnumMap&lt;/h3>
+&lt;p>&lt;code>EnumMap&lt;/code> 只能用于存放一种枚举类型，在构造器中必须指定存放的枚举类型。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Map&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">String&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">enumMap&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">EnumMap&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumMap&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">RED&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;red&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumMap&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">GREEN&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;green&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumMap&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">BLACK&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;black&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>EnumMap&lt;/code> 内部维护了 &lt;code>vals&lt;/code> 数组，长度为给定的枚举类型内部枚举常量的数量。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span> &lt;span class="kd">transient&lt;/span> &lt;span class="n">Object&lt;/span>&lt;span class="o">[]&lt;/span> &lt;span class="n">vals&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>put&lt;/code> 方法直接通过 &lt;code>ordinal()&lt;/code> 算出索引，不需要通过 &lt;code>hashCode()&lt;/code> 计算。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="n">V&lt;/span> &lt;span class="nf">put&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">K&lt;/span> &lt;span class="n">key&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">V&lt;/span> &lt;span class="n">value&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">typeCheck&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">index&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">key&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Object&lt;/span> &lt;span class="n">oldValue&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">vals&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">index&lt;/span>&lt;span class="o">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">vals&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">index&lt;/span>&lt;span class="o">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">maskNull&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">value&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">oldValue&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">size&lt;/span>&lt;span class="o">++;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">unmaskNull&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">oldValue&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="enumset">EnumSet&lt;/h3>
+&lt;p>&lt;code>EnumSet&lt;/code> 同样只能用于存放一种枚举类型，通过 &lt;code>noneOf(Class&amp;lt;E&amp;gt; elementType)&lt;/code>、&lt;code>allOf(Class&amp;lt;E&amp;gt; elementType)&lt;/code> 和 &lt;code>of(...)&lt;/code> 等工厂方法创建。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Set&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">enumSet&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">EnumSet&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">noneOf&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumSet&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">RED&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumSet&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">GREEN&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">enumSet&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Color&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">BLACK&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>EnumSet&lt;/code> 为抽象类，根据枚举常量的数量提供了两种不同子类，当枚举常量的数量小于等于 64 时使用 &lt;code>RegularEnumSet&lt;/code>，其他数量采用 &lt;code>JumboEnumSet&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Enum&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">EnumSet&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="nf">noneOf&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Class&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">elementType&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Enum&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;[]&lt;/span> &lt;span class="n">universe&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">getUniverse&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">elementType&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">universe&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">throw&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">ClassCastException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">elementType&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34; not an enum&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">universe&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">length&lt;/span> &lt;span class="o">&amp;lt;=&lt;/span> &lt;span class="n">64&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">RegularEnumSet&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">elementType&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">universe&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">JumboEnumSet&lt;/span>&lt;span class="o">&amp;lt;&amp;gt;(&lt;/span>&lt;span class="n">elementType&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">universe&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="regularenumset">RegularEnumSet&lt;/h4>
+&lt;p>&lt;code>RegularEnumSet&lt;/code> 直接采用位图，利用 &lt;code>long&lt;/code> 类型的 &lt;code>elements&lt;/code> 记录是否保存有某个枚举常量。&lt;/p>
+&lt;p>因为 &lt;code>long&lt;/code> 类型共 8 个字节，共 64 位，因此，最多保存 64 个枚举常量。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span> &lt;span class="kt">long&lt;/span> &lt;span class="n">elements&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">0L&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>add&lt;/code> 方法通过或运算将 &lt;code>elements&lt;/code> 第 &lt;code>ordinal()&lt;/code> 位的二进制设置为 1，代表已经添加过该枚举常量。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">E&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">typeCheck&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">long&lt;/span> &lt;span class="n">oldElements&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">elements&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">elements&lt;/span> &lt;span class="o">|=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">1L&lt;/span> &lt;span class="o">&amp;lt;&amp;lt;&lt;/span> &lt;span class="o">((&lt;/span>&lt;span class="n">Enum&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;)&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">).&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">elements&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="n">oldElements&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="jumboenumset">JumboEnumSet&lt;/h4>
+&lt;p>为保存含有更多枚举常量的枚举类型，&lt;code>JumboEnumSet&lt;/code> 采用 &lt;code>elements[]&lt;/code> 数组。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span> &lt;span class="kt">long&lt;/span> &lt;span class="n">elements&lt;/span>&lt;span class="o">[];&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>&amp;gt;&amp;gt;&amp;gt;&lt;/code> 为逻辑右移，不考虑符号位，&lt;code>a &amp;gt;&amp;gt;&amp;gt; 6&lt;/code> 相当于 &lt;code>a / (2^6)&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">JumboEnumSet&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Class&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="n">elementType&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">Enum&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;[]&lt;/span> &lt;span class="n">universe&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">super&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">elementType&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">universe&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">elements&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="kt">long&lt;/span>&lt;span class="o">[(&lt;/span>&lt;span class="n">universe&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">length&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">63&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">6&lt;/span>&lt;span class="o">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>相比于 &lt;code>RegularEnumSet&lt;/code> 类的 &lt;code>add&lt;/code> 方法，&lt;code>JumboEnumSet&lt;/code> 仅仅多了一步计算数组索引的操作。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">add&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">E&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">typeCheck&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">eOrdinal&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">ordinal&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">eWordNum&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">eOrdinal&lt;/span> &lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">6&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">long&lt;/span> &lt;span class="n">oldElements&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">elements&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">eWordNum&lt;/span>&lt;span class="o">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">elements&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">eWordNum&lt;/span>&lt;span class="o">]&lt;/span> &lt;span class="o">|=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">1L&lt;/span> &lt;span class="o">&amp;lt;&amp;lt;&lt;/span> &lt;span class="n">eOrdinal&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">boolean&lt;/span> &lt;span class="n">result&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">elements&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">eWordNum&lt;/span>&lt;span class="o">]&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="n">oldElements&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">result&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">size&lt;/span>&lt;span class="o">++;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">result&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="总结">总结&lt;/h2>
 &lt;ol>
-&lt;li>会话处理：脱离和附加到会话有助于我进行上下文切换和远程工作。&lt;/li>
-&lt;li>平台独立性： 我可以在我的 Macbook、我的 Linux 笔记本、服务器、Raspberry Pi 上使用 tmux，你说了算。&lt;/li>
-&lt;li>可定制：我有很多方法可以定制我的 tmux 环境的外观和行为。而且我可以用一个简单的 dotfile 在不同的平台上进行同步。&lt;/li>
+&lt;li>枚举类型没有可以访问的构造器，因此，不可以实例化。且保证枚举类型只会被实例化一次。&lt;/li>
+&lt;li>枚举类型不可继承，因为枚举类型默认会继承 &lt;code>Enum&lt;/code> 类，且 Java 只支持单继承。&lt;/li>
+&lt;li>枚举类型可以实现接口，利用接口的 &lt;code>default&lt;/code> 方法扩展功能。&lt;/li>
+&lt;li>枚举类型内定义的枚举常量可以直接通过 == 进行比较，推荐使用 == 方法。&lt;/li>
+&lt;li>保存枚举常量时推荐使用 &lt;code>EnumMap&lt;/code> 和 &lt;code>EnumSet&lt;/code> 代替 &lt;code>HashMap&lt;/code> 和 &lt;code>HashSet&lt;/code>。&lt;/li>
 &lt;/ol>
-&lt;h2 id="后续">后续&lt;/h2>
-&lt;p>如果你好奇地想了解 tmux 还能做什么，这是一件好事。幸运的是，大部分的东西都很容易发现。只要键入 &lt;code>C-b ?&lt;/code> 就可以看到所有可用命令的列表，并开始实验。&lt;/p>
-&lt;p>我自己经常使用的一些命令是：&lt;/p>
-&lt;ol>
-&lt;li>&lt;code>C-b z&lt;/code>：使一个面板变成全屏。再按一次 &lt;code>C-b z&lt;/code>，就可以把它缩回到以前的大小。&lt;/li>
-&lt;li>&lt;code>C-b C-&amp;lt;方向键&amp;gt;&lt;/code>:按&amp;lt;箭头键&amp;gt;的方向调整窗格大小（脚注 4）。&lt;/li>
-&lt;li>&lt;code>C-b ,&lt;/code>:给当前窗口重命名。&lt;/li>
-&lt;/ol>
-&lt;p>除此之外，还有很多资源可以帮助你进一步了解 tmux。像我这样的人在博客上写他们的 tmux 经验，并分享他们的发现。你可以在 Github 上的 dotfiles 资源库中找到人们分享他们的 tmux 配置。甚至还有 Brian Hogan 写的一本 &lt;a href="https://pragprog.com/search/?q=tmux">专门介绍 tmux 的书&lt;/a>。&lt;/p>
-&lt;p>现在，最好是自己去发现一些东西。实验一下，糊弄一下，也许试着用 tmux 来做你的日常工作。它需要一段时间来适应，当你开始的时候，你可能会觉得很慢。我鼓励你继续使用它。感受一下它的功能，很快你就会发现，你使用终端的工作将是纯粹的快乐和令人耳目一新的快速。&lt;/p>
-&lt;p>如果你对定制你的 tmux 体验感兴趣，我建议你阅读我的&lt;a href="https://www.hamvocke.com/blog/a-guide-to-customizing-your-tmux-conf/">定制 tmux.conf 指南&lt;/a>。&lt;/p>
-&lt;h2 id="脚注">脚注&lt;/h2>
-&lt;ol>
-&lt;li>如果你是 Linux 背景的人，你可能对窗口管理器的概念很熟悉，比如 &lt;a href="http://openbox.org/wiki/Main_Page">Openbox&lt;/a>、或 &lt;a href="https://i3wm.org/">i3&lt;/a> &lt;a href="https://awesomewm.org/apidoc/?redirected_from_wiki=1">awesome&lt;/a>。&lt;/li>
-&lt;li>tmux 是基于客户端-服务器架构的。虽然这很少有关系，但对了解东西的工作原理有帮助。tmux 服务器会跟踪所有正在运行的会话。你将只在 tmux 客户端工作，创建新的会话或连接到现有的会话。&lt;/li>
-&lt;li>也可以是 &lt;code>M-&lt;/code>，这只对 &lt;code>Meta&lt;/code> 键（即大多数键盘上的 Alt）来说是一样的。&lt;/li>
-&lt;li>这是个有趣的问题。你的前缀需要 ctrl，也需要你的命令键。我发现最简单的方法是在前缀键之后只释放 b 键，并在反复敲击方向键时一直按着 ctrl。实验一下，找点感觉。&lt;/li>
-&lt;/ol></description></item></channel></rss>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.9">https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.9&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html">https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://javarevisited.blogspot.com/2011/08/enum-in-java-example-tutorial.html#axzz7sctrlkdb">https://javarevisited.blogspot.com/2011/08/enum-in-java-example-tutorial.html#axzz7sctrlkdb&lt;/a>&lt;/p>
+&lt;p>Effective Java, Third Edition&lt;/p>
+&lt;/blockquote></description></item></channel></rss>

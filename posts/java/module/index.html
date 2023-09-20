@@ -1,0 +1,86 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://ileonli.github.io/favicon.ico><link rel=stylesheet href=/css/style.min.css><link rel=canonical href=https://ileonli.github.io/posts/java/module/><title>Java 模块化</title></head><body><header id=banner></header><main id=content><article><header id=post-header><h1>Java 模块化</h1><div><time>2023-03-10</time></div></header><p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。</p><p>使用 Java 模块有以下优势：</p><h2 id=使用模块>使用模块</h2><p>我们使用 Maven 创建项目，项目结构如下。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl>untitled/
+</span></span><span class=line><span class=cl>├── pom.xml
+</span></span><span class=line><span class=cl>└── src
+</span></span><span class=line><span class=cl>    ├── main
+</span></span><span class=line><span class=cl>    │   ├── java
+</span></span><span class=line><span class=cl>    │   │   ├── io
+</span></span><span class=line><span class=cl>    │   │   │   └── github
+</span></span><span class=line><span class=cl>    │   │   │       └── ileonli
+</span></span><span class=line><span class=cl>    │   │   │           └── Main.java
+</span></span><span class=line><span class=cl>    │   │   └── module-info.java
+</span></span><span class=line><span class=cl>    │   └── resources
+</span></span><span class=line><span class=cl>    └── <span class=nb>test</span>
+</span></span><span class=line><span class=cl>        └── java
+</span></span></code></pre></div><p>我们可以在 <code>module-info.java</code> 里设置模块名、添加或导出模块。</p><p>本项目的模块名设为：<code>io.github.ileonli.untitled</code>，</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>module</span> <span class=n>io</span><span class=o>.</span><span class=na>github</span><span class=o>.</span><span class=na>ileonli</span><span class=o>.</span><span class=na>untitled</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p><code>java --list-modules</code> 可以列出 JDK 的模块集。其中包括实现 Java 语言 SE 规范的标准模块（以 java 开头的名称）、JavaFX 模块（以 javafx 开头的名称）、特定于 JDK 的模块（以 jdk 开头的名称）和特定于 Oracle 的模块（以 oracle 开头的名称）。每个模块名称后都接着一个版本字符串 — @17 表示该模块属于 Java 17。</p><pre tabindex=0><code>java.base@17.0.7
+java.compiler@17.0.7
+java.datatransfer@17.0.7
+java.desktop@17.0.7
+java.instrument@17.0.7
+java.logging@17.0.7
+java.management@17.0.7
+java.management.rmi@17.0.7
+java.naming@17.0.7
+java.net.http@17.0.7
+java.prefs@17.0.7
+java.rmi@17.0.7
+java.scripting@17.0.7
+java.se@17.0.7
+java.security.jgss@17.0.7
+java.security.sasl@17.0.7
+java.smartcardio@17.0.7
+java.sql@17.0.7
+java.sql.rowset@17.0.7
+java.transaction.xa@17.0.7
+java.xml@17.0.7
+java.xml.crypto@17.0.7
+jdk.accessibility@17.0.7
+jdk.attach@17.0.7
+jdk.charsets@17.0.7
+jdk.compiler@17.0.7
+jdk.crypto.cryptoki@17.0.7
+jdk.crypto.ec@17.0.7
+jdk.dynalink@17.0.7
+jdk.editpad@17.0.7
+jdk.hotspot.agent@17.0.7
+jdk.httpserver@17.0.7
+jdk.incubator.foreign@17.0.7
+jdk.incubator.vector@17.0.7
+jdk.internal.ed@17.0.7
+jdk.internal.jvmstat@17.0.7
+jdk.internal.le@17.0.7
+jdk.internal.opt@17.0.7
+jdk.internal.vm.ci@17.0.7
+jdk.internal.vm.compiler@17.0.7
+jdk.internal.vm.compiler.management@17.0.7
+jdk.jartool@17.0.7
+jdk.javadoc@17.0.7
+jdk.jcmd@17.0.7
+jdk.jconsole@17.0.7
+jdk.jdeps@17.0.7
+jdk.jdi@17.0.7
+jdk.jdwp.agent@17.0.7
+jdk.jfr@17.0.7
+jdk.jlink@17.0.7
+jdk.jpackage@17.0.7
+jdk.jshell@17.0.7
+jdk.jsobject@17.0.7
+jdk.jstatd@17.0.7
+jdk.localedata@17.0.7
+jdk.management@17.0.7
+jdk.management.agent@17.0.7
+jdk.management.jfr@17.0.7
+jdk.naming.dns@17.0.7
+jdk.naming.rmi@17.0.7
+jdk.net@17.0.7
+jdk.nio.mapmode@17.0.7
+jdk.random@17.0.7
+jdk.sctp@17.0.7
+jdk.security.auth@17.0.7
+jdk.security.jgss@17.0.7
+jdk.unsupported@17.0.7
+jdk.unsupported.desktop@17.0.7
+jdk.xml.dom@17.0.7
+jdk.zipfs@17.0.7
+</code></pre><h2 id=模块关键字>模块关键字</h2><h3 id=requires>requires</h3><p>requires 用于导入其它模块，<code>requires 模块名</code></p><p>默认情况下，所有其他模块都依赖于 <code>java.base</code> 模块。</p><h3 id=exports>exports</h3><p>exports 用于指定模块下的哪些包对外可见，<code>exports 包名</code></p><blockquote><p><a href=https://www.oracle.com/corporate/features/understanding-java-9-modules.html>https://www.oracle.com/corporate/features/understanding-java-9-modules.html</a></p><p><a href=https://openjdk.org/projects/jigsaw/>https://openjdk.org/projects/jigsaw/</a></p><p><a href=https://jenkov.com/tutorials/java/modules.html>https://jenkov.com/tutorials/java/modules.html</a></p></blockquote></article></main><footer id=footer></footer></body></html>
