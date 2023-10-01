@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 19 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 数据库连接 (JDBC)</title><link>https://ileonli.github.io/posts/java/jdbc/</link><pubDate>Tue, 19 Sep 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/jdbc/</guid><description>&lt;blockquote>
-&lt;p>翻译：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>
+&lt;p>翻译自：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>
 &lt;/blockquote>
+&lt;hr>
 &lt;h1 id="使用-jdbc-处理-sql-语句">使用 JDBC 处理 SQL 语句&lt;/h1>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/processingsqlstatements.html">https://docs.oracle.com/javase/tutorial/jdbc/basics/processingsqlstatements.html&lt;/a>&lt;/p>
+&lt;/blockquote>
 &lt;p>一般来说，使用 JDBC 处理 SQL 语句需要以下步骤：&lt;/p>
 &lt;ol>
 &lt;li>建立连接。&lt;/li>
-&lt;li>创建 &lt;code>Statement&lt;/code>。&lt;/li>
+&lt;li>创建 &lt;code>Statement&lt;/code> 对象。&lt;/li>
 &lt;li>执行查询。&lt;/li>
 &lt;li>处理 &lt;code>ResultSet&lt;/code> 对象。&lt;/li>
 &lt;li>关闭连接。&lt;/li>
@@ -89,6 +93,9 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="o">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h1 id="建立连接-1">建立连接&lt;/h1>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html">https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html&lt;/a>&lt;/p>
+&lt;/blockquote>
 &lt;p>首先，你需要与你使用的数据源建立连接。数据源可以是 DBMS、传统（legacy）文件系统或具其他具有相应 JDBC 驱动程序的数据源。通常，一个 JDBC 应用使用下面两个类中的一个连接到目标数据源：&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>DriverManager&lt;/code>：通过这个完全实现的类可将应用程序连接到数据源，数据源由数据库 URL 指定。当此类第一次尝试建立连接时，会自动加载类路径下所有的 JDBC 4.0 驱动。请注意，你的程序必须手动加载 4.0 版本之前的 JDBC 驱动。&lt;/li>
@@ -167,7 +174,12 @@
 &lt;/ul>
 &lt;hr>
 &lt;h1 id="使用-datasource-对象连接">使用 &lt;code>DataSource&lt;/code> 对象连接&lt;/h1>
-&lt;p>此节覆盖 &lt;code>DataSource&lt;/code> 对象，使用此对象是连接数据源的优先方法。&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/sqldatasources.html">https://docs.oracle.com/javase/tutorial/jdbc/basics/sqldatasources.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>本节将介绍 &lt;code>DataSource&lt;/code> 对象，该对象是获取数据源连接的首选方式。除了稍后将介绍的其他优点外，数据源对象还可以提供连接池和分布式事务。这一功能对于企业数据库计算至关重要。特别是，它是企业 JavaBeans（EJB）技术不可或缺的一部分。&lt;/p>
+&lt;p>本节将向您展示如何使用 &lt;code>DataSource&lt;/code> 接口获取连接，以及如何使用分布式事务和连接池。这两项操作对 JDBC 应用程序的代码改动都很小。&lt;/p>
+&lt;p>系统管理员通常使用工具（如 Apache Tomcat 或 Oracle WebLogic Server）来部署实现这些操作的类，部署这些类所需的工作因所部署的 &lt;code>DataSource&lt;/code> 对象的类型而异。因此，本节的大部分内容将用于展示系统管理员如何设置环境，以便程序员可以使用 &lt;code>DataSource&lt;/code> 对象获取连接。&lt;/p>
 &lt;h2 id="使用-datasource-对象获得连接">使用 &lt;code>DataSource&lt;/code> 对象获得连接&lt;/h2>
 &lt;hr>
 &lt;h1 id="处理-sql-异常">处理 SQL 异常&lt;/h1>
