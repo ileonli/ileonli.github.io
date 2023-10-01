@@ -1,25 +1,98 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 数据库连接 (JDBC)</title><link>https://ileonli.github.io/posts/java/jdbc/</link><pubDate>Tue, 19 Sep 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/jdbc/</guid><description>&lt;blockquote>
 &lt;p>翻译：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>
 &lt;/blockquote>
-&lt;h2 id="使用-jdbc-处理-sql">使用 JDBC 处理 SQL&lt;/h2>
+&lt;h1 id="使用-jdbc-处理-sql-语句">使用 JDBC 处理 SQL 语句&lt;/h1>
 &lt;p>一般来说，使用 JDBC 处理 SQL 语句需要以下步骤：&lt;/p>
 &lt;ol>
-&lt;li>Establishing a connection.&lt;/li>
-&lt;li>Create a statement.&lt;/li>
-&lt;li>Execute the query.&lt;/li>
-&lt;li>Process the ResultSet object.&lt;/li>
-&lt;li>Close the connection.&lt;/li>
+&lt;li>建立连接。&lt;/li>
+&lt;li>创建 &lt;code>Statement&lt;/code>。&lt;/li>
+&lt;li>执行查询。&lt;/li>
+&lt;li>处理 &lt;code>ResultSet&lt;/code> 对象。&lt;/li>
+&lt;li>关闭连接。&lt;/li>
 &lt;/ol>
-&lt;hr>
-&lt;h1 id="建立连接">建立连接&lt;/h1>
-&lt;p>首先，你需要与你使用的数据源建立连接。数据源可以是 DBMS、遗留（legacy）的文件系统或具有相应 JDBC 驱动的其它数据源。通常，一个 JDBC 应用使用下面两个类中的一个连接到目标数据源：&lt;/p>
+&lt;p>本页面使用 &lt;a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/examples/JDBCTutorial/src/com/oracle/tutorial/jdbc/CoffeesTable.java">CoffeesTable.viewTable&lt;/a> 教程示例中的方法来演示这些步骤。该方法输出 &lt;code>COFFEES&lt;/code> 表的内容。本教程稍后将更详细地讨论此方法：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">viewTable&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Connection&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">query&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">&amp;#34;select COF_NAME, SUP_ID, PRICE, SALES, TOTAL from COFFEES&amp;#34;&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Statement&lt;/span> &lt;span class="n">stmt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">createStatement&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">coffeeName&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getString&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;COF_NAME&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SUP_ID&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">float&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getFloat&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;PRICE&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SALES&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">total&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;TOTAL&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">coffeeName&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">total&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">SQLException&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">JDBCTutorialUtilities&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">printSQLException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="建立连接">建立连接&lt;/h2>
+&lt;p>首先，需要要使用的数据源建立连接。数据源可以是 DBMS、传统（legacy）文件系统或其他具有相应 JDBC 驱动程序的数据源。此连接由连接对象表示。&lt;/p>
+&lt;h2 id="创建-statement">创建 Statement&lt;/h2>
+&lt;p>&lt;code>Statement&lt;/code> 是表示 SQL 语句的接口。执行 &lt;code>Statement&lt;/code> 对象会生成 &lt;code>ResultSet&lt;/code> 对象，这是一个代表数据库结果集的数据表。创建 &lt;code>Statement&lt;/code> 对象需要使用 &lt;code>Connection&lt;/code> 对象。&lt;/p>
+&lt;p>例如：&lt;code>CoffeesTable.viewTable&lt;/code> 使用以下代码创建 &lt;code>Statement&lt;/code> 对象：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">stmt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">createStatement&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>有三种不同的 &lt;code>Statement&lt;/code>：&lt;/p>
 &lt;ul>
-&lt;li>
-&lt;p>&lt;code>DriverManager&lt;/code>：通过这个完全实现的类可将应用程序连接到数据源，数据源由数据库 URL 指定。当此类第一次尝试建立连接时，会自动加载类路径下所有的 JDBC 4.0 驱动。请注意，你的程序必须手动加载 4.0 版本之前的 JDBC 驱动。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;code>DataSource&lt;/code>：该接口优于 &lt;code>DriverManager&lt;/code>，对于底层数据源的细节对应用透明。设置 &lt;code>DataSource&lt;/code> 对象的属性以使其代表特定的数据源。&lt;/p>
-&lt;/li>
+&lt;li>&lt;code>Statement&lt;/code>：用于实现简单的且没有参数的 SQL 语句。&lt;/li>
+&lt;li>&lt;code>PreparedStatement&lt;/code>：扩展的 &lt;code>Statement&lt;/code>，预编译 SQL 语句，该 SQL 可能包含输入参数。&lt;/li>
+&lt;li>&lt;code>CallableStatement&lt;/code>：扩展的 &lt;code>PreparedStatement&lt;/code>，用于执行可能包含输入和输出参数的存储过程。&lt;/li>
+&lt;/ul>
+&lt;h2 id="执行查询">执行查询&lt;/h2>
+&lt;p>为了执行查询，需要调用 &lt;code>Statement&lt;/code> 方法：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>execute&lt;/code>：如果查询返回的第一个对象是一个 &lt;code>ResultSet&lt;/code> 对象，则返回 &lt;code>true&lt;/code>。如果查询可能返回一个或多个 &lt;code>ResultSet&lt;/code> 对象，则使用该方法。通过重复调用 &lt;code>Statement.getResultSet&lt;/code> 来读取查询返回的 &lt;code>ResultSet&lt;/code> 对象。&lt;/li>
+&lt;li>&lt;code>executeQuery&lt;/code>：返回一个&lt;code>ResultSet&lt;/code> 对象。&lt;/li>
+&lt;li>&lt;code>executeUpdate&lt;/code>：返回一个整数，表示被 SQL 语句影响的行数。如果您使用 &lt;code>INSERT&lt;/code>、&lt;code>DELETE&lt;/code> 或 &lt;code>UPDATE&lt;/code> 等SQL 语句，请使用此方法。&lt;/li>
+&lt;/ul>
+&lt;p>例如：&lt;code>CoffeesTable.viewTable&lt;/code> 使用以下代码执行 &lt;code>Statement&lt;/code>：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="处理-resultset-对象">处理 &lt;code>ResultSet&lt;/code> 对象&lt;/h2>
+&lt;p>您可以通过游标（cursor）访问 &lt;code>ResultSet&lt;/code> 对象中的数据。请注意，该游标不是数据库游标。该游标是一个指针，指向 &lt;code>ResultSet&lt;/code> 对象中的一行数据。最初，光标位于第一行之前。您可以调用 &lt;code>ResultSet&lt;/code> 对象中定义的各种方法来移动光标。&lt;/p>
+&lt;p>例如，&lt;code>CoffeesTable.viewTable&lt;/code> 重复调用 &lt;code>ResultSet.next&lt;/code> 方法将光标向前移动一行。每次调用&lt;code>next&lt;/code> 时，该方法都会输出光标当前所在行的数据：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">coffeeName&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getString&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;COF_NAME&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SUP_ID&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">float&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getFloat&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;PRICE&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SALES&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">total&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;TOTAL&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">coffeeName&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">total&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ..
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="关闭连接">关闭连接&lt;/h2>
+&lt;p>当使用完 &lt;code>Connection&lt;/code>、&lt;code>Statement&lt;/code> 或 &lt;code>ResultSet&lt;/code> 对象后，调用其 &lt;code>close&lt;/code> 方法立即释放正在使用的资源。&lt;/p>
+&lt;p>此外，使用 try-with-resources 语句自动关闭 &lt;code>Connection&lt;/code>、&lt;code>Statement&lt;/code> 和 &lt;code>ResultSet&lt;/code> 对象，无论是否抛出 &lt;code>SQLException&lt;/code> 异常（当 JDBC 在与数据源交互期间遇到错误时，它会抛出 &lt;code>SQLException&lt;/code>）。自动资源语句由 try 语句和一个或多个声明的资源组成。例如 &lt;code>CoffeesTable.viewTable&lt;/code> 方法自动关闭其 &lt;code>Statement&lt;/code> 对象，如下所示：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">viewTable&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Connection&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">query&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">&amp;#34;select COF_NAME, SUP_ID, PRICE, SALES, TOTAL from COFFEES&amp;#34;&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Statement&lt;/span> &lt;span class="n">stmt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">createStatement&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">coffeeName&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getString&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;COF_NAME&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SUP_ID&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">float&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getFloat&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;PRICE&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SALES&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">total&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;TOTAL&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">coffeeName&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">supplierID&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">price&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">sales&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;, &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">total&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">SQLException&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">JDBCTutorialUtilities&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">printSQLException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>下面是一个 try-with-resources 语句，它声明了一个资源 &lt;code>stmt&lt;/code>，当 try 块终止时，该资源将自动关闭：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="k">try&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Statement&lt;/span> &lt;span class="n">stmt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">con&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">createStatement&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h1 id="建立连接-1">建立连接&lt;/h1>
+&lt;p>首先，你需要与你使用的数据源建立连接。数据源可以是 DBMS、传统（legacy）文件系统或具其他具有相应 JDBC 驱动程序的数据源。通常，一个 JDBC 应用使用下面两个类中的一个连接到目标数据源：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>DriverManager&lt;/code>：通过这个完全实现的类可将应用程序连接到数据源，数据源由数据库 URL 指定。当此类第一次尝试建立连接时，会自动加载类路径下所有的 JDBC 4.0 驱动。请注意，你的程序必须手动加载 4.0 版本之前的 JDBC 驱动。&lt;/li>
+&lt;li>&lt;code>DataSource&lt;/code>：该接口优于 &lt;code>DriverManager&lt;/code>，对于底层数据源的细节对应用透明。设置 &lt;code>DataSource&lt;/code> 对象的属性以使其代表特定的数据源。&lt;/li>
 &lt;/ul>
 &lt;h2 id="使用-drivermanager-类">使用 DriverManager 类&lt;/h2>
 &lt;p>使用 &lt;code>DeriverManager&lt;/code> 类连接到 DBMS 涉及调用 &lt;code>DriverManager.getConnection&lt;/code> 方法。&lt;/p>
