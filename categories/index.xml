@@ -49,12 +49,12 @@
 &lt;ul>
 &lt;li>&lt;code>execute&lt;/code>：如果查询返回的第一个对象是一个 &lt;code>ResultSet&lt;/code> 对象，则返回 &lt;code>true&lt;/code>。如果查询可能返回一个或多个 &lt;code>ResultSet&lt;/code> 对象，则使用该方法。通过重复调用 &lt;code>Statement.getResultSet&lt;/code> 来读取查询返回的 &lt;code>ResultSet&lt;/code> 对象。&lt;/li>
 &lt;li>&lt;code>executeQuery&lt;/code>：返回一个&lt;code>ResultSet&lt;/code> 对象。&lt;/li>
-&lt;li>&lt;code>executeUpdate&lt;/code>：返回一个整数，表示被 SQL 语句影响的行数。如果您使用 &lt;code>INSERT&lt;/code>、&lt;code>DELETE&lt;/code> 或 &lt;code>UPDATE&lt;/code> 等SQL 语句，请使用此方法。&lt;/li>
+&lt;li>&lt;code>executeUpdate&lt;/code>：返回一个整数，表示被 SQL 语句影响的行数。如果你使用 &lt;code>INSERT&lt;/code>、&lt;code>DELETE&lt;/code> 或 &lt;code>UPDATE&lt;/code> 等SQL 语句，请使用此方法。&lt;/li>
 &lt;/ul>
 &lt;p>例如：&lt;code>CoffeesTable.viewTable&lt;/code> 使用以下代码执行 &lt;code>Statement&lt;/code>：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="处理-resultset-对象">处理 &lt;code>ResultSet&lt;/code> 对象&lt;/h2>
-&lt;p>您可以通过游标（cursor）访问 &lt;code>ResultSet&lt;/code> 对象中的数据。请注意，该游标不是数据库游标。该游标是一个指针，指向 &lt;code>ResultSet&lt;/code> 对象中的一行数据。最初，光标位于第一行之前。您可以调用 &lt;code>ResultSet&lt;/code> 对象中定义的各种方法来移动光标。&lt;/p>
+&lt;p>你可以通过游标（cursor）访问 &lt;code>ResultSet&lt;/code> 对象中的数据。请注意，该游标不是数据库游标。该游标是一个指针，指向 &lt;code>ResultSet&lt;/code> 对象中的一行数据。最初，光标位于第一行之前。你可以调用 &lt;code>ResultSet&lt;/code> 对象中定义的各种方法来移动光标。&lt;/p>
 &lt;p>例如，&lt;code>CoffeesTable.viewTable&lt;/code> 重复调用 &lt;code>ResultSet.next&lt;/code> 方法将光标向前移动一行。每次调用&lt;code>next&lt;/code> 时，该方法都会输出光标当前所在行的数据：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">query&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
@@ -178,7 +178,7 @@
 &lt;p>&lt;a href="https://docs.oracle.com/javase/tutorial/jdbc/basics/sqldatasources.html">https://docs.oracle.com/javase/tutorial/jdbc/basics/sqldatasources.html&lt;/a>&lt;/p>
 &lt;/blockquote>
 &lt;p>本节将介绍 &lt;code>DataSource&lt;/code> 对象，该对象是获取数据源连接的首选方式。除了稍后将介绍的其他优点外，数据源对象还可以提供连接池和分布式事务。这一功能对于企业数据库计算至关重要。特别是，它是企业 JavaBeans（EJB）技术不可或缺的一部分。&lt;/p>
-&lt;p>本节将向您展示如何使用 &lt;code>DataSource&lt;/code> 接口获取连接，以及如何使用分布式事务和连接池。这两项操作对 JDBC 应用程序的代码改动都很小。&lt;/p>
+&lt;p>本节将向你展示如何使用 &lt;code>DataSource&lt;/code> 接口获取连接，以及如何使用分布式事务和连接池。这两项操作对 JDBC 应用程序的代码改动都很小。&lt;/p>
 &lt;p>系统管理员通常使用工具（如 Apache Tomcat 或 Oracle WebLogic Server）来部署实现这些操作的类，部署这些类所需的工作因所部署的 &lt;code>DataSource&lt;/code> 对象的类型而异。因此，本节的大部分内容将用于展示系统管理员如何设置环境，以便程序员可以使用 &lt;code>DataSource&lt;/code> 对象获取连接。&lt;/p>
 &lt;h2 id="使用-datasource-对象获得连接">使用 &lt;code>DataSource&lt;/code> 对象获得连接&lt;/h2>
 &lt;p>在建立连接章节中，你学习了如何使用 &lt;code>DriverManager&lt;/code> 类获取连接。本节将向你展示如何使用&lt;code>DataSource&lt;/code> 对象获取与数据源的连接，这也是首选方法。&lt;/p>
@@ -247,7 +247,7 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ctx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">bind&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;jdbc/fastCoffeeDB&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">ds&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>此时，会部署一个 &lt;code>DataSource&lt;/code> 对象，应用程序可从该数据源对象中获得与数据库 COFFEEBREAK 的池连接。&lt;/p>
 &lt;h2 id="获取并使用池化连接">获取并使用池化连接&lt;/h2>
-&lt;p>连接池是数据库连接对象的缓存。这些对象表示应用程序可以用来连接到数据库的物理连接。在运行时，应用程序从池中获取连接。如果池中包含可以满足请求的连接，则将连接返回给应用程序。如果未找到连接，则会创建一个新连接并将其返回给应用程序。应用程序使用该连接对数据库执行一些工作，然后将对象返回到池中。 然后该连接可用于下一个连接请求。&lt;/p>
+&lt;p>连接池是数据库连接对象的缓存。这些对象表示应用程序可以用来连接到数据库的物理连接。在运行时，应用程序从池中获取连接。如果池中包含可以满足请求的连接，则将连接返回给应用程序。如果未找到连接，则会创建一个新连接并将其返回给应用程序。应用程序使用该连接对数据库执行一些工作，然后将对象返回到池中。然后该连接可用于下一个连接请求。&lt;/p>
 &lt;p>连接池促进了连接对象的重用，减少了连接对象的创建次数。连接池显著提高了数据库密集型应用程序的性能，因为创建连接对象在时间和资源方面都非常昂贵。&lt;/p>
 &lt;p>现在已经部署了这些 &lt;code>DataSource&lt;/code> 和 &lt;code>ConnectionPoolDataSource&lt;/code> 对象，程序员可以使用 &lt;code>DataSource&lt;/code> 对象来获取池连接。获取池化连接的代码与获取非池化连接的代码类似，如以下两行所示：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ctx&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">InitialContext&lt;/span>&lt;span class="o">();&lt;/span>
@@ -318,11 +318,11 @@
 &lt;li>已部署实现 &lt;code>ConnectionPoolDataSource&lt;/code> 的类的实例。&lt;/li>
 &lt;li>已部署实现 &lt;code>DataSource&lt;/code> 的类的实例，并且为其 &lt;code>dataSourceName&lt;/code> 属性设置的值是绑定到先前部署的 &lt;code>ConnectionPoolDataSource&lt;/code> 对象的逻辑名称。&lt;/li>
 &lt;/ol>
-&lt;p>请注意，虽然此代码与您之前见过的代码非常相似，但它在以下方面有所不同：&lt;/p>
+&lt;p>请注意，虽然此代码与你之前见过的代码非常相似，但它在以下方面有所不同：&lt;/p>
 &lt;ul>
 &lt;li>
 &lt;p>除了 &lt;code>java.sql&lt;/code> 之外，它还导入 &lt;code>javax.sql&lt;/code>、&lt;code>javax.ejb&lt;/code> 和 &lt;code>javax.naming&lt;/code> 包。
-&lt;code>DataSource&lt;/code> 和 &lt;code>ConnectionPoolDataSource&lt;/code> 接口位于 &lt;code>javax.sql&lt;/code> 包中，JNDI 构造函数 &lt;code>InitialContext&lt;/code> 和方法 &lt;code>Context.lookup&lt;/code> 是 &lt;code>javax.naming&lt;/code> 包的一部分。 此特定示例代码采用 EJB 组件的形式，该组件使用 &lt;code>javax.ejb&lt;/code> 包中的 API。 此示例的目的是展示您使用池连接的方式与使用非池连接的方式相同，因此您不必担心理解 EJB API。&lt;/p>
+&lt;code>DataSource&lt;/code> 和 &lt;code>ConnectionPoolDataSource&lt;/code> 接口位于 &lt;code>javax.sql&lt;/code> 包中，JNDI 构造函数 &lt;code>InitialContext&lt;/code> 和方法 &lt;code>Context.lookup&lt;/code> 是 &lt;code>javax.naming&lt;/code> 包的一部分。此特定示例代码采用 EJB 组件的形式，该组件使用 &lt;code>javax.ejb&lt;/code> 包中的 API。此示例的目的是展示你使用池连接的方式与使用非池连接的方式相同，因此你不必担心理解 EJB API。&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>使用 &lt;code>DataSource&lt;/code> 对象来获取连接，而不是使用 &lt;code>DriverManager&lt;/code>。&lt;/p>
@@ -331,20 +331,20 @@
 &lt;p>使用 &lt;code>finally&lt;/code> 块来确保连接已关闭。&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;p>获取和使用池连接与获取和使用常规连接类似。当充当系统管理员的某人正确部署了 &lt;code>ConnectionPoolDataSource&lt;/code> 对象和 &lt;code>DataSource&lt;/code> 对象时，应用程序将使用该 &lt;code>DataSource&lt;/code> 对象来获取池连接。 但是，应用程序应该使用 &lt;code>finally&lt;/code> 块来关闭池连接。 为简单起见，前面的示例使用了 &lt;code>finally&lt;/code> 块，但没有使用 &lt;code>catch&lt;/code> 块。 如果 &lt;code>try&lt;/code> 块中的方法抛出异常，则默认会抛出异常，无论如何都会执行 &lt;code>finally&lt;/code> 子句。&lt;/p>
+&lt;p>获取和使用池连接与获取和使用常规连接类似。当充当系统管理员的某人正确部署了 &lt;code>ConnectionPoolDataSource&lt;/code> 对象和 &lt;code>DataSource&lt;/code> 对象时，应用程序将使用该 &lt;code>DataSource&lt;/code> 对象来获取池连接。但是，应用程序应该使用 &lt;code>finally&lt;/code> 块来关闭池连接。为简单起见，前面的示例使用了 &lt;code>finally&lt;/code> 块，但没有使用 &lt;code>catch&lt;/code> 块。如果 &lt;code>try&lt;/code> 块中的方法抛出异常，则默认会抛出异常，无论如何都会执行 &lt;code>finally&lt;/code> 子句。&lt;/p>
 &lt;h2 id="部署分布式事务">部署分布式事务&lt;/h2>
 &lt;p>可以部署 &lt;code>DataSource&lt;/code> 对象来获取可在分布式事务中使用的连接。与连接池一样，必须部署两个不同的类实例：一个 &lt;code>XADataSource&lt;/code> 对象和一个为了使用它而实现的 &lt;code>DataSource&lt;/code> 对象。&lt;/p>
-&lt;p>假设 Coffee Break 企业家购买的 EJB 服务器包含 &lt;code>DataSource&lt;/code> 类 &lt;code>com.applogic.TransactionalDS&lt;/code>，它与 &lt;code>XADataSource&lt;/code> 类（例如：&lt;code>com.dbaccess.XATransactionalDS&lt;/code>）一起使用。 事实上，它可以与任何 &lt;code>XADataSource&lt;/code> 类一起使用，这使得 EJB 服务器可以跨 JDBC 驱动程序移植。 当部署 &lt;code>DataSource&lt;/code> 和 &lt;code>XADataSource&lt;/code> 对象时，产生的连接将能够参与分布式事务。 在本例中，实现了 &lt;code>com.applogic.TransactionalDS&lt;/code> 类，以便生成的连接也是池连接，这通常是作为 EJB 服务器实现的一部分提供的 &lt;code>DataSource&lt;/code> 类的情况。&lt;/p>
+&lt;p>假设 Coffee Break 企业家购买的 EJB 服务器包含 &lt;code>DataSource&lt;/code> 类 &lt;code>com.applogic.TransactionalDS&lt;/code>，它与 &lt;code>XADataSource&lt;/code> 类（例如：&lt;code>com.dbaccess.XATransactionalDS&lt;/code>）一起使用。事实上，它可以与任何 &lt;code>XADataSource&lt;/code> 类一起使用，这使得 EJB 服务器可以跨 JDBC 驱动程序移植。当部署 &lt;code>DataSource&lt;/code> 和 &lt;code>XADataSource&lt;/code> 对象时，产生的连接将能够参与分布式事务。在本例中，实现了 &lt;code>com.applogic.TransactionalDS&lt;/code> 类，以便生成的连接也是池连接，这通常是作为 EJB 服务器实现的一部分提供的 &lt;code>DataSource&lt;/code> 类的情况。&lt;/p>
 &lt;p>必须首先部署 &lt;code>XADataSource&lt;/code> 对象。以下代码创建 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 的实例并设置其属性：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbaccess&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">XATransactionalDS&lt;/span> &lt;span class="n">xads&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">dbaccess&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">XATransactionalDS&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">xads&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">setServerName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;creamer&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">xads&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">setDatabaseName&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;COFFEEBREAK&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">xads&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">setPortNumber&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="mi">9040&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">xads&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">setDescription&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Distributed transactions for COFFEEBREAK DBMS&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>以下代码使用 JNDI 命名服务注册 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 对象 &lt;code>xads&lt;/code>。请注意，与 &lt;code>xads&lt;/code> 关联的逻辑名称在 jdbc 下添加了子上下文 &lt;code>xa&lt;/code>。 Oracle 建议 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 类的任何实例的逻辑名称始终以 &lt;code>jdbc/xa&lt;/code> 开头。&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>以下代码使用 JNDI 命名服务注册 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 对象 &lt;code>xads&lt;/code>。请注意，与 &lt;code>xads&lt;/code> 关联的逻辑名称在 jdbc 下添加了子上下文 &lt;code>xa&lt;/code>。Oracle 建议 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 类的任何实例的逻辑名称始终以 &lt;code>jdbc/xa&lt;/code> 开头。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Context&lt;/span> &lt;span class="n">ctx&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">InitialContext&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ctx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">bind&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;jdbc/xa/distCoffeeDB&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">xads&lt;/span>&lt;span class="o">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>接下来，部署实现与 &lt;code>xad&lt;/code> 和其他 &lt;code>XADataSource&lt;/code> 对象交互的 &lt;code>DataSource&lt;/code> &lt;code>对象。请注意，DataSource&lt;/code> 类 &lt;code>com.applogic.TransactionalDS&lt;/code> 可以与任何 JDBC 驱动程序供应商的 &lt;code>XADataSource&lt;/code> 类一起使用。 部署 &lt;code>DataSource&lt;/code> 对象涉及创建 &lt;code>com.applogic.TransactionalDS&lt;/code> 类的实例并设置其属性。&lt;code>dataSourceName&lt;/code> 属性设置为 &lt;code>jdbc/xa/distCoffeeDB&lt;/code>，即与 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 关联的逻辑名称。这是 &lt;code>XADataSource&lt;/code> 类，它为 &lt;code>DataSource&lt;/code> 类实现分布式事务功能。以下代码部署 &lt;code>DataSource&lt;/code> 类的实例：&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>接下来，部署实现与 &lt;code>xad&lt;/code> 和其他 &lt;code>XADataSource&lt;/code> 对象交互的 &lt;code>DataSource&lt;/code> &lt;code>对象。请注意，DataSource&lt;/code> 类 &lt;code>com.applogic.TransactionalDS&lt;/code> 可以与任何 JDBC 驱动程序供应商的 &lt;code>XADataSource&lt;/code> 类一起使用。部署 &lt;code>DataSource&lt;/code> 对象涉及创建 &lt;code>com.applogic.TransactionalDS&lt;/code> 类的实例并设置其属性。&lt;code>dataSourceName&lt;/code> 属性设置为 &lt;code>jdbc/xa/distCoffeeDB&lt;/code>，即与 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 关联的逻辑名称。这是 &lt;code>XADataSource&lt;/code> 类，它为 &lt;code>DataSource&lt;/code> 类实现分布式事务功能。以下代码部署 &lt;code>DataSource&lt;/code> 类的实例：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">applogic&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">TransactionalDS&lt;/span> &lt;span class="n">ds&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">applogic&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">TransactionalDS&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ds&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">setDescription&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Produces distributed transaction &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;connections to COFFEEBREAK&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
@@ -353,14 +353,14 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ctx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">bind&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;jdbc/distCoffeeDB&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">ds&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>现在已经部署了 &lt;code>com.applogic.TransactionalDS&lt;/code> 和 &lt;code>com.dbaccess.XATransactionalDS&lt;/code> 类的实例，应用程序可以在 &lt;code>TransactionalDS&lt;/code> 类的实例上调用 &lt;code>getConnection&lt;/code> 方法来获取与可在分布式事务中使用的 &lt;code>COFFEEBREAK&lt;/code> 数据库的连接。&lt;/p>
 &lt;h2 id="使用连接进行分布式事务">使用连接进行分布式事务&lt;/h2>
-&lt;p>要获得可用于分布式事务的连接，必须使用已正确实现和部署的 &lt;code>DataSource&lt;/code> 对象，如部署分布式事务部分所示。 对于这样的 &lt;code>DataSource&lt;/code> 对象，调用它的 &lt;code>getConnection&lt;/code> 方法。 建立连接后，就像使用任何其他连接一样使用它。由于 &lt;code>jdbc/distCoffeesDB&lt;/code> 已与 JNDI 命名服务中的 &lt;code>XADataSource&lt;/code> 对象关联，因此以下代码生成可在分布式事务中使用的 &lt;code>Connection&lt;/code> 对象：&lt;/p>
+&lt;p>要获得可用于分布式事务的连接，必须使用已正确实现和部署的 &lt;code>DataSource&lt;/code> 对象，如部署分布式事务部分所示。对于这样的 &lt;code>DataSource&lt;/code> 对象，调用它的 &lt;code>getConnection&lt;/code> 方法。建立连接后，就像使用任何其他连接一样使用它。由于 &lt;code>jdbc/distCoffeesDB&lt;/code> 已与 JNDI 命名服务中的 &lt;code>XADataSource&lt;/code> 对象关联，因此以下代码生成可在分布式事务中使用的 &lt;code>Connection&lt;/code> 对象：&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Context&lt;/span> &lt;span class="n">ctx&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">InitialContext&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">DataSource&lt;/span> &lt;span class="n">ds&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">DataSource&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="n">ctx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">lookup&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;jdbc/distCoffeesDB&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Connection&lt;/span> &lt;span class="n">con&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ds&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getConnection&lt;/span>&lt;span class="o">();&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当此连接作为分布式事务的一部分时，对其使用方式有一些次要但重要的限制。事务管理器控制分布式事务何时开始以及何时提交或回滚；因此，应用程序代码决不应该调用 &lt;code>Connection.commit&lt;/code> 或 &lt;code>Connection.rollback&lt;/code> 方法。应用程序同样不应该调用 &lt;code>Connection.setAutoCommit(true)&lt;/code>，这会启用自动提交模式，因为这也会干扰事务管理器对事务边界的控制。这解释了为什么在分布式事务范围内创建的新连接默认禁用其自动提交模式。请注意，这些限制仅在连接参与分布式事务时适用；当连接不是分布式事务的一部分时，没有任何限制。&lt;/p>
-&lt;p>对于以下示例，假设订单的咖啡已发货，这会触发对驻留在不同 DBMS 服务器上的两个表的更新。 第一个表是新的 &lt;code>INVENTORY&lt;/code> 表，第二个表是 &lt;code>COFFEES&lt;/code> 表。 由于这些表位于不同的 DBMS 服务器上，因此涉及它们的事务将是分布式事务。 以下示例中的代码获取连接、更新 &lt;code>COFFEES&lt;/code> 表并关闭连接，是分布式事务的第二部分。&lt;/p>
+&lt;p>对于以下示例，假设订单的咖啡已发货，这会触发对驻留在不同 DBMS 服务器上的两个表的更新。第一个表是新的 &lt;code>INVENTORY&lt;/code> 表，第二个表是 &lt;code>COFFEES&lt;/code> 表。由于这些表位于不同的 DBMS 服务器上，因此涉及它们的事务将是分布式事务。以下示例中的代码获取连接、更新 &lt;code>COFFEES&lt;/code> 表并关闭连接，是分布式事务的第二部分。&lt;/p>
 &lt;p>请注意，代码不会显式提交或回滚更新，因为分布式事务的范围由中间层服务器的底层系统基础结构控制。此外，假设用于分布式事务的连接是池连接，则应用程序使用 &lt;code>finally&lt;/code> 块来关闭连接。这样保证了即使抛出异常也会关闭有效的连接，从而保证连接返回到连接池中被回收。&lt;/p>
-&lt;p>以下代码示例说明了一个企业 Bean，它是一个实现可由客户端计算机调用的方法的类。此示例的目的是演示分布式事务的应用程序代码与其他代码没有什么不同，只是它不调用 &lt;code>Connection&lt;/code> 方法 &lt;code>commit&lt;/code>、&lt;code>rollback&lt;/code> 或 &lt;code>setAutoCommit(true)&lt;/code>。因此，您无需担心了解所使用的 EJB API。&lt;/p>
+&lt;p>以下代码示例说明了一个企业 Bean，它是一个实现可由客户端计算机调用的方法的类。此示例的目的是演示分布式事务的应用程序代码与其他代码没有什么不同，只是它不调用 &lt;code>Connection&lt;/code> 方法 &lt;code>commit&lt;/code>、&lt;code>rollback&lt;/code> 或 &lt;code>setAutoCommit(true)&lt;/code>。因此，你无需担心了解所使用的 EJB API。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">java.sql.*&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">javax.sql.*&lt;/span>&lt;span class="o">;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">javax.ejb.*&lt;/span>&lt;span class="o">;&lt;/span>
@@ -411,6 +411,101 @@
 &lt;li>对任何链式（chained）异常的引用。如果发生多个错误，则通过该链引用异常。通过对引发的异常调用方法 &lt;code>SQLException.getNextException&lt;/code> 来获取异常。&lt;/li>
 &lt;/ul>
 &lt;h2 id="获取异常">获取异常&lt;/h2>
+&lt;p>以下方法 &lt;code>JDBCTutorialUtilities.printSQLException&lt;/code> 输出 &lt;code>SQLException&lt;/code> 中包含的 &lt;code>SQLState&lt;/code>、错误代码、错误描述和原因（如果有）以及链接到它的任何其他异常：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">printSQLException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">SQLException&lt;/span> &lt;span class="n">ex&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Throwable&lt;/span> &lt;span class="n">e&lt;/span> &lt;span class="o">:&lt;/span> &lt;span class="n">ex&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">e&lt;/span> &lt;span class="k">instanceof&lt;/span> &lt;span class="n">SQLException&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">ignoreSQLException&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">((&lt;/span>&lt;span class="n">SQLException&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">).&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">getSQLState&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">e&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">printStackTrace&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">err&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">err&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SQLState: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">((&lt;/span>&lt;span class="n">SQLException&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">).&lt;/span>&lt;span class="na">getSQLState&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">err&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Error Code: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">((&lt;/span>&lt;span class="n">SQLException&lt;/span>&lt;span class="o">)&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="o">).&lt;/span>&lt;span class="na">getErrorCode&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">err&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Message: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getMessage&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Throwable&lt;/span> &lt;span class="n">t&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ex&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getCause&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">t&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Cause: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">t&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getCause&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>例如，如果你使用 Java DB 作为 DBMS 并调用方法 &lt;code>CoffeesTable.dropTable&lt;/code>。表 &lt;code>COFFEES&lt;/code> 不存在，并且你删除了对 &lt;code>JDBCTutorialUtilities.ignoreSQLException&lt;/code> 的调用，则将输出类似于以下的内容：&lt;/p>
+&lt;pre tabindex="0">&lt;code>SQLState: 42Y55
+Error Code: 30000
+Message: &amp;#39;DROP TABLE&amp;#39; cannot be performed on
+&amp;#39;TESTDB.COFFEES&amp;#39; because it does not exist.
+&lt;/code>&lt;/pre>&lt;p>你可以先获取 &lt;code>SQLState&lt;/code>，然后相应地处理 &lt;code>SQLException&lt;/code>，而不是打印 &lt;code>SQLException&lt;/code> 信息。例如，如果 &lt;code>SQLState&lt;/code> 等于代码 42Y55（并且你使用 Java DB 作为 DBMS），则 &lt;code>JDBCTutorialUtilities.ignoreSQLException&lt;/code> 方法将返回 &lt;code>true&lt;/code>，这会导致 &lt;code>JDBCTutorialUtilities.printSQLException&lt;/code> 忽略 &lt;code>SQLException&lt;/code>：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">boolean&lt;/span> &lt;span class="nf">ignoreSQLException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span> &lt;span class="n">sqlState&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">sqlState&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;The SQL state is not defined!&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// X0Y32: Jar file already exists in schema
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">sqlState&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equalsIgnoreCase&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;X0Y32&amp;#34;&lt;/span>&lt;span class="o">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 42Y55: Table already exists in schema
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">sqlState&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">equalsIgnoreCase&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;42Y55&amp;#34;&lt;/span>&lt;span class="o">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="获取警告">获取警告&lt;/h2>
+&lt;p>&lt;code>SQLWarning&lt;/code> 对象是处理数据库访问警告的 &lt;code>SQLException&lt;/code> 的子类。警告不会像异常那样停止应用程序的执行；它们只是提醒用户某些事情没有按计划发生。例如，警告可能会让你知道尝试撤销的权限并未被撤销。或者警告可能会告诉你在请求的断开连接期间发生了错误。&lt;/p>
+&lt;p>可以在 &lt;code>Connection&lt;/code> &lt;code>对象、Statement&lt;/code> 对象（包括 &lt;code>PreparedStatement&lt;/code> 和 &lt;code>CallableStatement&lt;/code> 对象）或 &lt;code>ResultSet&lt;/code> 对象上报告警告。这些类中的每一个都有一个 &lt;code>getWarnings&lt;/code> 方法，你必须调用该方法才能查看调用对象上报告的第一个警告。如果 &lt;code>getWarnings&lt;/code> 返回警告，你可以对其调用 &lt;code>SQLWarning&lt;/code> 方法 &lt;code>getNextWarning&lt;/code> 来获取任何其他警告。执行语句会自动清除先前语句中的警告，因此它们不会累积。但是，这意味着如果你想要检索一条语句上报告的警告，则必须在执行另一条语句之前执行此操作。&lt;/p>
+&lt;p>&lt;code>JDBCTutorialUtilities.java&lt;/code> 中的以下方法说明了如何获取有关 &lt;code>Statement&lt;/code> 或 &lt;code>ResultSet&lt;/code> 对象上报告的任何警告的完整信息：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">getWarningsFromResultSet&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">JDBCTutorialUtilities&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">printWarnings&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getWarnings&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">getWarningsFromStatement&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Statement&lt;/span> &lt;span class="n">stmt&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">JDBCTutorialUtilities&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">printWarnings&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">stmt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getWarnings&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">printWarnings&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">SQLWarning&lt;/span> &lt;span class="n">warning&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">warning&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;\n---Warning---\n&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">warning&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Message: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">warning&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getMessage&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SQLState: &amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">warning&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getSQLState&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">print&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Vendor error code: &amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">warning&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getErrorCode&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">warning&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">warning&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getNextWarning&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>最常见的警告是 &lt;code>DataTruncation&lt;/code> 警告，它是 &lt;code>SQLWarning&lt;/code> 的子类。所有 &lt;code>DataTruncation&lt;/code> 对象的 &lt;code>SQLState&lt;/code> 均为 01004，表示读取或写入数据时出现问题。&lt;code>DataTruncation&lt;/code> 方法可让您找出哪个列或参数数据被截断、截断是在读操作还是写操作上、应该传输多少字节以及实际传输了多少字节。&lt;/p>
+&lt;h2 id="sql-异常分类">SQL 异常分类&lt;/h2>
+&lt;p>JDBC 驱动程序可能会抛出 &lt;code>SQLException&lt;/code> 的子类，该子类对应于公共 &lt;code>SQLState&lt;/code> 或与特定 &lt;code>SQLState&lt;/code> 类值不关联的公共错误状态。这使你能够编写更可移植的错误处理代码。这些异常是以下类之一的子类：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>SQLNonTransientException&lt;/code>&lt;/li>
+&lt;li>&lt;code>SQLTransientException&lt;/code>&lt;/li>
+&lt;li>&lt;code>SQLRecoverableException&lt;/code>&lt;/li>
+&lt;li>&lt;/li>
+&lt;/ul>
+&lt;p>有关这些子类的更多信息，请参阅 &lt;code>java.sql&lt;/code> 包的最新 Javadoc 或 JDBC 驱动程序的文档。&lt;/p>
+&lt;h2 id="sqlexception-其它子类">&lt;code>SQLException&lt;/code> 其它子类&lt;/h2>
+&lt;p>还可以抛出 SQLException 的以下子类：&lt;/p>
+&lt;ul>
+&lt;li>当批量更新操作发生错误时，会抛出 &lt;code>BatchUpdateException&lt;/code>。除了 &lt;code>SQLException&lt;/code> 提供的信息之外，&lt;code>BatchUpdateException&lt;/code> 还提供错误发生之前执行的所有语句的更新计数。&lt;/li>
+&lt;li>当无法在连接上设置一个或多个客户端信息属性时，将引发 &lt;code>SQLClientInfoException&lt;/code>。除了 &lt;code>SQLException&lt;/code> 提供的信息之外，&lt;code>SQLClientInfoException&lt;/code> 还提供未设置的客户端信息属性的列表。&lt;/li>
+&lt;/ul>
 &lt;hr>
 &lt;h1 id="使用-preparedstatement">使用 &lt;code>PreparedStatement&lt;/code>&lt;/h1>
 &lt;h2 id="preparedstatement-概述">&lt;code>PreparedStatement&lt;/code> 概述&lt;/h2>
