@@ -1,0 +1,104 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://ileonli.github.io/favicon.ico><link rel=stylesheet href=/css/style.min.css><link rel=canonical href=https://ileonli.github.io/posts/java/language/jdbc/><title>Java 数据库连接 (JDBC)</title></head><body><header id=banner></header><main id=content><article><header id=post-header><h1>Java 数据库连接 (JDBC)</h1><div><time>2023-10-03</time></div></header><h2 id=数据库准备>数据库准备</h2><p>我们创建 <code>user</code> 表，该表有 <code>id</code>、<code>username</code> 和 <code>age</code> 字段。SQL 语句如下：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>create</span><span class=w> </span><span class=k>table</span><span class=w> </span><span class=k>user</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>id</span><span class=w>       </span><span class=nb>int</span><span class=w> </span><span class=n>auto_increment</span><span class=w> </span><span class=k>primary</span><span class=w> </span><span class=k>key</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>username</span><span class=w> </span><span class=nb>varchar</span><span class=p>(</span><span class=mi>12</span><span class=p>)</span><span class=w> </span><span class=k>null</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>age</span><span class=w>      </span><span class=nb>int</span><span class=w>         </span><span class=k>null</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></div><p>使用下边 SQL 语句在 <code>user</code> 表内插入一些数据：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-SQL data-lang=SQL><span class=line><span class=cl><span class=k>insert</span><span class=w> </span><span class=k>into</span><span class=w> </span><span class=k>user</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>values</span><span class=w> </span><span class=p>(</span><span class=k>null</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Tom&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>3</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>(</span><span class=k>null</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Jerry&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>4</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>(</span><span class=k>null</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Carry&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>4</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>(</span><span class=k>null</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Petter&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>3</span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></div><h2 id=jdbc>JDBC</h2><p>JDBC（Java Database Connectivity）提供了一系列访问数据库的接口，具体的实现由数据库驱动提供。接口定义在 <code>java.sql</code> 和 <code>javax.sql</code> 包中。</p><p>使用 JDBC 连接数据库并执行的流程如下：</p><ol><li>在应用程序中添加数据库驱动，如：<a href=https://github.com/mysql/mysql-connector-j>MySQL</a> 和 <a href=https://jdbc.postgresql.org/>PostgreSQL</a>。</li><li>使用 <code>DriverManager.getConnection</code> 获取数据库连接。</li><li>创建用于表示 SQL 的 <code>Statement</code> 对象。</li><li>执行 SQL 获取 <code>ResultSet</code> 结果集。</li><li>使用游标（cursor）获取结果，调用 <code>rs.next()</code> 判断是否有下一行结果。</li></ol><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.sql.*</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Main</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>SQLException</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>try</span> <span class=o>(</span><span class=n>Connection</span> <span class=n>connection</span> <span class=o>=</span> <span class=n>DriverManager</span><span class=o>.</span><span class=na>getConnection</span><span class=o>(</span>
+</span></span><span class=line><span class=cl>                <span class=s>&#34;jdbc:mysql://localhost:3306/shop&#34;</span><span class=o>,</span>
+</span></span><span class=line><span class=cl>                <span class=s>&#34;root&#34;</span><span class=o>,</span> <span class=s>&#34;0987654321&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>             <span class=n>Statement</span> <span class=n>statement</span> <span class=o>=</span> <span class=n>connection</span><span class=o>.</span><span class=na>createStatement</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>             <span class=n>ResultSet</span> <span class=n>rs</span> <span class=o>=</span> <span class=n>statement</span><span class=o>.</span><span class=na>executeQuery</span><span class=o>(</span><span class=s>&#34;SELECT * FROM `user`&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>while</span> <span class=o>(</span><span class=n>rs</span><span class=o>.</span><span class=na>next</span><span class=o>())</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                <span class=kt>int</span> <span class=n>id</span> <span class=o>=</span> <span class=n>rs</span><span class=o>.</span><span class=na>getInt</span><span class=o>(</span><span class=mi>1</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>String</span> <span class=n>username</span> <span class=o>=</span> <span class=n>rs</span><span class=o>.</span><span class=na>getString</span><span class=o>(</span><span class=mi>2</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>                <span class=kt>int</span> <span class=n>age</span> <span class=o>=</span> <span class=n>rs</span><span class=o>.</span><span class=na>getInt</span><span class=o>(</span><span class=mi>3</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=n>User</span> <span class=n>user</span> <span class=o>=</span> <span class=k>new</span> <span class=n>User</span><span class=o>(</span><span class=n>id</span><span class=o>,</span> <span class=n>username</span><span class=o>,</span> <span class=n>age</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>user</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>            <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h2 id=drivermanager>DriverManager</h2><p>在 JDBC 4.0 之前，我们需要使用 <code>Class.forName("com.mysql.jdbc.Driver");</code> 手动加载驱动（此方法已被废弃）。在 JDBC 4.0 之后 Java 会使用 SPI 技术自动扫描所有的驱动。</p><p>下边代码节选自 <code>java.sql.DriverManager#ensureDriversInitialized</code>，<code>ServiceLoader.load(Driver.class)</code> 会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>private</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>ensureDriversInitialized</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>(</span><span class=n>driversInitialized</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>synchronized</span> <span class=o>(</span><span class=n>lockForInitDrivers</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>(</span><span class=n>driversInitialized</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// If the driver is packaged as a Service Provider, load it.
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>// Get all the drivers through the classloader
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>// exposed as a java.sql.Driver.class service.
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>// ServiceLoader.load() replaces the sun.misc.Providers()
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>        <span class=n>AccessController</span><span class=o>.</span><span class=na>doPrivileged</span><span class=o>(</span><span class=k>new</span> <span class=n>PrivilegedAction</span><span class=o>&lt;</span><span class=n>Void</span><span class=o>&gt;()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=kd>public</span> <span class=n>Void</span> <span class=nf>run</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=n>ServiceLoader</span><span class=o>&lt;</span><span class=n>Driver</span><span class=o>&gt;</span> <span class=n>loadedDrivers</span> <span class=o>=</span> <span class=n>ServiceLoader</span><span class=o>.</span><span class=na>load</span><span class=o>(</span><span class=n>Driver</span><span class=o>.</span><span class=na>class</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>                <span class=n>Iterator</span><span class=o>&lt;</span><span class=n>Driver</span><span class=o>&gt;</span> <span class=n>driversIterator</span> <span class=o>=</span> <span class=n>loadedDrivers</span><span class=o>.</span><span class=na>iterator</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=cm>/* Load these drivers, so that they can be instantiated.
+</span></span></span><span class=line><span class=cl><span class=cm>                    * It may be the case that the driver class may not be there
+</span></span></span><span class=line><span class=cl><span class=cm>                    * i.e. there may be a packaged driver with the service class
+</span></span></span><span class=line><span class=cl><span class=cm>                    * as implementation of java.sql.Driver but the actual class
+</span></span></span><span class=line><span class=cl><span class=cm>                    * may be missing. In that case a java.util.ServiceConfigurationError
+</span></span></span><span class=line><span class=cl><span class=cm>                    * will be thrown at runtime by the VM trying to locate
+</span></span></span><span class=line><span class=cl><span class=cm>                    * and load the service.
+</span></span></span><span class=line><span class=cl><span class=cm>                    *
+</span></span></span><span class=line><span class=cl><span class=cm>                    * Adding a try catch block to catch those runtime errors
+</span></span></span><span class=line><span class=cl><span class=cm>                    * if driver not available in classpath but it&#39;s
+</span></span></span><span class=line><span class=cl><span class=cm>                    * packaged as service and that service is there in classpath.
+</span></span></span><span class=line><span class=cl><span class=cm>                    */</span>
+</span></span><span class=line><span class=cl>                <span class=k>try</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>while</span> <span class=o>(</span><span class=n>driversIterator</span><span class=o>.</span><span class=na>hasNext</span><span class=o>())</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                        <span class=n>driversIterator</span><span class=o>.</span><span class=na>next</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>                    <span class=o>}</span>
+</span></span><span class=line><span class=cl>                <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>Throwable</span> <span class=n>t</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                    <span class=c1>// Do nothing
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=o>}</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=kc>null</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>            <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>driversInitialized</span> <span class=o>=</span> <span class=kc>true</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><p>通过 SPI 加载 <code>com.mysql.cj.jdbc.Driver</code> 实现时，<code>static</code> 代码块会将自身注册到 <code>DriverManager</code> 中。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=c1>// com.mysql.cj.jdbc.Driver
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Driver</span> <span class=kd>extends</span> <span class=n>NonRegisteringDriver</span> <span class=kd>implements</span> <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>Driver</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// Register ourselves with the DriverManager
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>static</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>try</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>DriverManager</span><span class=o>.</span><span class=na>registerDriver</span><span class=o>(</span><span class=k>new</span> <span class=n>Driver</span><span class=o>());</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>SQLException</span> <span class=n>E</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>throw</span> <span class=k>new</span> <span class=n>RuntimeException</span><span class=o>(</span><span class=s>&#34;Can&#39;t register driver!&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     * Construct a new driver and register it with DriverManager
+</span></span></span><span class=line><span class=cl><span class=cm>     * 
+</span></span></span><span class=line><span class=cl><span class=cm>     * @throws SQLException
+</span></span></span><span class=line><span class=cl><span class=cm>     *             if a database error occurs.
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>Driver</span><span class=o>()</span> <span class=kd>throws</span> <span class=n>SQLException</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// Required for Class.forName().newInstance()
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></div><h2 id=statement>Statement</h2><h3 id=preparedstatement>PreparedStatement</h3><h2 id=resultset>ResultSet</h2></article></main><footer id=footer></footer></body></html>

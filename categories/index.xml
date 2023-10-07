@@ -1,4 +1,126 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 数据库连接 (JDBC)</title><link>https://ileonli.github.io/posts/java/mybatis/jdbc/</link><pubDate>Tue, 03 Oct 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/mybatis/jdbc/</guid><description>&lt;h1 id="heading">&lt;/h1></description></item><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/language/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/language/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on Leon Li (imleonli@outlook.com)</title><link>https://ileonli.github.io/categories/</link><description>Recent content in Categories on Leon Li (imleonli@outlook.com)</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://ileonli.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 数据库连接 (JDBC)</title><link>https://ileonli.github.io/posts/java/language/jdbc/</link><pubDate>Tue, 03 Oct 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/language/jdbc/</guid><description>&lt;h2 id="数据库准备">数据库准备&lt;/h2>
+&lt;p>我们创建 &lt;code>user&lt;/code> 表，该表有 &lt;code>id&lt;/code>、&lt;code>username&lt;/code> 和 &lt;code>age&lt;/code> 字段。SQL 语句如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-SQL" data-lang="SQL">&lt;span class="line">&lt;span class="cl">&lt;span class="k">create&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">table&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">user&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">id&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">auto_increment&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">primary&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">username&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">varchar&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">12&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">age&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>使用下边 SQL 语句在 &lt;code>user&lt;/code> 表内插入一些数据：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-SQL" data-lang="SQL">&lt;span class="line">&lt;span class="cl">&lt;span class="k">insert&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">into&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">user&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">values&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;Tom&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;Jerry&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">4&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;Carry&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">4&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;Petter&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="jdbc">JDBC&lt;/h2>
+&lt;p>JDBC（Java Database Connectivity）提供了一系列访问数据库的接口，具体的实现由数据库驱动提供。接口定义在 &lt;code>java.sql&lt;/code> 和 &lt;code>javax.sql&lt;/code> 包中。&lt;/p>
+&lt;p>使用 JDBC 连接数据库并执行的流程如下：&lt;/p>
+&lt;ol>
+&lt;li>在应用程序中添加数据库驱动，如：&lt;a href="https://github.com/mysql/mysql-connector-j">MySQL&lt;/a> 和 &lt;a href="https://jdbc.postgresql.org/">PostgreSQL&lt;/a>。&lt;/li>
+&lt;li>使用 &lt;code>DriverManager.getConnection&lt;/code> 获取数据库连接。&lt;/li>
+&lt;li>创建用于表示 SQL 的 &lt;code>Statement&lt;/code> 对象。&lt;/li>
+&lt;li>执行 SQL 获取 &lt;code>ResultSet&lt;/code> 结果集。&lt;/li>
+&lt;li>使用游标（cursor）获取结果，调用 &lt;code>rs.next()&lt;/code> 判断是否有下一行结果。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">java.sql.*&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Main&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="o">[]&lt;/span> &lt;span class="n">args&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Connection&lt;/span> &lt;span class="n">connection&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">DriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getConnection&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;jdbc:mysql://localhost:3306/shop&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;root&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s">&amp;#34;0987654321&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Statement&lt;/span> &lt;span class="n">statement&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">connection&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">createStatement&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ResultSet&lt;/span> &lt;span class="n">rs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">statement&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">executeQuery&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;SELECT * FROM `user`&amp;#34;&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">id&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">String&lt;/span> &lt;span class="n">username&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getString&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kt">int&lt;/span> &lt;span class="n">age&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getInt&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">User&lt;/span> &lt;span class="n">user&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">User&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">id&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">username&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="n">age&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">System&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">out&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">println&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">user&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="drivermanager">DriverManager&lt;/h2>
+&lt;p>在 JDBC 4.0 之前，我们需要使用 &lt;code>Class.forName(&amp;quot;com.mysql.jdbc.Driver&amp;quot;);&lt;/code> 手动加载驱动（此方法已被废弃）。在 JDBC 4.0 之后 Java 会使用 SPI 技术自动扫描所有的驱动。&lt;/p>
+&lt;p>下边代码节选自 &lt;code>java.sql.DriverManager#ensureDriversInitialized&lt;/code>，&lt;code>ServiceLoader.load(Driver.class)&lt;/code> 会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="kt">void&lt;/span> &lt;span class="nf">ensureDriversInitialized&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">driversInitialized&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">synchronized&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">lockForInitDrivers&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">driversInitialized&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// If the driver is packaged as a Service Provider, load it.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// Get all the drivers through the classloader
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// exposed as a java.sql.Driver.class service.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// ServiceLoader.load() replaces the sun.misc.Providers()
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">AccessController&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">doPrivileged&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">PrivilegedAction&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Void&lt;/span>&lt;span class="o">&amp;gt;()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="n">Void&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">loadedDrivers&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ServiceLoader&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">load&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Iterator&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Driver&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">driversIterator&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">loadedDrivers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">iterator&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="cm">/* Load these drivers, so that they can be instantiated.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * It may be the case that the driver class may not be there
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * i.e. there may be a packaged driver with the service class
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * as implementation of java.sql.Driver but the actual class
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * may be missing. In that case a java.util.ServiceConfigurationError
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * will be thrown at runtime by the VM trying to locate
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * and load the service.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Adding a try catch block to catch those runtime errors
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * if driver not available in classpath but it&amp;#39;s
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * packaged as service and that service is there in classpath.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">driversIterator&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">hasNext&lt;/span>&lt;span class="o">())&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">driversIterator&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="o">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">Throwable&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Do nothing
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">driversInitialized&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="o">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>通过 SPI 加载 &lt;code>com.mysql.cj.jdbc.Driver&lt;/code> 实现时，&lt;code>static&lt;/code> 代码块会将自身注册到 &lt;code>DriverManager&lt;/code> 中。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-Java" data-lang="Java">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// com.mysql.cj.jdbc.Driver
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">public&lt;/span> &lt;span class="kd">class&lt;/span> &lt;span class="nc">Driver&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">NonRegisteringDriver&lt;/span> &lt;span class="kd">implements&lt;/span> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">Driver&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// Register ourselves with the DriverManager
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">static&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">sql&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">DriverManager&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">registerDriver&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="k">new&lt;/span> &lt;span class="n">Driver&lt;/span>&lt;span class="o">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span> &lt;span class="k">catch&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">SQLException&lt;/span> &lt;span class="n">E&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">throw&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="n">RuntimeException&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;Can&amp;#39;t register driver!&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Construct a new driver and register it with DriverManager
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @throws SQLException
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * if a database error occurs.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">public&lt;/span> &lt;span class="nf">Driver&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="kd">throws&lt;/span> &lt;span class="n">SQLException&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Required for Class.forName().newInstance()
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="statement">Statement&lt;/h2>
+&lt;h3 id="preparedstatement">PreparedStatement&lt;/h3>
+&lt;h2 id="resultset">ResultSet&lt;/h2></description></item><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/language/module/</link><pubDate>Fri, 10 Mar 2023 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/posts/java/language/module/</guid><description>&lt;p>Java 9 中引入了模块化，称为 Java Platform Module System，模块在包的级别上引出了更高级别的组合方式。一个 Java 模块可以指定它所包含的哪些 Java 包对其他 Java 模块可见。Java 模块还必须指定需要哪些 Java 模块来完成其工作。&lt;/p>
 &lt;p>使用 Java 模块有以下优势：&lt;/p>
 &lt;h2 id="使用模块">使用模块&lt;/h2>
 &lt;p>我们使用 Maven 创建项目，项目结构如下。&lt;/p>
