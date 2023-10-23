@@ -6,203 +6,204 @@ package org.example; public class MysqlDriver implements DatabaseBaseDriver { @O
 package org.example; public interface DatabaseBaseDriver { void open(); void close(); String getName(); } 通过实现 DatabaseBaseDriver 接口，分别创建了操作 MySQL 和 PostgreSQL 数据库的驱动。
 package org.example; public class MysqlDriver implements DatabaseBaseDriver { @Override public void open() { System.out.println(&#34;open MySQL connection&#34;); } @Override public void close() { System.out.println(&#34;close MySQL connection&#34;); } @Override public String getName() { return &#34;mysql&#34;; } } package org.example; public class PostgresqlDriver implements DatabaseBaseDriver { @Override public void open() { System."><meta property="og:type" content="article"><meta property="og:url" content="https://ileonli.github.io/posts/java/language/spi/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-02-15T00:00:00+00:00"><meta property="article:modified_time" content="2023-02-15T00:00:00+00:00"><link rel=canonical href=https://ileonli.github.io/posts/java/language/spi/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.135e22c97ff685fe983fc60048e309ced8f00d8d38f536aa67dba8a13a03dfa4.css integrity="sha256-E14iyX/2hf6YP8YASOMJztjwDY049TaqZ9uooToD36Q=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.a00e6364bacbc8266ad1cc81230774a1397198f8cfb7bcba29b7d6fcb54ce57f.css integrity="sha256-oA5jZLrLyCZq0cyBIwd0oTlxmPjPt7y6KbfW/LVM5X8=" crossorigin=anonymous media=screen><link rel=icon type=image/svg+xml href=/images/favicon.svg sizes=any><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Leon' Blog</a>
 <input type=checkbox id=menu-toggle>
-<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/about/>About</a></li><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/projects/>Projects</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://ileonli.github.io/posts/java/language/spi/>Java SPI 机制</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/about/>About</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://ileonli.github.io/posts/java/language/spi/>Java SPI 机制</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2023-02-15T00:00:00Z>February 15, 2023</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
 3-minute read</span></div></div></header><div class=post-content><h2 id=简单使用>简单使用
 <a class=heading-link href=#%e7%ae%80%e5%8d%95%e4%bd%bf%e7%94%a8><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>为使用 Java 操作数据库，我们需要提供驱动程序。为支持多种数据库（如：MySQL、PostgreSQL、Oracle），提供 <code>DatabaseBaseDriver</code> 接口。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>interface</span> <span class=nc>DatabaseBaseDriver</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=nf>open</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=nf>close</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=n>String</span> <span class=nf>getName</span><span class=o>();</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>通过实现 <code>DatabaseBaseDriver</code> 接口，分别创建了操作 <code>MySQL</code> 和 <code>PostgreSQL</code> 数据库的驱动。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>MysqlDriver</span> <span class=kd>implements</span> <span class=n>DatabaseBaseDriver</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>open</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;open MySQL connection&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>close</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;close MySQL connection&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>String</span> <span class=nf>getName</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=s>&#34;mysql&#34;</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>PostgresqlDriver</span> <span class=kd>implements</span> <span class=n>DatabaseBaseDriver</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>open</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;open PostgreSQL connection&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>close</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;close PostgreSQL connection&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>String</span> <span class=nf>getName</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=s>&#34;postgresql&#34;</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>为方便对数据库驱动的管理和使用，对驱动的所有操作均使用 <code>DatabaseBaseDriverManager</code> 类。</p><ul><li><code>getDrivers</code> 方法用于获取注册到 Manager 中的所有驱动。</li><li><code>getDriverByName</code> 方法通过保存的名称获取保存到 Manager 中的驱动。</li><li><code>registerDriver</code> 方法用于注册驱动到 Manager 中。</li></ul><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>DatabaseBaseDriverManager</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=n>Map</span><span class=o>&lt;</span><span class=n>String</span><span class=o>,</span> <span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>drivers</span>
-</span></span><span class=line><span class=cl>        <span class=o>=</span> <span class=k>new</span> <span class=n>ConcurrentHashMap</span><span class=o>&lt;&gt;();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=nf>getDrivers</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>Collection</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>storedDrivers</span> <span class=o>=</span> <span class=n>drivers</span><span class=o>.</span><span class=na>values</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>ArrayList</span><span class=o>&lt;&gt;(</span><span class=n>storedDrivers</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>DatabaseBaseDriver</span> <span class=nf>getDriverByName</span><span class=o>(</span><span class=n>String</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>drivers</span><span class=o>.</span><span class=na>get</span><span class=o>(</span><span class=n>name</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>registerDriver</span><span class=o>(</span><span class=n>SDatabaseBaseDriver</span> <span class=n>driver</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>drivers</span><span class=o>.</span><span class=na>put</span><span class=o>(</span><span class=n>driver</span><span class=o>.</span><span class=na>getName</span><span class=o>(),</span> <span class=n>driver</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>当我们需要使用 MySQL 时，需要在使用驱动前通过 <code>registerDriver</code> 方法注册 MySQL 驱动实例。</p><p>在使用数据库时，先通过 <code>getDriverByName</code> 获取驱动实例，再通过获取到的驱动实例操作数据库。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Main</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>run</span><span class=o>(</span><span class=n>String</span> <span class=n>sql</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>DatabaseBaseDriver</span> <span class=n>mysql</span> <span class=o>=</span>
-</span></span><span class=line><span class=cl>                <span class=n>DatabaseBaseDriverManager</span><span class=o>.</span><span class=na>getDriverByName</span><span class=o>(</span><span class=s>&#34;mysql&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>mysql</span><span class=o>.</span><span class=na>open</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// use given sql to operate db
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>mysql</span><span class=o>.</span><span class=na>close</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>DatabaseBaseDriverManager</span><span class=o>.</span><span class=na>registerDriver</span><span class=o>(</span><span class=k>new</span> <span class=n>MysqlDriver</span><span class=o>());</span>
-</span></span><span class=line><span class=cl>        <span class=n>run</span><span class=o>(</span><span class=s>&#34;SELECT * FROM `user`&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
+<span class=sr-only>Link to heading</span></a></h2><p>为使用 Java 操作数据库，我们需要提供驱动程序。为支持多种数据库（如：MySQL、PostgreSQL、Oracle），提供 <code>DatabaseBaseDriver</code> 接口。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>interface</span> <span style=color:#5dd8ff>DatabaseBaseDriver</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>open</span>();
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>close</span>();
+</span></span><span style=display:flex><span>    String <span style=color:#41a1c0>getName</span>();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>通过实现 <code>DatabaseBaseDriver</code> 接口，分别创建了操作 <code>MySQL</code> 和 <code>PostgreSQL</code> 数据库的驱动。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>MysqlDriver</span> <span style=color:#fc5fa3>implements</span> DatabaseBaseDriver {
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>open</span>() {
+</span></span><span style=display:flex><span>        System.out.println(<span style=color:#fc6a5d>&#34;open MySQL connection&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>close</span>() {
+</span></span><span style=display:flex><span>        System.out.println(<span style=color:#fc6a5d>&#34;close MySQL connection&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> String <span style=color:#41a1c0>getName</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> <span style=color:#fc6a5d>&#34;mysql&#34;</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>PostgresqlDriver</span> <span style=color:#fc5fa3>implements</span> DatabaseBaseDriver {
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>open</span>() {
+</span></span><span style=display:flex><span>        System.out.println(<span style=color:#fc6a5d>&#34;open PostgreSQL connection&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>close</span>() {
+</span></span><span style=display:flex><span>        System.out.println(<span style=color:#fc6a5d>&#34;close PostgreSQL connection&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> String <span style=color:#41a1c0>getName</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> <span style=color:#fc6a5d>&#34;postgresql&#34;</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>为方便对数据库驱动的管理和使用，对驱动的所有操作均使用 <code>DatabaseBaseDriverManager</code> 类。</p><ul><li><code>getDrivers</code> 方法用于获取注册到 Manager 中的所有驱动。</li><li><code>getDriverByName</code> 方法通过保存的名称获取保存到 Manager 中的驱动。</li><li><code>registerDriver</code> 方法用于注册驱动到 Manager 中。</li></ul><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>DatabaseBaseDriverManager</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>private</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>final</span> Map&lt;String, DatabaseBaseDriver&gt; drivers
+</span></span><span style=display:flex><span>        = <span style=color:#fc5fa3>new</span> ConcurrentHashMap&lt;&gt;();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> List&lt;DatabaseBaseDriver&gt; <span style=color:#41a1c0>getDrivers</span>() {
+</span></span><span style=display:flex><span>        Collection&lt;DatabaseBaseDriver&gt; storedDrivers = drivers.values();
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> <span style=color:#fc5fa3>new</span> ArrayList&lt;&gt;(storedDrivers);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> DatabaseBaseDriver <span style=color:#41a1c0>getDriverByName</span>(String name) {
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> drivers.get(name);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>registerDriver</span>(SDatabaseBaseDriver driver) {
+</span></span><span style=display:flex><span>        drivers.put(driver.getName(), driver);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>当我们需要使用 MySQL 时，需要在使用驱动前通过 <code>registerDriver</code> 方法注册 MySQL 驱动实例。</p><p>在使用数据库时，先通过 <code>getDriverByName</code> 获取驱动实例，再通过获取到的驱动实例操作数据库。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>Main</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>run</span>(String sql) {
+</span></span><span style=display:flex><span>        DatabaseBaseDriver mysql =
+</span></span><span style=display:flex><span>                DatabaseBaseDriverManager.getDriverByName(<span style=color:#fc6a5d>&#34;mysql&#34;</span>);
+</span></span><span style=display:flex><span>        mysql.open();
+</span></span><span style=display:flex><span>        <span style=color:#6c7986>// use given sql to operate db
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>        mysql.close();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>main</span>(String[] args) {
+</span></span><span style=display:flex><span>        DatabaseBaseDriverManager.registerDriver(<span style=color:#fc5fa3>new</span> MysqlDriver());
+</span></span><span style=display:flex><span>        run(<span style=color:#fc6a5d>&#34;SELECT * FROM `user`&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>此时的代码耦合度很高，当添加或删除驱动时，就需要更改代码。有没有机制可以允许我们不直接在程序里直接指明，而由具体的实现动态装配呢？</p><hr><p>Java 6 引入了 SPI（Service Provider Interface）机制，用于加载服务的实现，使用步骤具体如下：</p><ol><li>在 resources 文件夹中新建 <a href=https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html class=external-link target=_blank rel=noopener>META-INF</a> 文件夹。</li><li>在 META-INF 文件夹中创建 services 文件夹。</li><li>在 services 文件夹中创建名为接口全类名的文件，并在此文件中添加提供服务实现的类的全类名。</li></ol><pre tabindex=0><code>resources
     └─META-INF
         └─services
             └─org.example.DatabaseBaseDriver
                 org.example.MysqlDriver
                 org.example.PostgresqlDriver
-</code></pre><p>改造 <code>DatabaseBaseDriverManager</code> 类，在获取驱动实例前，通过 <code>ensureInitialized</code> 方法确保驱动实例已经初始化。</p><p><code>ServiceLoader</code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。</p><p>通过 <code>Iterator</code> 调用 <code>next()</code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 <code>java.util.ServiceLoader.ProviderImpl#newInstance</code> 方法中。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>DatabaseBaseDriverManager</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=n>Map</span><span class=o>&lt;</span><span class=n>String</span><span class=o>,</span> <span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>drivers</span>
-</span></span><span class=line><span class=cl>            <span class=o>=</span> <span class=k>new</span> <span class=n>ConcurrentHashMap</span><span class=o>&lt;&gt;();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=n>AtomicBoolean</span> <span class=n>isInit</span> <span class=o>=</span> <span class=k>new</span> <span class=n>AtomicBoolean</span><span class=o>(</span><span class=kc>false</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>ensureInitialized</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>(!</span><span class=n>isInit</span><span class=o>.</span><span class=na>get</span><span class=o>())</span> <span class=o>{</span> <span class=c1>// drivers have not initialize
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=n>ServiceLoader</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>loader</span> <span class=o>=</span>
-</span></span><span class=line><span class=cl>                    <span class=n>ServiceLoader</span><span class=o>.</span><span class=na>load</span><span class=o>(</span><span class=n>DatabaseBaseDriver</span><span class=o>.</span><span class=na>class</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>            <span class=n>Iterator</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>itr</span> <span class=o>=</span> <span class=n>loader</span><span class=o>.</span><span class=na>iterator</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>            <span class=k>while</span> <span class=o>(</span><span class=n>itr</span><span class=o>.</span><span class=na>hasNext</span><span class=o>())</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>                <span class=n>DatabaseBaseDriver</span> <span class=n>driver</span> <span class=o>=</span> <span class=n>itr</span><span class=o>.</span><span class=na>next</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>                <span class=n>registerDriver</span><span class=o>(</span><span class=n>driver</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>            <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>            <span class=n>isInit</span><span class=o>.</span><span class=na>compareAndSet</span><span class=o>(</span><span class=kc>false</span><span class=o>,</span> <span class=kc>true</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=o>}</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=nf>getDrivers</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>ensureInitialized</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=n>Collection</span><span class=o>&lt;</span><span class=n>DatabaseBaseDriver</span><span class=o>&gt;</span> <span class=n>storedDrivers</span> <span class=o>=</span> <span class=n>drivers</span><span class=o>.</span><span class=na>values</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>ArrayList</span><span class=o>&lt;&gt;(</span><span class=n>storedDrivers</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>DatabaseBaseDriver</span> <span class=nf>getDriverByName</span><span class=o>(</span><span class=n>String</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>ensureInitialized</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>drivers</span><span class=o>.</span><span class=na>get</span><span class=o>(</span><span class=n>name</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>registerDriver</span><span class=o>(</span><span class=n>DatabaseBaseDriver</span> <span class=n>driver</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>drivers</span><span class=o>.</span><span class=na>putIfAbsent</span><span class=o>(</span><span class=n>driver</span><span class=o>.</span><span class=na>getName</span><span class=o>(),</span> <span class=n>driver</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>在使用 SPI 技术后，可以直接获取驱动，无需使用代码添加驱动。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.example</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Main</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>DatabaseBaseDriver</span> <span class=n>mysql</span> 
-</span></span><span class=line><span class=cl>                <span class=o>=</span> <span class=n>DatabaseBaseDriverManager</span><span class=o>.</span><span class=na>getDriverByName</span><span class=o>(</span><span class=s>&#34;mysql&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>                
-</span></span><span class=line><span class=cl>        <span class=n>mysql</span><span class=o>.</span><span class=na>open</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// do something
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>mysql</span><span class=o>.</span><span class=na>close</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
+</code></pre><p>改造 <code>DatabaseBaseDriverManager</code> 类，在获取驱动实例前，通过 <code>ensureInitialized</code> 方法确保驱动实例已经初始化。</p><p><code>ServiceLoader</code> 在加载接口时，会去 META-INF/services 下找接口的全限定类名文件，再根据里面的内容加载相应的实现类。</p><p>通过 <code>Iterator</code> 调用 <code>next()</code> 方法迭代时，会使用反射动态创建具体的实现类，具体逻辑流程在 <code>java.util.ServiceLoader.ProviderImpl#newInstance</code> 方法中。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>DatabaseBaseDriverManager</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>private</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>final</span> Map&lt;String, DatabaseBaseDriver&gt; drivers
+</span></span><span style=display:flex><span>            = <span style=color:#fc5fa3>new</span> ConcurrentHashMap&lt;&gt;();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>private</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>final</span> AtomicBoolean isInit = <span style=color:#fc5fa3>new</span> AtomicBoolean(<span style=color:#fc5fa3>false</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>private</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>ensureInitialized</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>if</span> (!isInit.get()) { <span style=color:#6c7986>// drivers have not initialize
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>            ServiceLoader&lt;DatabaseBaseDriver&gt; loader =
+</span></span><span style=display:flex><span>                    ServiceLoader.load(DatabaseBaseDriver.class);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            Iterator&lt;DatabaseBaseDriver&gt; itr = loader.iterator();
+</span></span><span style=display:flex><span>            <span style=color:#fc5fa3>while</span> (itr.hasNext()) {
+</span></span><span style=display:flex><span>                DatabaseBaseDriver driver = itr.next();
+</span></span><span style=display:flex><span>                registerDriver(driver);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            isInit.compareAndSet(<span style=color:#fc5fa3>false</span>, <span style=color:#fc5fa3>true</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> List&lt;DatabaseBaseDriver&gt; <span style=color:#41a1c0>getDrivers</span>() {
+</span></span><span style=display:flex><span>        ensureInitialized();
+</span></span><span style=display:flex><span>        Collection&lt;DatabaseBaseDriver&gt; storedDrivers = drivers.values();
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> <span style=color:#fc5fa3>new</span> ArrayList&lt;&gt;(storedDrivers);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> DatabaseBaseDriver <span style=color:#41a1c0>getDriverByName</span>(String name) {
+</span></span><span style=display:flex><span>        ensureInitialized();
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>return</span> drivers.get(name);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>registerDriver</span>(DatabaseBaseDriver driver) {
+</span></span><span style=display:flex><span>        drivers.putIfAbsent(driver.getName(), driver);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>在使用 SPI 技术后，可以直接获取驱动，无需使用代码添加驱动。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>package</span> org.example;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>Main</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>static</span> <span style=color:#fc5fa3>void</span> <span style=color:#41a1c0>main</span>(String[] args) {
+</span></span><span style=display:flex><span>        DatabaseBaseDriver mysql 
+</span></span><span style=display:flex><span>                = DatabaseBaseDriverManager.getDriverByName(<span style=color:#fc6a5d>&#34;mysql&#34;</span>);
+</span></span><span style=display:flex><span>                
+</span></span><span style=display:flex><span>        mysql.open();
+</span></span><span style=display:flex><span>        <span style=color:#6c7986>// do something
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>        mysql.close();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h2 id=jdk-中的-drivermanager>JDK 中的 DriverManager
 <a class=heading-link href=#jdk-%e4%b8%ad%e7%9a%84-drivermanager><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>第二种改进的方法正是 JDK 中 <code>java.sql.DriverManager</code> 类所作的操作。</p><p>代码片段截取自 <code>java.sql.DriverManager</code> 类中 <code>ensureDriversInitialized</code> 方法，省略非关键代码。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=n>ServiceLoader</span><span class=o>&lt;</span><span class=n>Driver</span><span class=o>&gt;</span> <span class=n>loadedDrivers</span> <span class=o>=</span> <span class=n>ServiceLoader</span><span class=o>.</span><span class=na>load</span><span class=o>(</span><span class=n>Driver</span><span class=o>.</span><span class=na>class</span><span class=o>);</span>
-</span></span><span class=line><span class=cl><span class=n>Iterator</span><span class=o>&lt;</span><span class=n>Driver</span><span class=o>&gt;</span> <span class=n>driversIterator</span> <span class=o>=</span> <span class=n>loadedDrivers</span><span class=o>.</span><span class=na>iterator</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* Load these drivers, so that they can be instantiated.
-</span></span></span><span class=line><span class=cl><span class=cm> * It may be the case that the driver class may not be there
-</span></span></span><span class=line><span class=cl><span class=cm> * i.e. there may be a packaged driver with the service class
-</span></span></span><span class=line><span class=cl><span class=cm> * as implementation of java.sql.Driver but the actual class
-</span></span></span><span class=line><span class=cl><span class=cm> * may be missing. In that case a java.util.ServiceConfigurationError
-</span></span></span><span class=line><span class=cl><span class=cm> * will be thrown at runtime by the VM trying to locate
-</span></span></span><span class=line><span class=cl><span class=cm> * and load the service.
-</span></span></span><span class=line><span class=cl><span class=cm> *
-</span></span></span><span class=line><span class=cl><span class=cm> * Adding a try catch block to catch those runtime errors
-</span></span></span><span class=line><span class=cl><span class=cm> * if driver not available in classpath but it&#39;s
-</span></span></span><span class=line><span class=cl><span class=cm> * packaged as service and that service is there in classpath.
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=k>try</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=o>(</span><span class=n>driversIterator</span><span class=o>.</span><span class=na>hasNext</span><span class=o>())</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>driversIterator</span><span class=o>.</span><span class=na>next</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>Throwable</span> <span class=n>t</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>// Do nothing
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=k>return</span> <span class=kc>null</span><span class=o>;</span>
+<span class=sr-only>Link to heading</span></a></h2><p>第二种改进的方法正是 JDK 中 <code>java.sql.DriverManager</code> 类所作的操作。</p><p>代码片段截取自 <code>java.sql.DriverManager</code> 类中 <code>ensureDriversInitialized</code> 方法，省略非关键代码。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>ServiceLoader&lt;Driver&gt; loadedDrivers = ServiceLoader.load(Driver.class);
+</span></span><span style=display:flex><span>Iterator&lt;Driver&gt; driversIterator = loadedDrivers.iterator();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#6c7986>/* Load these drivers, so that they can be instantiated.
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * It may be the case that the driver class may not be there
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * i.e. there may be a packaged driver with the service class
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * as implementation of java.sql.Driver but the actual class
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * may be missing. In that case a java.util.ServiceConfigurationError
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * will be thrown at runtime by the VM trying to locate
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * and load the service.
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> *
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * Adding a try catch block to catch those runtime errors
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * if driver not available in classpath but it&#39;s
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> * packaged as service and that service is there in classpath.
+</span></span></span><span style=display:flex><span><span style=color:#6c7986> */</span>
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>while</span> (driversIterator.hasNext()) {
+</span></span><span style=display:flex><span>        driversIterator.next();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>} <span style=color:#fc5fa3>catch</span> (Throwable t) {
+</span></span><span style=display:flex><span>    <span style=color:#6c7986>// Do nothing
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>}
+</span></span><span style=display:flex><span><span style=color:#fc5fa3>return</span> <span style=color:#fc5fa3>null</span>;
 </span></span></code></pre></div><h2 id=具体应用>具体应用
 <a class=heading-link href=#%e5%85%b7%e4%bd%93%e5%ba%94%e7%94%a8><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h2><h3 id=插件>插件
 <a class=heading-link href=#%e6%8f%92%e4%bb%b6><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h3><p>插件只需要实现系统所提供的插件接口，再通过 SPI 技术即可方便的装载。</p><h3 id=数据库驱动>数据库驱动
 <a class=heading-link href=#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%a9%b1%e5%8a%a8><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>JDK 中提供了 <code>java.sql.Driver</code> 接口，所有的驱动类必须实现，同时提供了 <code>java.sql.DriverManager</code> 管理所有的驱动。</p><p>可以看到 MySQL 驱动使用了 SPI 机制，<code>java.sql.Driver</code> 文件中内容为 <code>com.mysql.cj.jdbc.Driver</code>。</p><p><img src=/img/java/spi/mysql-driver-spi.png alt></p><p><code>com.mysql.cj.jdbc.Driver</code> 类使用静态代码块注册到 <code>java.sql.DriverManager</code> 中，在第一次类加载时运行。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Java data-lang=Java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Driver</span> <span class=kd>extends</span> <span class=n>NonRegisteringDriver</span> <span class=kd>implements</span> <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>Driver</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=c1>//
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// Register ourselves with the DriverManager
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>//
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>static</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>try</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>java</span><span class=o>.</span><span class=na>sql</span><span class=o>.</span><span class=na>DriverManager</span><span class=o>.</span><span class=na>registerDriver</span><span class=o>(</span><span class=k>new</span> <span class=n>Driver</span><span class=o>());</span>
-</span></span><span class=line><span class=cl>        <span class=o>}</span> <span class=k>catch</span> <span class=o>(</span><span class=n>SQLException</span> <span class=n>E</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>            <span class=k>throw</span> <span class=k>new</span> <span class=n>RuntimeException</span><span class=o>(</span><span class=s>&#34;Can&#39;t register driver!&#34;</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=o>}</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=cm>/**
-</span></span></span><span class=line><span class=cl><span class=cm>     * Construct a new driver and register it with DriverManager
-</span></span></span><span class=line><span class=cl><span class=cm>     * 
-</span></span></span><span class=line><span class=cl><span class=cm>     * @throws SQLException
-</span></span></span><span class=line><span class=cl><span class=cm>     *             if a database error occurs.
-</span></span></span><span class=line><span class=cl><span class=cm>     */</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>Driver</span><span class=o>()</span> <span class=kd>throws</span> <span class=n>SQLException</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=c1>// Required for Class.forName().newInstance()
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
+<span class=sr-only>Link to heading</span></a></h3><p>JDK 中提供了 <code>java.sql.Driver</code> 接口，所有的驱动类必须实现，同时提供了 <code>java.sql.DriverManager</code> 管理所有的驱动。</p><p>可以看到 MySQL 驱动使用了 SPI 机制，<code>java.sql.Driver</code> 文件中内容为 <code>com.mysql.cj.jdbc.Driver</code>。</p><p><img src=/img/java/spi/mysql-driver-spi.png alt></p><p><code>com.mysql.cj.jdbc.Driver</code> 类使用静态代码块注册到 <code>java.sql.DriverManager</code> 中，在第一次类加载时运行。</p><div class=highlight><pre tabindex=0 style=color:#fff;background-color:#1f1f24;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#fc5fa3>public</span> <span style=color:#fc5fa3>class</span> <span style=color:#5dd8ff>Driver</span> <span style=color:#fc5fa3>extends</span> NonRegisteringDriver <span style=color:#fc5fa3>implements</span> java.sql.Driver {
+</span></span><span style=display:flex><span>    <span style=color:#6c7986>//
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>    <span style=color:#6c7986>// Register ourselves with the DriverManager
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>    <span style=color:#6c7986>//
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>    <span style=color:#fc5fa3>static</span> {
+</span></span><span style=display:flex><span>        <span style=color:#fc5fa3>try</span> {
+</span></span><span style=display:flex><span>            java.sql.DriverManager.registerDriver(<span style=color:#fc5fa3>new</span> Driver());
+</span></span><span style=display:flex><span>        } <span style=color:#fc5fa3>catch</span> (SQLException E) {
+</span></span><span style=display:flex><span>            <span style=color:#fc5fa3>throw</span> <span style=color:#fc5fa3>new</span> RuntimeException(<span style=color:#fc6a5d>&#34;Can&#39;t register driver!&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#6c7986>/**
+</span></span></span><span style=display:flex><span><span style=color:#6c7986>     * Construct a new driver and register it with DriverManager
+</span></span></span><span style=display:flex><span><span style=color:#6c7986>     * 
+</span></span></span><span style=display:flex><span><span style=color:#6c7986>     * @throws SQLException
+</span></span></span><span style=display:flex><span><span style=color:#6c7986>     *             if a database error occurs.
+</span></span></span><span style=display:flex><span><span style=color:#6c7986>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#fc5fa3>public</span> <span style=color:#41a1c0>Driver</span>() <span style=color:#fc5fa3>throws</span> SQLException {
+</span></span><span style=display:flex><span>        <span style=color:#6c7986>// Required for Class.forName().newInstance()
+</span></span></span><span style=display:flex><span><span style=color:#6c7986></span>    }
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>PostgreSQL 驱动同样如此。</p><p><img src=/img/java/spi/postgresql-driver-spi.png alt></p><h2 id=总结>总结
 <a class=heading-link href=#%e6%80%bb%e7%bb%93><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。</p><blockquote><p><a href=https://docs.oracle.com/javase/tutorial/ext/basics/spi.html class=external-link target=_blank rel=noopener>https://docs.oracle.com/javase/tutorial/ext/basics/spi.html</a></p><p><a href=https://www.baeldung.com/java-spi class=external-link target=_blank rel=noopener>https://www.baeldung.com/java-spi</a></p></blockquote></div><footer></footer></article></section></div><footer class=footer><section class=container>©
+<span class=sr-only>Link to heading</span></a></h2><p>可以通过 SPI 机制可以很方便进行系统解耦，提供程序的可扩展性。该机制同时也是”约定大于配置“思想的体现。</p><blockquote><p><a href=https://docs.oracle.com/javase/tutorial/ext/basics/spi.html class=external-link target=_blank rel=noopener>https://docs.oracle.com/javase/tutorial/ext/basics/spi.html</a></p><p><a href=https://www.baeldung.com/java-spi class=external-link target=_blank rel=noopener>https://www.baeldung.com/java-spi</a></p></blockquote></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css integrity=sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0 crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js integrity=sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4 crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})'></script></section></div><footer class=footer><section class=container>©
 2023
 Leon Li
 ·
