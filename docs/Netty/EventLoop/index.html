@@ -1,0 +1,149 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content='EventLoop # 一旦注册，将处理 Channel 的所有 I/O 操作。一个 EventLoop 实例通常会处理多个 Channel，但这可能取决于实现细节和内部机制。
+EventLoop 本质是一个单线程执行器，同时维护了一个 Selector。
+EventLoop 由 Thread 驱动，且不会更改
+try (EventLoop loop = new DefaultEventLoop()) { for (int i = 0; i < 3; i++) { loop.submit(() -> { for (int j = 0; j < 16; j++) { System.out.print(j + " "); } System.out.println(); }); } } 使用 EventLoop 的定时调度功能。
+try (EventLoop loop = new DefaultEventLoop()) { ScheduledFuture<?> future = loop.'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/Netty/EventLoop/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="EventLoop"><meta property="og:description" content='EventLoop # 一旦注册，将处理 Channel 的所有 I/O 操作。一个 EventLoop 实例通常会处理多个 Channel，但这可能取决于实现细节和内部机制。
+EventLoop 本质是一个单线程执行器，同时维护了一个 Selector。
+EventLoop 由 Thread 驱动，且不会更改
+try (EventLoop loop = new DefaultEventLoop()) { for (int i = 0; i < 3; i++) { loop.submit(() -> { for (int j = 0; j < 16; j++) { System.out.print(j + " "); } System.out.println(); }); } } 使用 EventLoop 的定时调度功能。
+try (EventLoop loop = new DefaultEventLoop()) { ScheduledFuture<?> future = loop.'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-07-25T22:58:20+08:00"><title>EventLoop | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.7b7bf845299011218add69f47ba021f148527602c1b497ef4db9df1de3e87917.js integrity="sha256-e3v4RSmQESGK3Wn0e6Ah8UhSdgLBtJfvTbnfHePoeRc=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
+<label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle>
+<label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle>
+<label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
+<label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-8e8ae3b760618e1158c1946d2d023ca5 class=toggle checked>
+<label for=section-8e8ae3b760618e1158c1946d2d023ca5 class="flex justify-between"><a role=button>Netty</a></label><ul><li><a href=/docs/Netty/ByteBuf/>ByteBuf</a></li><li><a href=/docs/Netty/EventLoop/ class=active>EventLoop</a></li><li><a href=/docs/Netty/EventLoopGroup/>EventLoopGroup</a></li><li><a href=/docs/Netty/Channel/>Channel</a></li><li><a href=/docs/Netty/ChannelHandler/>ChannelHandler</a></li><li><a href=/docs/Netty/encoder-and-decoder/>编码器和解码器</a></li></ul></li><li><span>计算机网络</span><ul></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>EventLoop</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#eventloop>EventLoop</a><ul><li><a href=#继承关系>继承关系</a><ul><li><a href=#orderedeventexecutor>OrderedEventExecutor</a></li><li><a href=#eventloopgroup>EventLoopGroup</a></li><li><a href=#eventexecutor>EventExecutor</a></li><li><a href=#eventexecutorgroup>EventExecutorGroup</a></li><li><a href=#scheduledexecutorservice>ScheduledExecutorService</a></li></ul></li><li><a href=#eventloop-主要实现>EventLoop 主要实现</a></li><li><a href=#heading></a></li><li><a href=#处理-io-事件>处理 I/O 事件</a></li></ul></li></ul></nav></aside></header><article class="markdown book-article"><h1 id=eventloop>EventLoop
+<a class=anchor href=#eventloop>#</a></h1><p>一旦注册，将处理 <code>Channel</code> 的所有 I/O 操作。一个 <code>EventLoop</code> 实例通常会处理多个 <code>Channel</code>，但这可能取决于实现细节和内部机制。</p><p><code>EventLoop</code> 本质是一个单线程执行器，同时维护了一个 <code>Selector</code>。</p><p><code>EventLoop</code> 由 <code>Thread</code> 驱动，且不会更改</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>try</span> (EventLoop loop <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> DefaultEventLoop()) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0; i <span style=color:#f92672>&lt;</span> 3; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>        loop.<span style=color:#a6e22e>submit</span>(() <span style=color:#f92672>-&gt;</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> 0; j <span style=color:#f92672>&lt;</span> 16; j<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>                System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>print</span>(j <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; &#34;</span>);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>();
+</span></span><span style=display:flex><span>        });
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>使用 <code>EventLoop</code> 的定时调度功能。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>try</span> (EventLoop loop <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> DefaultEventLoop()) {
+</span></span><span style=display:flex><span>    ScheduledFuture<span style=color:#f92672>&lt;?&gt;</span> future <span style=color:#f92672>=</span> loop.<span style=color:#a6e22e>schedule</span>(
+</span></span><span style=display:flex><span>            () <span style=color:#f92672>-&gt;</span> LocalDateTime.<span style=color:#a6e22e>now</span>(), 3, TimeUnit.<span style=color:#a6e22e>SECONDS</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(future.<span style=color:#a6e22e>get</span>());
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>如果（当前）调用线程正是支撑 EventLoop 的线程，那么所提交的代码块将会被（直接）执行。否则，EventLoop 将调度该任务以便稍后执行，并将它放入到内部队列中。当</p><p>如果必须要进行阻塞调用或者执行长时间运行的任务，我们建议使用一个专门的 EventExecutor。</p><h2 id=继承关系>继承关系
+<a class=anchor href=#%e7%bb%a7%e6%89%bf%e5%85%b3%e7%b3%bb>#</a></h2><p><img src=/img/Netty/EventLoop.png alt></p><h3 id=orderedeventexecutor>OrderedEventExecutor
+<a class=anchor href=#orderedeventexecutor>#</a></h3><p>用于标记 <code>EventExecutor</code> 将以有序（ordered） / 串行（serial）的方式处理提交的任务。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>OrderedEventExecutor</span> <span style=color:#66d9ef>extends</span> EventExecutor {
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=eventloopgroup>EventLoopGroup
+<a class=anchor href=#eventloopgroup>#</a></h3><ul><li><code>next()</code> 方法用于获取该 <code>EventLoopGroup</code> 中的下一个 <code>EventLoop</code>。</li><li><code>register()</code> 将 <code>Channel</code> 注册到该 <code>EventLoopGroup</code> 中，<strong>只可以注册一次</strong>。</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>EventLoopGroup</span> <span style=color:#66d9ef>extends</span> EventExecutorGroup {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    EventLoop <span style=color:#a6e22e>next</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    ChannelFuture <span style=color:#a6e22e>register</span>(Channel channel);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    ChannelFuture <span style=color:#a6e22e>register</span>(ChannelPromise promise);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Deprecated</span>
+</span></span><span style=display:flex><span>    ChannelFuture <span style=color:#a6e22e>register</span>(Channel channel, ChannelPromise promise);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=eventexecutor>EventExecutor
+<a class=anchor href=#eventexecutor>#</a></h3><p><code>EventExecutor</code> 是一个特殊的 <code>EventExecutorGroup</code>，它提供了一些方便的方法来查看线程是否在事件循环中执行。除此之外，它还扩展了 <code>EventExecutorGroup</code> 以允许一种通用的方式来访问方法。</p><ul><li><code>next()</code> 返回自身。</li><li><code>parent()</code> 返回所属的 <code>EventExecutorGroup</code>，没有则返回 <code>null</code>。</li><li><code>inEventLoop()</code> 返回当前执行线程是否是 <code>EventLoop</code> 所绑定的线程。</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>EventExecutor</span> <span style=color:#66d9ef>extends</span> EventExecutorGroup {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    EventExecutor <span style=color:#a6e22e>next</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    EventExecutorGroup <span style=color:#a6e22e>parent</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>inEventLoop</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>inEventLoop</span>(Thread thread);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> Promise<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>newPromise</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> ProgressivePromise<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>newProgressivePromise</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> Future<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>newSucceededFuture</span>(V result);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> Future<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>newFailedFuture</span>(Throwable cause);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=eventexecutorgroup>EventExecutorGroup
+<a class=anchor href=#eventexecutorgroup>#</a></h3><p><code>EventExecutorGroup</code> 负责通过它的 <code>next()</code> 方法提供 <code>EventExecutor</code>。除此之外，还负责处理生命周期，允许以全局方式关闭它们。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>EventExecutorGroup</span> <span style=color:#66d9ef>extends</span> ScheduledExecutorService, Iterable<span style=color:#f92672>&lt;</span>EventExecutor<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>isShuttingDown</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    Future<span style=color:#f92672>&lt;?&gt;</span> shutdownGracefully();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    Future<span style=color:#f92672>&lt;?&gt;</span> shutdownGracefully(<span style=color:#66d9ef>long</span> quietPeriod, <span style=color:#66d9ef>long</span> timeout, TimeUnit unit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    Future<span style=color:#f92672>&lt;?&gt;</span> terminationFuture();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Deprecated</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shutdown</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Deprecated</span>
+</span></span><span style=display:flex><span>    List<span style=color:#f92672>&lt;</span>Runnable<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>shutdownNow</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    EventExecutor <span style=color:#a6e22e>next</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    Iterator<span style=color:#f92672>&lt;</span>EventExecutor<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>iterator</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    Future<span style=color:#f92672>&lt;?&gt;</span> submit(Runnable task);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> Future<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>submit</span>(Runnable task, T result);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> Future<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>submit</span>(Callable<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> task);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    ScheduledFuture<span style=color:#f92672>&lt;?&gt;</span> schedule(Runnable command, <span style=color:#66d9ef>long</span> delay, TimeUnit unit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> ScheduledFuture<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>schedule</span>(Callable<span style=color:#f92672>&lt;</span>V<span style=color:#f92672>&gt;</span> callable, <span style=color:#66d9ef>long</span> delay, TimeUnit unit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    ScheduledFuture<span style=color:#f92672>&lt;?&gt;</span> scheduleAtFixedRate(Runnable command, <span style=color:#66d9ef>long</span> initialDelay, <span style=color:#66d9ef>long</span> period, TimeUnit unit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    ScheduledFuture<span style=color:#f92672>&lt;?&gt;</span> scheduleWithFixedDelay(Runnable command, <span style=color:#66d9ef>long</span> initialDelay, <span style=color:#66d9ef>long</span> delay, TimeUnit unit);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=scheduledexecutorservice>ScheduledExecutorService
+<a class=anchor href=#scheduledexecutorservice>#</a></h3><p>继承自 <code>java.util.concurrent.ScheduledExecutorService</code> 类。</p><h2 id=eventloop-主要实现>EventLoop 主要实现
+<a class=anchor href=#eventloop-%e4%b8%bb%e8%a6%81%e5%ae%9e%e7%8e%b0>#</a></h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>EventLoopGroup defaultGroup <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> DefaultEventLoopGroup();
+</span></span><span style=display:flex><span>EventLoopGroup nioGroup <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> NioEventLoopGroup();
+</span></span></code></pre></div><h2 id=heading><a class=anchor href=#heading>#</a></h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SingleThreadEventExecutor</span> <span style=color:#66d9ef>extends</span> AbstractScheduledEventExecutor <span style=color:#66d9ef>implements</span> OrderedEventExecutor {
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>execute</span>(Runnable task, <span style=color:#66d9ef>boolean</span> immediate) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>boolean</span> inEventLoop <span style=color:#f92672>=</span> inEventLoop();
+</span></span><span style=display:flex><span>        addTask(task);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>inEventLoop) {
+</span></span><span style=display:flex><span>            startThread();
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (isShutdown()) {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>boolean</span> reject <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span>;
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>if</span> (removeTask(task)) {
+</span></span><span style=display:flex><span>                        reject <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span>;
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                } <span style=color:#66d9ef>catch</span> (UnsupportedOperationException e) {
+</span></span><span style=display:flex><span>                    <span style=color:#75715e>// The task queue does not support removal so the best thing we can do is to just move on and</span>
+</span></span><span style=display:flex><span>                    <span style=color:#75715e>// hope we will be able to pick-up the task before its completely terminated.</span>
+</span></span><span style=display:flex><span>                    <span style=color:#75715e>// In worst case we will log on termination.</span>
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>if</span> (reject) {
+</span></span><span style=display:flex><span>                    reject();
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>addTaskWakesUp <span style=color:#f92672>&amp;&amp;</span> immediate) {
+</span></span><span style=display:flex><span>            wakeup(inEventLoop);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=处理-io-事件>处理 I/O 事件
+<a class=anchor href=#%e5%a4%84%e7%90%86-io-%e4%ba%8b%e4%bb%b6>#</a></h2></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#eventloop>EventLoop</a><ul><li><a href=#继承关系>继承关系</a><ul><li><a href=#orderedeventexecutor>OrderedEventExecutor</a></li><li><a href=#eventloopgroup>EventLoopGroup</a></li><li><a href=#eventexecutor>EventExecutor</a></li><li><a href=#eventexecutorgroup>EventExecutorGroup</a></li><li><a href=#scheduledexecutorservice>ScheduledExecutorService</a></li></ul></li><li><a href=#eventloop-主要实现>EventLoop 主要实现</a></li><li><a href=#heading></a></li><li><a href=#处理-io-事件>处理 I/O 事件</a></li></ul></li></ul></nav></div></aside></main></body></html>

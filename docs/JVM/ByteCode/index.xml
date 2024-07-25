@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>字节码 on Leon' Blog</title><link>https://ileonli.github.io/docs/JVM/ByteCode/</link><description>Recent content in 字节码 on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/JVM/ByteCode/index.xml" rel="self" type="application/rss+xml"/><item><title>Class 文件结构</title><link>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</guid><description>Class 文件结构 # 前言 # 任何一个 class 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 class 文件（如：动态生成的类）。
+// Main.java public class Main { public static class InnerClass { } public static void main(String[] args) { } } 当执行 $javac Main.java 命令后，会生成 Main.class 和 Main$InnerClass.class 两个 class 文件。
+class 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。
+使用 u1、u2 和 u4 分别表示 1 字节、2 字节和 4 字节。
+Names # 二进制类和接口名称 # 在 Java 虚拟机中，类和接口的名称使用二进制名称格式表示。此格式与源代码中的类名表示略有不同。</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>常量池 # 常量池是一个表，所有的表项都有以下的格式。tag 表示表项的类型，info 用于表示 tag 类型所需要存储的信息。
+cp_info { u1 tag; u1 info[]; } 常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。
+为什么设计常量池？ # 复用 # 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名、字段名等。可以避免了在类文件中多次存储相同的常量，从而减少了类文件的大小。
+下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
+public class Main { public static void main(String[] args) { String str = &amp;#34;Hello World!&amp;#34;; System.out.println(str); System.out.println(&amp;#34;Hello World!&amp;#34;); } } 从 class 文件的反编译结果可以看出 main 方法中有大量的复用：
+0: ldc #7 和 13: ldc #7 使用 #7 来代替 Hello World!</description></item></channel></rss>
