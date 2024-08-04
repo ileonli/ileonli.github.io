@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pro Git on Leon' Blog</title><link>https://ileonli.github.io/docs/ProGit/</link><description>Recent content in Pro Git on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/ProGit/index.xml" rel="self" type="application/rss+xml"/><item><title>Git 基础</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</guid><description>Git 基础 # 获取 Git 仓库 # 有两种取得 Git 项目仓库的方法：
+将现有项目或目录下导入所有文件到 Git 中，可以使用 $ git init 命令。 从服务器克隆一个现有的 Git 仓库，使用 $ git clone &amp;lt;project url&amp;gt; 命令。 Git 生命周期 # 工作目录下的所有文件都处于两种状态之一：已跟踪和未跟踪。
+已跟踪：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于未修改、已修改或已放入暂存区。 未跟踪：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。
+编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为已修改文件。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。
+如此反复，使用 Git 的生命周期如下图所示：
+检查当前文件状态 # 如果需要查看文件处于的状态，可以使用 $ git status 命令。
+当我们对 $ git init 后的仓库使用此命令，可以看到下边的输出：
+$ git status On branch main No commits yet nothing to commit (create/copy files and use &amp;#34;git add&amp;#34; to track) 我们可以从上边输出中得到以下信息：</description></item></channel></rss>

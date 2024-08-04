@@ -1,0 +1,178 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content='Git 基础 # 获取 Git 仓库 # 有两种取得 Git 项目仓库的方法：
+将现有项目或目录下导入所有文件到 Git 中，可以使用 $ git init 命令。 从服务器克隆一个现有的 Git 仓库，使用 $ git clone <project url> 命令。 Git 生命周期 # 工作目录下的所有文件都处于两种状态之一：已跟踪和未跟踪。
+已跟踪：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于未修改、已修改或已放入暂存区。 未跟踪：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。
+编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为已修改文件。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。
+如此反复，使用 Git 的生命周期如下图所示：
+检查当前文件状态 # 如果需要查看文件处于的状态，可以使用 $ git status 命令。
+当我们对 $ git init 后的仓库使用此命令，可以看到下边的输出：
+$ git status On branch main No commits yet nothing to commit (create/copy files and use "git add" to track) 我们可以从上边输出中得到以下信息：'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="Git 基础"><meta property="og:description" content='Git 基础 # 获取 Git 仓库 # 有两种取得 Git 项目仓库的方法：
+将现有项目或目录下导入所有文件到 Git 中，可以使用 $ git init 命令。 从服务器克隆一个现有的 Git 仓库，使用 $ git clone <project url> 命令。 Git 生命周期 # 工作目录下的所有文件都处于两种状态之一：已跟踪和未跟踪。
+已跟踪：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于未修改、已修改或已放入暂存区。 未跟踪：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。
+编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为已修改文件。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。
+如此反复，使用 Git 的生命周期如下图所示：
+检查当前文件状态 # 如果需要查看文件处于的状态，可以使用 $ git status 命令。
+当我们对 $ git init 后的仓库使用此命令，可以看到下边的输出：
+$ git status On branch main No commits yet nothing to commit (create/copy files and use "git add" to track) 我们可以从上边输出中得到以下信息：'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Git 基础 | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.e94ebffbf92c383d50f39909af90da24ca2cbb84206d5b876e497b7e23171dd8.js integrity="sha256-6U6/+/ksOD1Q85kJr5DaJMosu4QgbVuHbkl7fiMXHdg=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
+<label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle>
+<label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle>
+<label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
+<label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-8e8ae3b760618e1158c1946d2d023ca5 class=toggle>
+<label for=section-8e8ae3b760618e1158c1946d2d023ca5 class="flex justify-between"><a role=button>Netty</a></label><ul><li><a href=/docs/Netty/ByteBuf/>ByteBuf</a></li><li><a href=/docs/Netty/EventLoop/>EventLoop</a></li><li><a href=/docs/Netty/EventLoopGroup/>EventLoopGroup</a></li><li><a href=/docs/Netty/Channel/>Channel</a></li><li><a href=/docs/Netty/ChannelHandler/>ChannelHandler</a></li><li><a href=/docs/Netty/encoder-and-decoder/>编码器和解码器</a></li></ul></li><li><input type=checkbox id=section-bccb031e3769927ed8f05e90efe74959 class=toggle checked>
+<label for=section-bccb031e3769927ed8f05e90efe74959 class="flex justify-between"><a role=button>Pro Git</a></label><ul><li><a href=/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/ class=active>Git 基础</a></li></ul></li><li><span>计算机网络</span><ul></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>Git 基础</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#git-基础>Git 基础</a><ul><li><a href=#获取-git-仓库>获取 Git 仓库</a></li><li><a href=#git-生命周期>Git 生命周期</a><ul><li><a href=#检查当前文件状态>检查当前文件状态</a></li><li><a href=#跟踪新文件>跟踪新文件</a></li><li><a href=#暂存已修改文件>暂存已修改文件</a></li><li><a href=#提交更新>提交更新</a></li><li><a href=#跳过暂存区域>跳过暂存区域</a></li><li><a href=#移除文件>移除文件</a></li><li><a href=#状态简览>状态简览</a></li><li><a href=#忽略文件>忽略文件</a></li><li><a href=#查看提交历史>查看提交历史</a></li><li><a href=#查看已暂存和未暂存的修改>查看已暂存和未暂存的修改</a></li></ul></li><li><a href=#撤消操作>撤消操作</a><ul><li><a href=#修正>修正</a></li><li><a href=#取消暂存的文件>取消暂存的文件</a></li></ul></li></ul></li></ul></nav></aside></header><article class="markdown book-article"><h1 id=git-基础>Git 基础
+<a class=anchor href=#git-%e5%9f%ba%e7%a1%80>#</a></h1><h2 id=获取-git-仓库>获取 Git 仓库
+<a class=anchor href=#%e8%8e%b7%e5%8f%96-git-%e4%bb%93%e5%ba%93>#</a></h2><p>有两种取得 Git 项目仓库的方法：</p><ol><li>将现有项目或目录下导入所有文件到 Git 中，可以使用 <code>$ git init</code> 命令。</li><li>从服务器克隆一个现有的 Git 仓库，使用 <code>$ git clone &lt;project url></code> 命令。</li></ol><h2 id=git-生命周期>Git 生命周期
+<a class=anchor href=#git-%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f>#</a></h2><p>工作目录下的所有文件都处于两种状态之一：<strong>已跟踪</strong>和<strong>未跟踪</strong>。</p><ul><li><strong>已跟踪</strong>：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于<strong>未修改</strong>、<strong>已修改</strong>或<strong>已放入暂存区</strong>。</li><li><strong>未跟踪</strong>：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。</li></ul><blockquote><p>初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。</p></blockquote><hr><p>编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为<strong>已修改文件</strong>。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。</p><p>如此反复，使用 Git 的生命周期如下图所示：</p><p><img src=/img/ProGit/lifecycle.png alt></p><h3 id=检查当前文件状态>检查当前文件状态
+<a class=anchor href=#%e6%a3%80%e6%9f%a5%e5%bd%93%e5%89%8d%e6%96%87%e4%bb%b6%e7%8a%b6%e6%80%81>#</a></h3><p>如果需要查看文件处于的状态，可以使用 <code>$ git status</code> 命令。</p><p>当我们对 <code>$ git init</code> 后的仓库使用此命令，可以看到下边的输出：</p><pre tabindex=0><code>$ git status
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use &#34;git add&#34; to track)
+</code></pre><p>我们可以从上边输出中得到以下信息：</p><ol><li>当前的分支名称为 “main”。</li><li>所有已跟踪的文件自上次提交后未进行任何修改。</li><li>当前目录下没有处于未跟踪的文件。</li></ol><hr><p>现在，使用 <code>echo</code> 命令在项目下创建一个新的 README 文件。使用 <code>$ git status</code> 命令后，可以看到一个新的未跟踪文件：</p><pre tabindex=0><code>$ echo &#39;My Project&#39; &gt; README
+$ git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use &#34;git add &lt;file&gt;...&#34; to include in what will be committed)
+	README
+
+nothing added to commit but untracked files present (use &#34;git add&#34; to track)
+</code></pre><p>从输出中可以看到 README 文件处于 <code>Untracked files</code> 下。Git 不会自动将未跟踪文件纳入跟踪范围，除非明确告之“我需要跟踪该文件”，</p><h3 id=跟踪新文件>跟踪新文件
+<a class=anchor href=#%e8%b7%9f%e8%b8%aa%e6%96%b0%e6%96%87%e4%bb%b6>#</a></h3><p>使用命令 <code>$ git add</code> 开始跟踪一个文件。 所以，要跟踪 README 文件，可以运行：</p><pre tabindex=0><code>$ git add README
+</code></pre><p>此时再次运行 <code>$ git status</code> 命令，可以看到 README 文件已被跟踪，并处于暂存状态：</p><pre tabindex=0><code>$ git status
+On branch main
+
+No commits yet
+
+Changes to be committed:
+  (use &#34;git rm --cached &lt;file&gt;...&#34; to unstage)
+	new file:   README
+</code></pre><p>在 <code>Changes to be committed</code> 下的文件处于<strong>已暂存状态</strong>。如果此时提交，那么该文件当前的版本将被保留在历史记录中。</p><h3 id=暂存已修改文件>暂存已修改文件
+<a class=anchor href=#%e6%9a%82%e5%ad%98%e5%b7%b2%e4%bf%ae%e6%94%b9%e6%96%87%e4%bb%b6>#</a></h3><p>如果修改了一个名为 CONTRIBUTING.md 的已被跟踪的文件，然后运行 git status 命令，会看到下面内容：</p><pre tabindex=0><code>$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	new file:   README
+
+Changes not staged for commit:
+  (use &#34;git add &lt;file&gt;...&#34; to update what will be committed)
+  (use &#34;git restore &lt;file&gt;...&#34; to discard changes in working directory)
+	modified:   CONTRIBUTING.md
+</code></pre><p>文件 CONTRIBUTING.md 出现在 <code>Changes not staged for commit</code> 这行下面，说明已跟踪文件的内容发生了变化，但还没有放到暂存区。要暂存这次更新，需要运行 <code>$ git add</code> 命令。</p><hr><p>现在运行 <code>$ git add CONTRIBUTING.md</code> 将 CONTRIBUTING.md 文件放到暂存区，然后再看看 <code>$ git status</code> 的输出：</p><pre tabindex=0><code>$ git add CONTRIBUTING.md 
+$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	modified:   CONTRIBUTING.md
+	new file:   README
+</code></pre><p>现在两个文件都已暂存，下次提交时就会一并记录到仓库。假设此时，你想要在 CONTRIBUTING.md 里再加条注释，重新编辑保存后，准备提交这两个文件。</p><p>不过且慢，再次运行 <code>$ git status</code> 看看：</p><pre tabindex=0><code>$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	modified:   CONTRIBUTING.md
+	new file:   README
+
+Changes not staged for commit:
+  (use &#34;git add &lt;file&gt;...&#34; to update what will be committed)
+  (use &#34;git restore &lt;file&gt;...&#34; to discard changes in working directory)
+	modified:   CONTRIBUTING.md
+</code></pre><p>可以看到 CONTRIBUTING.md 文件同时出现在暂存区和非暂存区。这是为什么？</p><p>实际上 Git 只不过暂存了你运行 <code>$ git add</code> 命令时的版本，如果现在提交，CONTRIBUTING.md 的版本是你最后一次运行 <code>$ git add</code> 命令时的那个版本，而不是运行 <code>$ git commit</code> 时，在工作目录中的版本。</p><p>所以，运行了 <code>$ git add</code> 之后又作了修订的文件，需要重新运行 <code>$ git add</code> 把最新版本重新暂存起来：</p><pre tabindex=0><code>$ git add CONTRIBUTING.md 
+$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	modified:   CONTRIBUTING.md
+	new file:   README
+</code></pre><h3 id=提交更新>提交更新
+<a class=anchor href=#%e6%8f%90%e4%ba%a4%e6%9b%b4%e6%96%b0>#</a></h3><p>使用 <code>$ git commit</code> 前，一定要确保所有的修改已经 <code>$ git add</code> 过。</p><pre tabindex=0><code>$ git commit
+</code></pre><p>这种方式会启动文本编辑器以便输入本次提交的说明。退出编辑器时，Git 会丢掉注释行，用你输入提交附带信息生成一次提交。</p><pre tabindex=0><code># Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Changes to be committed:
+#       modified:   CONTRIBUTING.md
+#       new file:   README
+#
+</code></pre><p>另外，你也可以在 commit 命令后添加 -m 选项，将提交信息与命令放在同一行，如下所示：</p><pre tabindex=0><code>$ git commit -m &#34;add: CONTRIBUTING.md and README&#34;
+[main 34ae990] add: CONTRIBUTING.md and README
+ 2 files changed, 2 insertions(+)
+ create mode 100644 README
+</code></pre><p>每一次运行提交操作，都是保存一次项目快照，以后可以回到这个状态，或者进行比较。</p><h3 id=跳过暂存区域>跳过暂存区域
+<a class=anchor href=#%e8%b7%b3%e8%bf%87%e6%9a%82%e5%ad%98%e5%8c%ba%e5%9f%9f>#</a></h3><p>尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。</p><p>Git 提供了一个跳过使用暂存区域的方式，只要在提交的时候，给 <code>$ git commit</code> 加上 <code>-a</code> 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 <code>$ git add</code> 步骤。</p><h3 id=移除文件>移除文件
+<a class=anchor href=#%e7%a7%bb%e9%99%a4%e6%96%87%e4%bb%b6>#</a></h3><p>要从 Git 中移除某个文件，就必须要从已跟踪文件清单中移除（确切地说，是从暂存区域移除），然后提交。可以用 <code>$ git rm</code> 命令完成此项工作，并连带从工作目录中删除指定的文件，这样以后就不会出现在未跟踪文件清单中了。</p><p>如果只是简单地从工作目录中手工删除文件，运行 <code>$ git status</code> 时就会在 <code>Changes not staged for commit</code> 部分（未暂存清单）看到：</p><pre tabindex=0><code>$ rm README 
+$ git status
+On branch main
+Changes not staged for commit:
+  (use &#34;git add/rm &lt;file&gt;...&#34; to update what will be committed)
+  (use &#34;git restore &lt;file&gt;...&#34; to discard changes in working directory)
+	deleted:    README
+
+no changes added to commit (use &#34;git add&#34; and/or &#34;git commit -a&#34;)
+</code></pre><p>然后再运行 <code>$ git rm</code> 记录此次移除文件的操作：</p><pre tabindex=0><code>$ git rm README
+rm &#39;README&#39;
+$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	deleted:    README
+</code></pre><p>下一次提交时，该文件就不再纳入版本管理了。</p><blockquote><p>如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项 <code>-f</code>。这是一种安全特性，用于防止误删还没有添加到快照的数据，这样的数据不能被 Git 恢复。</p></blockquote><hr><p>另外一种情况是，我们想把文件从 Git 仓库中删除（亦即从暂存区域移除），但仍然希望保留在当前工作目录中。换句话说，仍然文件保留在磁盘，但是并不想让 Git 继续跟踪。</p><blockquote><p>当你忘记添加 .gitignore 文件，不小心把一个很大的日志文件或一堆 .a 这样的编译生成文件添加到暂存区时，这一做法尤其有用。</p></blockquote><p>为达到这一目的，可以使用 <code>--cached</code> 选项：</p><pre tabindex=0><code>$ git rm --cached README
+</code></pre><h3 id=状态简览>状态简览
+<a class=anchor href=#%e7%8a%b6%e6%80%81%e7%ae%80%e8%a7%88>#</a></h3><p>使用 <code>$ git status -s</code> 命令或 <code>$ git status --short</code> 命令可以获得一种更为紧凑的格式输出。</p><h3 id=忽略文件>忽略文件
+<a class=anchor href=#%e5%bf%bd%e7%95%a5%e6%96%87%e4%bb%b6>#</a></h3><p>有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。我们可以创建一个名为 <code>.gitignore</code> 文件，列出要忽略的文件。</p><p>可以在
+<a href=https://github.com/github/gitignore>A collection of useful .gitignore templates</a> 查看常用的模板。</p><h3 id=查看提交历史>查看提交历史
+<a class=anchor href=#%e6%9f%a5%e7%9c%8b%e6%8f%90%e4%ba%a4%e5%8e%86%e5%8f%b2>#</a></h3><p>在提交了若干更新，又或者克隆了某个项目之后，如果想回顾下历史提交记录。完成这个任务最简单而又有效的工具是 <code>$ git log</code> 命令。</p><pre tabindex=0><code>$ git log
+commit 6c669101bea2a6b2400f070f72f35f0866ea714a (HEAD -&gt; main)
+Author: Leon Li &lt;imleonli@outlook.com&gt;
+Date:   Sun Aug 4 16:06:10 2024 +0800
+
+    add: README
+</code></pre><h3 id=查看已暂存和未暂存的修改>查看已暂存和未暂存的修改
+<a class=anchor href=#%e6%9f%a5%e7%9c%8b%e5%b7%b2%e6%9a%82%e5%ad%98%e5%92%8c%e6%9c%aa%e6%9a%82%e5%ad%98%e7%9a%84%e4%bf%ae%e6%94%b9>#</a></h3><p>如果 <code>$ git status</code> 命令的输出对于你来说过于模糊，你想知道具体修改了什么地方，可以用 <code>$ git diff</code> 命令。</p><h2 id=撤消操作>撤消操作
+<a class=anchor href=#%e6%92%a4%e6%b6%88%e6%93%8d%e4%bd%9c>#</a></h2><h3 id=修正>修正
+<a class=anchor href=#%e4%bf%ae%e6%ad%a3>#</a></h3><p>有时候我们提交完了才发现漏掉了几个文件没有添加，或者提交信息写错了。此时，可以运行带有 <code>--amend</code> 选项的提交命令尝试重新提交：</p><pre tabindex=0><code>$ git commit --amend
+</code></pre><p>我们有 3 个处于 <code>Changes to be committed</code> 状态的文件。</p><pre tabindex=0><code>$ git status
+On branch main
+Changes to be committed:
+  (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+	modified:   1.txt
+	modified:   2.txt
+	modified:   3.txt
+</code></pre><p>我们使用 <code>$ git commit</code> 提交其中的两个文件。</p><pre tabindex=0><code>$ git commit -m &#34;change: 1.txt, 2.txt&#34; 1.txt 2.txt 
+[main 787cfc9] change: 1.txt, 2.txt
+ 2 files changed, 2 insertions(+)
+</code></pre><pre tabindex=0><code>$ git log
+commit 787cfc91428a9be730e97e103b00e2bfe59e671c (HEAD -&gt; main)
+Author: Leon Li &lt;imleonli@outlook.com&gt;
+Date:   Sun Aug 4 16:40:12 2024 +0800
+
+    change: 1.txt, 2.txt
+
+commit 984668dbca2b4d3dbf40aad117122bd737a735db
+Author: Leon Li &lt;imleonli@outlook.com&gt;
+Date:   Sun Aug 4 16:37:31 2024 +0800
+
+    add 1.txt, 2.txt and 3.txt
+</code></pre><p>此时，发现 3.txt 忘记提交了，此时我们可以使用 <code>$ git commit</code> 再次提交，但此时会多出一次提交记录。</p><p>我们可以使用 <code>$ git commit --amend</code> 提交暂存区中的文件，以及修改提交信息。</p><pre tabindex=0><code>$ git commit --amend 
+[main 71cfcbd] change: 1.txt, 2.txt and 3.txt
+ Date: Sun Aug 4 16:40:12 2024 +0800
+ 3 files changed, 3 insertions(+)
+</code></pre><p>通过查看 <code>git log</code>，此时只有一次修改的记录，上一个修改记录被覆盖掉了。</p><pre tabindex=0><code>$ git log
+commit 82911668c9d16c8c85e636ecc7d4cd717d0ab9f0 (HEAD -&gt; main)
+Author: Leon Li &lt;imleonli@outlook.com&gt;
+Date:   Sun Aug 4 16:40:12 2024 +0800
+
+    change: 1.txt, 2.txt and 3.txt
+
+commit 984668dbca2b4d3dbf40aad117122bd737a735db
+Author: Leon Li &lt;imleonli@outlook.com&gt;
+Date:   Sun Aug 4 16:37:31 2024 +0800
+
+    add 1.txt, 2.txt and 3.txt
+</code></pre><h3 id=取消暂存的文件>取消暂存的文件
+<a class=anchor href=#%e5%8f%96%e6%b6%88%e6%9a%82%e5%ad%98%e7%9a%84%e6%96%87%e4%bb%b6>#</a></h3></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#git-基础>Git 基础</a><ul><li><a href=#获取-git-仓库>获取 Git 仓库</a></li><li><a href=#git-生命周期>Git 生命周期</a><ul><li><a href=#检查当前文件状态>检查当前文件状态</a></li><li><a href=#跟踪新文件>跟踪新文件</a></li><li><a href=#暂存已修改文件>暂存已修改文件</a></li><li><a href=#提交更新>提交更新</a></li><li><a href=#跳过暂存区域>跳过暂存区域</a></li><li><a href=#移除文件>移除文件</a></li><li><a href=#状态简览>状态简览</a></li><li><a href=#忽略文件>忽略文件</a></li><li><a href=#查看提交历史>查看提交历史</a></li><li><a href=#查看已暂存和未暂存的修改>查看已暂存和未暂存的修改</a></li></ul></li><li><a href=#撤消操作>撤消操作</a><ul><li><a href=#修正>修正</a></li><li><a href=#取消暂存的文件>取消暂存的文件</a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>
