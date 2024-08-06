@@ -8,7 +8,7 @@ cp_info { u1 tag; u1 info[]; } 常量池索引是从 1 开始的，不是直接�
 为什么设计常量池？ # 复用 # 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名、字段名等。可以避免了在类文件中多次存储相同的常量，从而减少了类文件的大小。
 下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
 public class Main { public static void main(String[] args) { String str = "Hello World!"; System.out.println(str); System.out.println("Hello World!"); } } 从 class 文件的反编译结果可以看出 main 方法中有大量的复用：
-0: ldc #7 和 13: ldc #7 使用 #7 来代替 Hello World!'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-07-25T22:58:20+08:00"><title>常量池 | Leon' Blog</title>
+0: ldc #7 和 13: ldc #7 使用 #7 来代替 Hello World!'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-08-06T17:25:25+08:00"><title>常量池 | Leon' Blog</title>
 <link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.ef40ab90670f297d5b8f74624f17db061f97ec32ab5cb966269bb5f03f0a0244.js integrity="sha256-70CrkGcPKX1bj3RiTxfbBh+X7DKrXLlmJpu18D8KAkQ=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
 <label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle checked>
@@ -32,141 +32,141 @@ public class Main { public static void main(String[] args) { String str = "Hello
 </span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Hello World!&#34;</span>);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>从 class 文件的反编译结果可以看出 <code>main</code> 方法中有大量的复用：</p><ol><li><code>0: ldc #7</code> 和 <code>13: ldc #7</code> 使用 <code>#7</code> 来代替 <code>Hello World!</code> 字符串。</li><li><code>3: getstatic #9</code> 和 <code>10: getstatic #9</code> 使用 <code>#9</code> 来代替 <code>java/lang/System.out:Ljava/io/PrintStream;</code> 变量。</li><li><code>7: invokevirtual #15</code> 和 <code>15: invokevirtual #15</code> 使用 <code>#15</code> 来代替 <code>java/io/PrintStream.println:(Ljava/lang/String;)V</code> 方法。</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>github</span>.<span style=color:#a6e22e>ileonli</span>.<span style=color:#a6e22e>Main</span>
-</span></span><span style=display:flex><span>  minor version: 0
-</span></span><span style=display:flex><span>  major version: 65
-</span></span><span style=display:flex><span>  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
-</span></span><span style=display:flex><span>  this_class: <span style=color:#960050;background-color:#1e0010>#</span>21                         <span style=color:#75715e>// io/github/ileonli/Main</span>
-</span></span><span style=display:flex><span>  super_class: <span style=color:#960050;background-color:#1e0010>#</span>2                         <span style=color:#75715e>// java/lang/Object</span>
-</span></span><span style=display:flex><span>  interfaces: 0, fields: 0, methods: 2, attributes: 1
-</span></span><span style=display:flex><span>Constant pool:
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>1 <span style=color:#f92672>=</span> Methodref          <span style=color:#960050;background-color:#1e0010>#</span>2.<span style=color:#960050;background-color:#1e0010>#</span>3          <span style=color:#75715e>// java/lang/Object.&#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>2 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>4             <span style=color:#75715e>// java/lang/Object</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>3 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>5:<span style=color:#960050;background-color:#1e0010>#</span>6          <span style=color:#75715e>// &#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>4 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>Object
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>5 <span style=color:#f92672>=</span> Utf8               <span style=color:#f92672>&lt;</span>init<span style=color:#f92672>&gt;</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>6 <span style=color:#f92672>=</span> Utf8               ()V
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>7 <span style=color:#f92672>=</span> String             <span style=color:#960050;background-color:#1e0010>#</span>8             <span style=color:#75715e>// Hello World!</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>8 <span style=color:#f92672>=</span> Utf8               Hello World<span style=color:#f92672>!</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>9 <span style=color:#f92672>=</span> Fieldref           <span style=color:#960050;background-color:#1e0010>#</span>10.<span style=color:#960050;background-color:#1e0010>#</span>11        <span style=color:#75715e>// java/lang/System.out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>10 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>12            <span style=color:#75715e>// java/lang/System</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>11 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>13:<span style=color:#960050;background-color:#1e0010>#</span>14        <span style=color:#75715e>// out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>12 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>System
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>13 <span style=color:#f92672>=</span> Utf8               out
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>14 <span style=color:#f92672>=</span> Utf8               Ljava<span style=color:#f92672>/</span>io<span style=color:#f92672>/</span>PrintStream;
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>15 <span style=color:#f92672>=</span> Methodref          <span style=color:#960050;background-color:#1e0010>#</span>16.<span style=color:#960050;background-color:#1e0010>#</span>17        <span style=color:#75715e>// java/io/PrintStream.println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>16 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>18            <span style=color:#75715e>// java/io/PrintStream</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>17 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>19:<span style=color:#960050;background-color:#1e0010>#</span>20        <span style=color:#75715e>// println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>18 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>io<span style=color:#f92672>/</span>PrintStream
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>19 <span style=color:#f92672>=</span> Utf8               println
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>20 <span style=color:#f92672>=</span> Utf8               (Ljava<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>String;)V
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>21 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>22            <span style=color:#75715e>// io/github/ileonli/Main</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>22 <span style=color:#f92672>=</span> Utf8               io<span style=color:#f92672>/</span>github<span style=color:#f92672>/</span>ileonli<span style=color:#f92672>/</span>Main
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>23 <span style=color:#f92672>=</span> Utf8               Code
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>24 <span style=color:#f92672>=</span> Utf8               LineNumberTable
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>25 <span style=color:#f92672>=</span> Utf8               main
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>26 <span style=color:#f92672>=</span> Utf8               (<span style=color:#f92672>[</span>Ljava<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>String;)V
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>27 <span style=color:#f92672>=</span> Utf8               SourceFile
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>28 <span style=color:#f92672>=</span> Utf8               Main.<span style=color:#a6e22e>java</span>
-</span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> io.<span style=color:#a6e22e>github</span>.<span style=color:#a6e22e>ileonli</span>.<span style=color:#a6e22e>Main</span>();
-</span></span><span style=display:flex><span>    descriptor: ()V
-</span></span><span style=display:flex><span>    flags: (0x0001) ACC_PUBLIC
-</span></span><span style=display:flex><span>    Code:
-</span></span><span style=display:flex><span>      stack<span style=color:#f92672>=</span>1, locals<span style=color:#f92672>=</span>1, args_size<span style=color:#f92672>=</span>1
-</span></span><span style=display:flex><span>         0: aload_0
-</span></span><span style=display:flex><span>         1: invokespecial <span style=color:#960050;background-color:#1e0010>#</span>1                  <span style=color:#75715e>// Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>         4: <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>      LineNumberTable:
-</span></span><span style=display:flex><span>        line 3: 0
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span>(java.<span style=color:#a6e22e>lang</span>.<span style=color:#a6e22e>String</span><span style=color:#f92672>[]</span>);
-</span></span><span style=display:flex><span>    descriptor: (<span style=color:#f92672>[</span>Ljava<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>String;)V
-</span></span><span style=display:flex><span>    flags: (0x0009) ACC_PUBLIC, ACC_STATIC
-</span></span><span style=display:flex><span>    Code:
-</span></span><span style=display:flex><span>      stack<span style=color:#f92672>=</span>2, locals<span style=color:#f92672>=</span>2, args_size<span style=color:#f92672>=</span>1
-</span></span><span style=display:flex><span>         0: ldc           <span style=color:#960050;background-color:#1e0010>#</span>7                  <span style=color:#75715e>// String Hello World!</span>
-</span></span><span style=display:flex><span>         2: astore_1
-</span></span><span style=display:flex><span>         3: getstatic     <span style=color:#960050;background-color:#1e0010>#</span>9                  <span style=color:#75715e>// Field java/lang/System.out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>         6: aload_1
-</span></span><span style=display:flex><span>         7: invokevirtual <span style=color:#960050;background-color:#1e0010>#</span>15                 <span style=color:#75715e>// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>        10: getstatic     <span style=color:#960050;background-color:#1e0010>#</span>9                  <span style=color:#75715e>// Field java/lang/System.out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>        13: ldc           <span style=color:#960050;background-color:#1e0010>#</span>7                  <span style=color:#75715e>// String Hello World!</span>
-</span></span><span style=display:flex><span>        15: invokevirtual <span style=color:#960050;background-color:#1e0010>#</span>15                 <span style=color:#75715e>// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>        18: <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>      LineNumberTable:
-</span></span><span style=display:flex><span>        line 5: 0
-</span></span><span style=display:flex><span>        line 6: 3
-</span></span><span style=display:flex><span>        line 7: 10
-</span></span><span style=display:flex><span>        line 8: 18
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=符号引用>符号引用
+</span></span></code></pre></div><p>从 class 文件的反编译结果可以看出 <code>main</code> 方法中有大量的复用：</p><ol><li><code>0: ldc #7</code> 和 <code>13: ldc #7</code> 使用 <code>#7</code> 来代替 <code>Hello World!</code> 字符串。</li><li><code>3: getstatic #9</code> 和 <code>10: getstatic #9</code> 使用 <code>#9</code> 来代替 <code>java/lang/System.out:Ljava/io/PrintStream;</code> 变量。</li><li><code>7: invokevirtual #15</code> 和 <code>15: invokevirtual #15</code> 使用 <code>#15</code> 来代替 <code>java/io/PrintStream.println:(Ljava/lang/String;)V</code> 方法。</li></ol><pre tabindex=0><code>public class io.github.ileonli.Main
+  minor version: 0
+  major version: 65
+  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+  this_class: #21                         // io/github/ileonli/Main
+  super_class: #2                         // java/lang/Object
+  interfaces: 0, fields: 0, methods: 2, attributes: 1
+Constant pool:
+   #1 = Methodref          #2.#3          // java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+   #2 = Class              #4             // java/lang/Object
+   #3 = NameAndType        #5:#6          // &#34;&lt;init&gt;&#34;:()V
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               &lt;init&gt;
+   #6 = Utf8               ()V
+   #7 = String             #8             // Hello World!
+   #8 = Utf8               Hello World!
+   #9 = Fieldref           #10.#11        // java/lang/System.out:Ljava/io/PrintStream;
+  #10 = Class              #12            // java/lang/System
+  #11 = NameAndType        #13:#14        // out:Ljava/io/PrintStream;
+  #12 = Utf8               java/lang/System
+  #13 = Utf8               out
+  #14 = Utf8               Ljava/io/PrintStream;
+  #15 = Methodref          #16.#17        // java/io/PrintStream.println:(Ljava/lang/String;)V
+  #16 = Class              #18            // java/io/PrintStream
+  #17 = NameAndType        #19:#20        // println:(Ljava/lang/String;)V
+  #18 = Utf8               java/io/PrintStream
+  #19 = Utf8               println
+  #20 = Utf8               (Ljava/lang/String;)V
+  #21 = Class              #22            // io/github/ileonli/Main
+  #22 = Utf8               io/github/ileonli/Main
+  #23 = Utf8               Code
+  #24 = Utf8               LineNumberTable
+  #25 = Utf8               main
+  #26 = Utf8               ([Ljava/lang/String;)V
+  #27 = Utf8               SourceFile
+  #28 = Utf8               Main.java
+{
+  public io.github.ileonli.Main();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+         4: return
+      LineNumberTable:
+        line 3: 0
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: ldc           #7                  // String Hello World!
+         2: astore_1
+         3: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         6: aload_1
+         7: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        10: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        13: ldc           #7                  // String Hello World!
+        15: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        18: return
+      LineNumberTable:
+        line 5: 0
+        line 6: 3
+        line 7: 10
+        line 8: 18
+}
+</code></pre><h3 id=符号引用>符号引用
 <a class=anchor href=#%e7%ac%a6%e5%8f%b7%e5%bc%95%e7%94%a8>#</a></h3><p>JVM 中的指令并不依赖于运行时类、接口、类实例或数组的布局。相反，指令通过常量池表中的符号信息进行引用。</p><p>这意味着 JVM 指令在运行时操作时，不需要直接处理类或对象的内存布局，而是通过常量池中的符号来找到所需的类、方法、字段等信息。</p><hr><p>如我们有个类 <code>Example</code>，其中有个方法为 <code>printMesssage</code>。在编译后的 class 文件中，常量池会有以下条目：</p><ol><li><code>CONSTANT_Class_info</code>：表示 <code>Example</code> 类。</li><li><code>CONSTANT_NameAndType_info</code>：表示 <code>printMessage</code> 方法的名字和类型。</li><li><code>CONSTANT_Methodref_info</code>：表示 <code>Example</code> 类中的 <code>printMessage</code> 方法。</li></ol><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Example</span> {
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>printMessage</span>() {
 </span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Hello, World!&#34;</span>);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>使用 <code>$javap -v Example.class</code> 反编译得到的结果。</p><p>JVM 指令例如 <code>invokevirtual</code> 会使用这些常量池条目来确定具体要调用的方法，而不是直接引用方法在内存中的地址。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>github</span>.<span style=color:#a6e22e>ileonli</span>.<span style=color:#a6e22e>Example</span>
-</span></span><span style=display:flex><span>  minor version: 0
-</span></span><span style=display:flex><span>  major version: 65
-</span></span><span style=display:flex><span>  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
-</span></span><span style=display:flex><span>  this_class: <span style=color:#960050;background-color:#1e0010>#</span>21                         <span style=color:#75715e>// io/github/ileonli/Example</span>
-</span></span><span style=display:flex><span>  super_class: <span style=color:#960050;background-color:#1e0010>#</span>2                         <span style=color:#75715e>// java/lang/Object</span>
-</span></span><span style=display:flex><span>  interfaces: 0, fields: 0, methods: 2, attributes: 1
-</span></span><span style=display:flex><span>Constant pool:
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>1 <span style=color:#f92672>=</span> Methodref          <span style=color:#960050;background-color:#1e0010>#</span>2.<span style=color:#960050;background-color:#1e0010>#</span>3          <span style=color:#75715e>// java/lang/Object.&#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>2 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>4             <span style=color:#75715e>// java/lang/Object</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>3 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>5:<span style=color:#960050;background-color:#1e0010>#</span>6          <span style=color:#75715e>// &#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>4 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>Object
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>5 <span style=color:#f92672>=</span> Utf8               <span style=color:#f92672>&lt;</span>init<span style=color:#f92672>&gt;</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>6 <span style=color:#f92672>=</span> Utf8               ()V
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>7 <span style=color:#f92672>=</span> Fieldref           <span style=color:#960050;background-color:#1e0010>#</span>8.<span style=color:#960050;background-color:#1e0010>#</span>9          <span style=color:#75715e>// java/lang/System.out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>8 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>10            <span style=color:#75715e>// java/lang/System</span>
-</span></span><span style=display:flex><span>   <span style=color:#960050;background-color:#1e0010>#</span>9 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>11:<span style=color:#960050;background-color:#1e0010>#</span>12        <span style=color:#75715e>// out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>10 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>System
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>11 <span style=color:#f92672>=</span> Utf8               out
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>12 <span style=color:#f92672>=</span> Utf8               Ljava<span style=color:#f92672>/</span>io<span style=color:#f92672>/</span>PrintStream;
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>13 <span style=color:#f92672>=</span> String             <span style=color:#960050;background-color:#1e0010>#</span>14            <span style=color:#75715e>// Hello, World!</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>14 <span style=color:#f92672>=</span> Utf8               Hello, World<span style=color:#f92672>!</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>15 <span style=color:#f92672>=</span> Methodref          <span style=color:#960050;background-color:#1e0010>#</span>16.<span style=color:#960050;background-color:#1e0010>#</span>17        <span style=color:#75715e>// java/io/PrintStream.println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>16 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>18            <span style=color:#75715e>// java/io/PrintStream</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>17 <span style=color:#f92672>=</span> NameAndType        <span style=color:#960050;background-color:#1e0010>#</span>19:<span style=color:#960050;background-color:#1e0010>#</span>20        <span style=color:#75715e>// println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>18 <span style=color:#f92672>=</span> Utf8               java<span style=color:#f92672>/</span>io<span style=color:#f92672>/</span>PrintStream
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>19 <span style=color:#f92672>=</span> Utf8               println
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>20 <span style=color:#f92672>=</span> Utf8               (Ljava<span style=color:#f92672>/</span>lang<span style=color:#f92672>/</span>String;)V
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>21 <span style=color:#f92672>=</span> Class              <span style=color:#960050;background-color:#1e0010>#</span>22            <span style=color:#75715e>// io/github/ileonli/Example</span>
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>22 <span style=color:#f92672>=</span> Utf8               io<span style=color:#f92672>/</span>github<span style=color:#f92672>/</span>ileonli<span style=color:#f92672>/</span>Example
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>23 <span style=color:#f92672>=</span> Utf8               Code
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>24 <span style=color:#f92672>=</span> Utf8               LineNumberTable
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>25 <span style=color:#f92672>=</span> Utf8               printMessage
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>26 <span style=color:#f92672>=</span> Utf8               SourceFile
-</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>#</span>27 <span style=color:#f92672>=</span> Utf8               Example.<span style=color:#a6e22e>java</span>
-</span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> io.<span style=color:#a6e22e>github</span>.<span style=color:#a6e22e>ileonli</span>.<span style=color:#a6e22e>Example</span>();
-</span></span><span style=display:flex><span>    descriptor: ()V
-</span></span><span style=display:flex><span>    flags: (0x0001) ACC_PUBLIC
-</span></span><span style=display:flex><span>    Code:
-</span></span><span style=display:flex><span>      stack<span style=color:#f92672>=</span>1, locals<span style=color:#f92672>=</span>1, args_size<span style=color:#f92672>=</span>1
-</span></span><span style=display:flex><span>         0: aload_0
-</span></span><span style=display:flex><span>         1: invokespecial <span style=color:#960050;background-color:#1e0010>#</span>1                  <span style=color:#75715e>// Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V</span>
-</span></span><span style=display:flex><span>         4: <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>      LineNumberTable:
-</span></span><span style=display:flex><span>        line 3: 0
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>printMessage</span>();
-</span></span><span style=display:flex><span>    descriptor: ()V
-</span></span><span style=display:flex><span>    flags: (0x0001) ACC_PUBLIC
-</span></span><span style=display:flex><span>    Code:
-</span></span><span style=display:flex><span>      stack<span style=color:#f92672>=</span>2, locals<span style=color:#f92672>=</span>1, args_size<span style=color:#f92672>=</span>1
-</span></span><span style=display:flex><span>         0: getstatic     <span style=color:#960050;background-color:#1e0010>#</span>7                  <span style=color:#75715e>// Field java/lang/System.out:Ljava/io/PrintStream;</span>
-</span></span><span style=display:flex><span>         3: ldc           <span style=color:#960050;background-color:#1e0010>#</span>13                 <span style=color:#75715e>// String Hello, World!</span>
-</span></span><span style=display:flex><span>         5: invokevirtual <span style=color:#960050;background-color:#1e0010>#</span>15                 <span style=color:#75715e>// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span>
-</span></span><span style=display:flex><span>         8: <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>      LineNumberTable:
-</span></span><span style=display:flex><span>        line 5: 0
-</span></span><span style=display:flex><span>        line 6: 8
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h2 id=常量池项目类型>常量池项目类型
+</span></span></code></pre></div><p>使用 <code>$javap -v Example.class</code> 反编译得到的结果。</p><p>JVM 指令例如 <code>invokevirtual</code> 会使用这些常量池条目来确定具体要调用的方法，而不是直接引用方法在内存中的地址。</p><pre tabindex=0><code>public class io.github.ileonli.Example
+  minor version: 0
+  major version: 65
+  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+  this_class: #21                         // io/github/ileonli/Example
+  super_class: #2                         // java/lang/Object
+  interfaces: 0, fields: 0, methods: 2, attributes: 1
+Constant pool:
+   #1 = Methodref          #2.#3          // java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+   #2 = Class              #4             // java/lang/Object
+   #3 = NameAndType        #5:#6          // &#34;&lt;init&gt;&#34;:()V
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               &lt;init&gt;
+   #6 = Utf8               ()V
+   #7 = Fieldref           #8.#9          // java/lang/System.out:Ljava/io/PrintStream;
+   #8 = Class              #10            // java/lang/System
+   #9 = NameAndType        #11:#12        // out:Ljava/io/PrintStream;
+  #10 = Utf8               java/lang/System
+  #11 = Utf8               out
+  #12 = Utf8               Ljava/io/PrintStream;
+  #13 = String             #14            // Hello, World!
+  #14 = Utf8               Hello, World!
+  #15 = Methodref          #16.#17        // java/io/PrintStream.println:(Ljava/lang/String;)V
+  #16 = Class              #18            // java/io/PrintStream
+  #17 = NameAndType        #19:#20        // println:(Ljava/lang/String;)V
+  #18 = Utf8               java/io/PrintStream
+  #19 = Utf8               println
+  #20 = Utf8               (Ljava/lang/String;)V
+  #21 = Class              #22            // io/github/ileonli/Example
+  #22 = Utf8               io/github/ileonli/Example
+  #23 = Utf8               Code
+  #24 = Utf8               LineNumberTable
+  #25 = Utf8               printMessage
+  #26 = Utf8               SourceFile
+  #27 = Utf8               Example.java
+{
+  public io.github.ileonli.Example();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+         4: return
+      LineNumberTable:
+        line 3: 0
+
+  public void printMessage();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #13                 // String Hello, World!
+         5: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: return
+      LineNumberTable:
+        line 5: 0
+        line 6: 8
+}
+</code></pre><h2 id=常量池项目类型>常量池项目类型
 <a class=anchor href=#%e5%b8%b8%e9%87%8f%e6%b1%a0%e9%a1%b9%e7%9b%ae%e7%b1%bb%e5%9e%8b>#</a></h2><p>常量池中的表项共有下边几种：</p><table><thead><tr><th>Constant Kind</th><th>Tag</th><th>Class File Format</th><th>Java SE</th></tr></thead><tbody><tr><td>CONSTANT_Utf8</td><td>1</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Integer</td><td>3</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Float</td><td>4</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Long</td><td>5</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Double</td><td>6</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Class</td><td>7</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_String</td><td>8</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Fieldref</td><td>9</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_Methodref</td><td>10</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_InterfaceMethodref</td><td>11</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_NameAndType</td><td>12</td><td>45.3</td><td>1.0.2</td></tr><tr><td>CONSTANT_MethodHandle</td><td>15</td><td>51.0</td><td>7</td></tr><tr><td>CONSTANT_MethodType</td><td>16</td><td>51.0</td><td>7</td></tr><tr><td>CONSTANT_Dynamic</td><td>17</td><td>55.0</td><td>11</td></tr><tr><td>CONSTANT_InvokeDynamic</td><td>18</td><td>51.0</td><td>7</td></tr><tr><td>CONSTANT_Module</td><td>19</td><td>53.0</td><td>9</td></tr><tr><td>CONSTANT_Package</td><td>20</td><td>53.0</td><td>9</td></tr></tbody></table><h3 id=constant_class_info>CONSTANT_Class_info
 <a class=anchor href=#constant_class_info>#</a></h3><p><code>CONSTANT_Class_info</code> 用于表示一个类，或者一个接口。</p><p><code>name_index</code> 为指向常量池表项的索引，该表项必须为 <code>CONSTANT_Utf8_info</code>。</p><pre tabindex=0><code>CONSTANT_Class_info {
     u1 tag;
