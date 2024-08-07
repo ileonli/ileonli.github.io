@@ -1,0 +1,317 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
+Proxy # Proxy 类主要使用 newProxyInstance() 静态方法生成代理对象。
+public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h) { ... } 该方法主要有三个参数：
+loader：定义代理类的类加载器。 interfaces：代理类要实现的接口列表。 h：用于分发方法调用的调用处理器。 InvocationHandler # 当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 InvocationHandler 接口类的 invoke 方法来调用。
+public interface InvocationHandler { public Object invoke(Object proxy, Method method, Object[] args) throws Throwable; } 该方法主要有三个参数：
+proxy：动态生成的代理类的实例。 method：代理类对象调用的方法。 args：调用 method 方法的参数。 通过 Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候，实际会调用到实现 InvocationHandler 接口的类的 invoke() 方法。
+具体步骤 # TargetClass 类继承自 InterfaceA 和 InterfaceB 接口。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/Java/DynamicProxy/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="动态代理"><meta property="og:description" content="动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
+Proxy # Proxy 类主要使用 newProxyInstance() 静态方法生成代理对象。
+public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h) { ... } 该方法主要有三个参数：
+loader：定义代理类的类加载器。 interfaces：代理类要实现的接口列表。 h：用于分发方法调用的调用处理器。 InvocationHandler # 当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 InvocationHandler 接口类的 invoke 方法来调用。
+public interface InvocationHandler { public Object invoke(Object proxy, Method method, Object[] args) throws Throwable; } 该方法主要有三个参数：
+proxy：动态生成的代理类的实例。 method：代理类对象调用的方法。 args：调用 method 方法的参数。 通过 Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候，实际会调用到实现 InvocationHandler 接口的类的 invoke() 方法。
+具体步骤 # TargetClass 类继承自 InterfaceA 和 InterfaceB 接口。"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-08-07T19:17:01+08:00"><title>动态代理 | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.0f292f46975d55fc679277e18578689f6a799fe8cfb64a3379993b733720c23b.js integrity="sha256-DykvRpddVfxnknfhhXhon2p5n+jPtkozeZk7czcgwjs=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle checked>
+<label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li><li><a href=/docs/Java/DynamicProxy/ class=active>动态代理</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle>
+<label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle>
+<label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
+<label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-8e8ae3b760618e1158c1946d2d023ca5 class=toggle>
+<label for=section-8e8ae3b760618e1158c1946d2d023ca5 class="flex justify-between"><a role=button>Netty</a></label><ul><li><a href=/docs/Netty/ByteBuf/>ByteBuf</a></li><li><a href=/docs/Netty/EventLoop/>EventLoop</a></li><li><a href=/docs/Netty/EventLoopGroup/>EventLoopGroup</a></li><li><a href=/docs/Netty/Channel/>Channel</a></li><li><a href=/docs/Netty/ChannelHandler/>ChannelHandler</a></li><li><a href=/docs/Netty/encoder-and-decoder/>编码器和解码器</a></li></ul></li><li><input type=checkbox id=section-bccb031e3769927ed8f05e90efe74959 class=toggle>
+<label for=section-bccb031e3769927ed8f05e90efe74959 class="flex justify-between"><a role=button>Pro Git</a></label><ul><li><a href=/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/>Git 基础</a></li><li><a href=/docs/ProGit/Git-%E5%88%86%E6%94%AF/>Git 分支</a></li></ul></li><li><span>计算机网络</span><ul></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>动态代理</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#动态代理>动态代理</a><ul><li><a href=#proxy>Proxy</a></li><li><a href=#invocationhandler>InvocationHandler</a></li><li><a href=#具体步骤>具体步骤</a></li><li><a href=#原理>原理</a></li><li><a href=#proxy-的缺点>Proxy 的缺点</a></li></ul></li></ul></nav></aside></header><article class="markdown book-article"><h1 id=动态代理>动态代理
+<a class=anchor href=#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86>#</a></h1><p>在 Java 动态代理机制中，<code>InvocationHandler</code> 接口和 <code>Proxy</code> 类是核心。</p><h2 id=proxy>Proxy
+<a class=anchor href=#proxy>#</a></h2><p><code>Proxy</code> 类主要使用 <code>newProxyInstance()</code> 静态方法生成代理对象。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Object <span style=color:#a6e22e>newProxyInstance</span>(ClassLoader loader,
+</span></span><span style=display:flex><span>                                      Class<span style=color:#f92672>&lt;?&gt;[]</span> interfaces,
+</span></span><span style=display:flex><span>                                      InvocationHandler h) {
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>该方法主要有三个参数：</p><ol><li><code>loader</code>：定义代理类的类加载器。</li><li><code>interfaces</code>：代理类要实现的接口列表。</li><li><code>h</code>：用于分发方法调用的调用处理器。</li></ol><h2 id=invocationhandler>InvocationHandler
+<a class=anchor href=#invocationhandler>#</a></h2><p>当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 <code>InvocationHandler</code> 接口类的 <code>invoke</code> 方法来调用。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InvocationHandler</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throws</span> Throwable;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>该方法主要有三个参数：</p><ol><li><code>proxy</code>：动态生成的代理类的实例。</li><li><code>method</code>：代理类对象调用的方法。</li><li><code>args</code>：调用 <code>method</code> 方法的参数。</li></ol><p>通过 <code>Proxy</code> 类的 <code>newProxyInstance()</code> 创建的代理对象在调用方法的时候，实际会调用到实现 <code>InvocationHandler</code> 接口的类的 <code>invoke()</code> 方法。</p><h2 id=具体步骤>具体步骤
+<a class=anchor href=#%e5%85%b7%e4%bd%93%e6%ad%a5%e9%aa%a4>#</a></h2><p><code>TargetClass</code> 类继承自 <code>InterfaceA</code> 和 <code>InterfaceB</code> 接口。</p><p>如果想在 <code>targetA()</code> 和 <code>targetB()</code> 方法调用前后进行一些额外操作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceA</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceB</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>TargetClass</span> <span style=color:#66d9ef>implements</span> InterfaceA, InterfaceB {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>() {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Target A&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>() {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Target B&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>在 <code>InvocationHandler</code> 中的 <code>invoke</code> 方法中定义额外的操作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SimpleInvocationHandler</span> <span style=color:#66d9ef>implements</span> InvocationHandler {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Object target;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SimpleInvocationHandler</span>(Object target) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>target</span> <span style=color:#f92672>=</span> target;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>printf</span>(<span style=color:#e6db74>&#34;Before invocation method %s\n&#34;</span>, method.<span style=color:#a6e22e>getName</span>());
+</span></span><span style=display:flex><span>        Object result <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>invoke</span>(target, args);
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>printf</span>(<span style=color:#e6db74>&#34;After invocation method %s\n&#34;</span>, method.<span style=color:#a6e22e>getName</span>());
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> result;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>通过 <code>Proxy.newProxyInstance</code> 方法生成代理对象。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span>(String<span style=color:#f92672>[]</span> args) {
+</span></span><span style=display:flex><span>    System.<span style=color:#a6e22e>setProperty</span>(<span style=color:#e6db74>&#34;jdk.proxy.ProxyGenerator.saveGeneratedFiles&#34;</span>, <span style=color:#e6db74>&#34;true&#34;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    TargetClass target <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TargetClass();
+</span></span><span style=display:flex><span>    SimpleInvocationHandler handler <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> SimpleInvocationHandler(target);
+</span></span><span style=display:flex><span>    Object o <span style=color:#f92672>=</span> Proxy.<span style=color:#a6e22e>newProxyInstance</span>(
+</span></span><span style=display:flex><span>            TargetClass.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getClassLoader</span>(),
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>new</span> Class<span style=color:#f92672>[]</span>{InterfaceA.<span style=color:#a6e22e>class</span>, InterfaceB.<span style=color:#a6e22e>class</span>},
+</span></span><span style=display:flex><span>            handler
+</span></span><span style=display:flex><span>    );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    ((InterfaceA) o).<span style=color:#a6e22e>targetA</span>();
+</span></span><span style=display:flex><span>    ((InterfaceB) o).<span style=color:#a6e22e>targetB</span>();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=原理>原理
+<a class=anchor href=#%e5%8e%9f%e7%90%86>#</a></h2><p>生成的类会继承自 <code>Proxy</code> 类，实现调用 <code>newInstance()</code> 方法时传入的 <code>interfaces</code> 中的所有接口。</p><p>被代理的类中的所有方法会被收集为 <code>Method</code> 方法。当通过代理对象调用方法时，会转发到传入的 <code>InvocationHandler</code> 中。</p><p>传入到 <code>h.invoke</code> 中的参数分别为：</p><ul><li><code>this</code>：被代理对象实例。</li><li><code>m*</code>：调用的具体方法。</li><li><code>args</code>：调用方法传入的参数。</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>//</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Source code recreated from a .class file by IntelliJ IDEA</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// (powered by FernFlower decompiler)</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.invoke.MethodHandles;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.InvocationHandler;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Method;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Proxy;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.UndeclaredThrowableException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>final</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>$Proxy0</span> <span style=color:#66d9ef>extends</span> Proxy <span style=color:#66d9ef>implements</span> InterfaceA, InterfaceB {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m0;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m1;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m2;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m3;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m4;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>$Proxy0</span>(InvocationHandler var1) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>super</span>(var1);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>hashCode</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (Integer)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m0, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>equals</span>(Object var1) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (Boolean)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m1, <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[]</span>{var1});
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> String <span style=color:#a6e22e>toString</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (String)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m2, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m3, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m4, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>static</span> {
+</span></span><span style=display:flex><span>        ClassLoader var0 <span style=color:#f92672>=</span> $Proxy0.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getClassLoader</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            m0 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;hashCode&#34;</span>);
+</span></span><span style=display:flex><span>            m1 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;equals&#34;</span>, Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0));
+</span></span><span style=display:flex><span>            m2 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;toString&#34;</span>);
+</span></span><span style=display:flex><span>            m3 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;io.github.ileonli.InterfaceA&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;targetA&#34;</span>);
+</span></span><span style=display:flex><span>            m4 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;io.github.ileonli.InterfaceB&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;targetB&#34;</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (NoSuchMethodException var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoSuchMethodError(var2.<span style=color:#a6e22e>getMessage</span>());
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (ClassNotFoundException var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoClassDefFoundError(var3.<span style=color:#a6e22e>getMessage</span>());
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> MethodHandles.<span style=color:#a6e22e>Lookup</span> <span style=color:#a6e22e>proxyClassLookup</span>(MethodHandles.<span style=color:#a6e22e>Lookup</span> var0) <span style=color:#66d9ef>throws</span> IllegalAccessException {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (var0.<span style=color:#a6e22e>lookupClass</span>() <span style=color:#f92672>==</span> Proxy.<span style=color:#a6e22e>class</span> <span style=color:#f92672>&amp;&amp;</span> var0.<span style=color:#a6e22e>hasFullPrivilegeAccess</span>()) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> MethodHandles.<span style=color:#a6e22e>lookup</span>();
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalAccessException(var0.<span style=color:#a6e22e>toString</span>());
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><hr><p>该代码主要依靠下边两个主要的方法和类：</p><ul><li><p>java.lang.reflect.Proxy.ProxyBuilder#defineProxyClass</p></li><li><p>java.lang.reflect.ProxyGenerator</p></li></ul><h2 id=proxy-的缺点>Proxy 的缺点
+<a class=anchor href=#proxy-%e7%9a%84%e7%bc%ba%e7%82%b9>#</a></h2><p>JDK 动态代理有一个最致命的问题是其只能代理实现了接口的类。</p><hr><p>我们对代码进行一些修改，<code>TargetClass</code> 继承了 <code>SuperClass</code> 类。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceA</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceB</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SuperClass</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>superClassFunc</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>TargetClass</span> <span style=color:#66d9ef>extends</span> SuperClass <span style=color:#66d9ef>implements</span> InterfaceA, InterfaceB {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>() {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Target A&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>() {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Target B&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>superClassFunc</span>() {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Super Class Func&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SimpleInvocationHandler</span> <span style=color:#66d9ef>implements</span> InvocationHandler {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Object target;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SimpleInvocationHandler</span>(Object target) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>target</span> <span style=color:#f92672>=</span> target;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>printf</span>(<span style=color:#e6db74>&#34;Before invocation method %s\n&#34;</span>, method.<span style=color:#a6e22e>getName</span>());
+</span></span><span style=display:flex><span>        Object result <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>invoke</span>(target, args);
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>printf</span>(<span style=color:#e6db74>&#34;After invocation method %s\n&#34;</span>, method.<span style=color:#a6e22e>getName</span>());
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> result;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>反编译生成的代码后发现此类只包含实现的接口中的方法。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.invoke.MethodHandles;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.InvocationHandler;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Method;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Proxy;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.UndeclaredThrowableException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>final</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>$Proxy0</span> <span style=color:#66d9ef>extends</span> Proxy <span style=color:#66d9ef>implements</span> InterfaceA, InterfaceB {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m0;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m1;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m2;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m3;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Method m4;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>$Proxy0</span>(InvocationHandler var1) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>super</span>(var1);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>hashCode</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (Integer)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m0, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>equals</span>(Object var1) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (Boolean)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m1, <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[]</span>{var1});
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> String <span style=color:#a6e22e>toString</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> (String)<span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m2, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m3, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetB</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>h</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, m4, (Object<span style=color:#f92672>[]</span>)<span style=color:#66d9ef>null</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (RuntimeException <span style=color:#f92672>|</span> Error var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> var2;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (Throwable var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> UndeclaredThrowableException(var3);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>static</span> {
+</span></span><span style=display:flex><span>        ClassLoader var0 <span style=color:#f92672>=</span> $Proxy0.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getClassLoader</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>            m0 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;hashCode&#34;</span>);
+</span></span><span style=display:flex><span>            m1 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;equals&#34;</span>, Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0));
+</span></span><span style=display:flex><span>            m2 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;java.lang.Object&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;toString&#34;</span>);
+</span></span><span style=display:flex><span>            m3 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;io.github.ileonli.InterfaceA&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;targetA&#34;</span>);
+</span></span><span style=display:flex><span>            m4 <span style=color:#f92672>=</span> Class.<span style=color:#a6e22e>forName</span>(<span style=color:#e6db74>&#34;io.github.ileonli.InterfaceB&#34;</span>, <span style=color:#66d9ef>false</span>, var0).<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;targetB&#34;</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (NoSuchMethodException var2) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoSuchMethodError(((Throwable)var2).<span style=color:#a6e22e>getMessage</span>());
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>catch</span> (ClassNotFoundException var3) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NoClassDefFoundError(((Throwable)var3).<span style=color:#a6e22e>getMessage</span>());
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> MethodHandles.<span style=color:#a6e22e>Lookup</span> <span style=color:#a6e22e>proxyClassLookup</span>(MethodHandles.<span style=color:#a6e22e>Lookup</span> var0) <span style=color:#66d9ef>throws</span> IllegalAccessException {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (var0.<span style=color:#a6e22e>lookupClass</span>() <span style=color:#f92672>==</span> Proxy.<span style=color:#a6e22e>class</span> <span style=color:#f92672>&amp;&amp;</span> var0.<span style=color:#a6e22e>hasFullPrivilegeAccess</span>()) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> MethodHandles.<span style=color:#a6e22e>lookup</span>();
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalAccessException(var0.<span style=color:#a6e22e>toString</span>());
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#动态代理>动态代理</a><ul><li><a href=#proxy>Proxy</a></li><li><a href=#invocationhandler>InvocationHandler</a></li><li><a href=#具体步骤>具体步骤</a></li><li><a href=#原理>原理</a></li><li><a href=#proxy-的缺点>Proxy 的缺点</a></li></ul></li></ul></nav></div></aside></main></body></html>

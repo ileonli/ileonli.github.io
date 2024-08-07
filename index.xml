@@ -65,7 +65,13 @@ How To Build AsmTools
 类加载器（class loader） # 启动类加载器（bootstrap class loader）由 C++ 实现，
 除了启动类加载器之外，其它的类加载器都是 java.lang.ClassLoader 的子类，因此有对应的 Java 对象。这些类加载器需要先由另一个类加载器，比如说启动类加载器，加载至 Java 虚拟机中，方能执行类加载。
 双亲委派模型 # JDK 9 前 # 启动类加载器（Bootstrap Class Loader）：用于加载 扩展类加载器（Extension Class Loader）: 应用程序类加载器（Application Class Loader）: 可输出 BootstrapClassLoader 可加载的类。
-URLClassPath bootstrapClassPath = Launcher.getBootstrapClassPath(); for (URL url : bootstrapClassPath.</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>编码器和解码器 # 编码器：将消息转换为适合于传输的格式（通常是字节流）。 解码器：将网络字节流转换为应用程序的消息格式。 因此，编码器处理出站数据，而解码器处理入站数据。
+URLClassPath bootstrapClassPath = Launcher.getBootstrapClassPath(); for (URL url : bootstrapClassPath.</description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
+Proxy # Proxy 类主要使用 newProxyInstance() 静态方法生成代理对象。
+public static Object newProxyInstance(ClassLoader loader, Class&amp;lt;?&amp;gt;[] interfaces, InvocationHandler h) { ... } 该方法主要有三个参数：
+loader：定义代理类的类加载器。 interfaces：代理类要实现的接口列表。 h：用于分发方法调用的调用处理器。 InvocationHandler # 当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 InvocationHandler 接口类的 invoke 方法来调用。
+public interface InvocationHandler { public Object invoke(Object proxy, Method method, Object[] args) throws Throwable; } 该方法主要有三个参数：
+proxy：动态生成的代理类的实例。 method：代理类对象调用的方法。 args：调用 method 方法的参数。 通过 Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候，实际会调用到实现 InvocationHandler 接口的类的 invoke() 方法。
+具体步骤 # TargetClass 类继承自 InterfaceA 和 InterfaceB 接口。</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>编码器和解码器 # 编码器：将消息转换为适合于传输的格式（通常是字节流）。 解码器：将网络字节流转换为应用程序的消息格式。 因此，编码器处理出站数据，而解码器处理入站数据。
 解码器 # 由于解码器是负责处理入站数据的，因此，解码器是 ChannelInboundHandler。
 解码器主要有下边两种：
 将字节解码为消息的 ByteToMessageDecoder 和 ReplayingDecoder。 将一种消息类型解码为另一种消息的 MessageToMessageDecoder。 ByteToMessageDecoder # ReplayingDecoder # ReplayingDecoder 扩展了 ByteToMessageDecoder 类，使得我们不必调用 readableBytes() 方法。它通过使用一个自定义的 ByteBuf 实现， ReplayingDecoderByteBuf，包装传入的 ByteBuf 实现了这一点，其将在内部执行该调用
