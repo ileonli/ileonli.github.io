@@ -5,7 +5,18 @@ https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#whatIs</descript
 DriverManager：用于将应用程序连接到通过数据库 URL 指定的数据源。当此类首次尝试建立连接时，它会自动加载类路径中找到的任何 JDBC 4.0 驱动程序。必须手动加载任何 4.0 版本之前的 JDBC 驱动程序。 DataSource：相比于 DriverManager，更推荐使用此接口，因为它允许应用程序对底层数据源的细节保持透明。DataSource 对象的属性被设置为表示特定的数据源。 使用 DriverManager 类 # String url = &amp;#34;jdbc:mysql://localhost:3306/db&amp;#34;; String username = &amp;#34;root&amp;#34;, password = &amp;#34;0987654321&amp;#34;; Connection conn = DriverManager.getConnection(url, username, password); 使用 JDBC 处理 SQL 语句 # 新建一个 user 表，如下图所示：
 使用 conn 对象创建 Statement，使用 stmt 执行 SQL 语句。
 ResultSet 保存了执行 SQL 语句的结果，可以遍历保存的结果。
-String query = &amp;#34;SELECT * FROM `user`;&amp;#34;; try (Statement stmt = conn.</description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
+String query = &amp;#34;SELECT * FROM `user`;&amp;#34;; try (Statement stmt = conn.</description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>MethodHandles # 翻译自： https://dev.java/learn/introduction_to_method_handles/
+什么是方法句柄（What are method handles） # 方法句柄是一种用于方法查找和调用的低级机制。与反射相比，反射和方法句柄都提供了调用方法、调用构造函数以及访问字段的手段。
+那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的指针之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。
+让我们深入探讨一下方法句柄能够提供什么功能以及我们如何有效地使用它们。
+访问检查（Access checking） # 方法句柄调用的访问检查与反射的执行方式是不同的。使用反射时，每次调用都会对调用者进行访问检查。而对于方法句柄，访问检查只在方法句柄创建时进行。
+需要注意的是，如果在能够访问非公共成员的上下文中创建了方法句柄，那么当该方法句柄被传递到外部时，它仍然可以访问这些非公共成员。
+因此，非公共成员可能会从不应有访问权限的代码中被访问。开发者有责任将此类方法句柄限制在其创建的上下文内。或者，可以使用适当的查找对象在创建方法句柄时立即设置访问限制。
+方法句柄查找（Method handle lookup） # 要创建方法句柄，我们首先需要创建一个 LookUp 对象，此为创建方法句柄的工厂。根据 Lookup 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。
+例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。通常我们希望避免这种情况。一个办法是将 Lookup 对象和方法句柄也设为私有。另一种方法是使用 MethodHandles.publicLookup 方法创建 Lookup 对象，这样它只能查找在无条件导出的包中公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：
+MethodHandles.Lookup publicLookup = MethodHandles.publicLookup(); 如果我们打算将 Lookup 对象和方法句柄设为私有，那么允许它们访问任何成员，包括私有和受保护的成员，是安全的：
+MethodHandles.Lookup lookup = MethodHandles.lookup(); 方法类型（Method type） # 要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息被表示为 MethodType 类。为了实例化一个 MethodType 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:
+MethodType methodType = MethodType.methodType(int.class /* the method returns integer */, String.class /* and accepts a single String argument*/); 有了 Lookup 和 MethodType 实例后，我们就可以查找方法句柄了。对于实例方法，我们应该使用 Lookup.</description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
 Proxy # Proxy 类主要使用 newProxyInstance() 静态方法生成代理对象。
 public static Object newProxyInstance(ClassLoader loader, Class&amp;lt;?&amp;gt;[] interfaces, InvocationHandler h) { ... } 该方法主要有三个参数：
 loader：定义代理类的类加载器。 interfaces：代理类要实现的接口列表。 h：用于分发方法调用的调用处理器。 InvocationHandler # 当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 InvocationHandler 接口类的 invoke 方法来调用。
