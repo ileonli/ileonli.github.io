@@ -1,0 +1,281 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content='Mapper # MapperRegistry # MapperRegistry 是 Mapper 接口及其对应的代理对象工厂的注册中心。
+Configuration 是 MyBatis 全局性的配置对象，在 MyBatis 初始化的过程中，所有配置信息会被解析成相应的对象并记录到 Configuration 对象中。
+knownMappers # MapperRegistry 类中的 knownMappers 用做具体保存。
+key 是 Mapper 接口对应的 Class 对象，value 为 MapperProxyFactory 工厂对象。
+private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new ConcurrentHashMap<>(); addMapper # addMapper 会将接口类和包装后的对象放入到 knownMappers 对象中。
+public <T> void addMapper(Class<T> type) { if (type.isInterface()) { if (hasMapper(type)) { throw new BindingException("Type " + type + " is already known to the MapperRegistry.'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/MyBatis/Mapper/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="Mapper"><meta property="og:description" content='Mapper # MapperRegistry # MapperRegistry 是 Mapper 接口及其对应的代理对象工厂的注册中心。
+Configuration 是 MyBatis 全局性的配置对象，在 MyBatis 初始化的过程中，所有配置信息会被解析成相应的对象并记录到 Configuration 对象中。
+knownMappers # MapperRegistry 类中的 knownMappers 用做具体保存。
+key 是 Mapper 接口对应的 Class 对象，value 为 MapperProxyFactory 工厂对象。
+private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new ConcurrentHashMap<>(); addMapper # addMapper 会将接口类和包装后的对象放入到 knownMappers 对象中。
+public <T> void addMapper(Class<T> type) { if (type.isInterface()) { if (hasMapper(type)) { throw new BindingException("Type " + type + " is already known to the MapperRegistry.'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-08-16T14:49:50+08:00"><title>Mapper | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.a7149865f62d0e36ebe9528f617c4a79ac107276108d09763905b95504e6376d.js integrity="sha256-pxSYZfYtDjbr6VKPYXxKeawQcnYQjQl2OQW5VQTmN20=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-5a08c1db6cf2ea603872adfba04d8e24 class=toggle>
+<label for=section-5a08c1db6cf2ea603872adfba04d8e24 class="flex justify-between"><a role=button>Bolt</a></label><ul><li><a href=/docs/Bolt/introduction/>Bolt 介绍</a></li><li><a href=/docs/Bolt/storage/>Bolt 存储与缓存</a></li></ul></li><li><input type=checkbox id=section-9fbc80cb6420725238beafa8b7a27788 class=toggle>
+<label for=section-9fbc80cb6420725238beafa8b7a27788 class="flex justify-between"><a role=button>J4DB</a></label><ul></ul></li><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
+<label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li><li><a href=/docs/Java/JDBC/>JDBC</a></li><li><a href=/docs/Java/MethodHandles/>MethodHandles</a></li><li><a href=/docs/Java/DynamicProxy/>动态代理</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle>
+<label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle>
+<label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
+<label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-be784f006af4b056e801791bd4131884 class=toggle checked>
+<label for=section-be784f006af4b056e801791bd4131884 class="flex justify-between"><a role=button>MyBatis</a></label><ul><li><a href=/docs/MyBatis/SqlSession/>SqlSession</a></li><li><a href=/docs/MyBatis/Mapper/ class=active>Mapper</a></li><li><a href=/docs/MyBatis/ResultSetHandler/>ResultSetHandler</a></li><li><a href=/docs/MyBatis/StatementHandler/>StatementHandler</a></li><li><a href=/docs/MyBatis/Executor/>Executor</a></li><li><a href=/docs/MyBatis/Cache/>Cache</a></li></ul></li><li><input type=checkbox id=section-8e8ae3b760618e1158c1946d2d023ca5 class=toggle>
+<label for=section-8e8ae3b760618e1158c1946d2d023ca5 class="flex justify-between"><a role=button>Netty</a></label><ul><li><a href=/docs/Netty/ByteBuf/>ByteBuf</a></li><li><a href=/docs/Netty/EventLoop/>EventLoop</a></li><li><a href=/docs/Netty/EventLoopGroup/>EventLoopGroup</a></li><li><a href=/docs/Netty/Channel/>Channel</a></li><li><a href=/docs/Netty/ChannelHandler/>ChannelHandler</a></li><li><a href=/docs/Netty/encoder-and-decoder/>编码器和解码器</a></li></ul></li><li><input type=checkbox id=section-bccb031e3769927ed8f05e90efe74959 class=toggle>
+<label for=section-bccb031e3769927ed8f05e90efe74959 class="flex justify-between"><a role=button>Pro Git</a></label><ul><li><a href=/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/>Git 基础</a></li><li><a href=/docs/ProGit/Git-%E5%88%86%E6%94%AF/>Git 分支</a></li></ul></li><li><span>计算机网络</span><ul></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>Mapper</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#mapper>Mapper</a><ul><li><a href=#mapperregistry>MapperRegistry</a><ul><li><a href=#knownmappers>knownMappers</a></li><li><a href=#addmapper>addMapper</a></li><li><a href=#getmapper>getMapper</a></li></ul></li><li><a href=#mapperproxyfactory>MapperProxyFactory</a><ul><li><a href=#mapperinterface>mapperInterface</a></li><li><a href=#newinstance>newInstance</a></li></ul></li><li><a href=#mapperproxy>MapperProxy</a><ul><li><a href=#invoke>invoke</a></li><li><a href=#cachedinvoker>cachedInvoker</a></li><li><a href=#methodhandles>MethodHandles</a></li></ul></li><li><a href=#mappermethodinvoker>MapperMethodInvoker</a><ul><li><a href=#plainmethodinvoker>PlainMethodInvoker</a></li><li><a href=#defaultmethodinvoker>DefaultMethodInvoker</a></li></ul></li><li><a href=#mappermethod>MapperMethod</a><ul><li><a href=#sqlcommand>SqlCommand</a></li><li><a href=#methodsignature>MethodSignature</a></li><li><a href=#execute>execute</a></li></ul></li></ul></li></ul></nav></aside></header><article class="markdown book-article"><h1 id=mapper>Mapper
+<a class=anchor href=#mapper>#</a></h1><h2 id=mapperregistry>MapperRegistry
+<a class=anchor href=#mapperregistry>#</a></h2><p><code>MapperRegistry</code> 是 Mapper 接口及其对应的代理对象工厂的注册中心。</p><p><code>Configuration</code> 是 MyBatis 全局性的配置对象，在 MyBatis 初始化的过程中，所有配置信息会被解析成相应的对象并记录到 <code>Configuration</code> 对象中。</p><h3 id=knownmappers>knownMappers
+<a class=anchor href=#knownmappers>#</a></h3><p><code>MapperRegistry</code> 类中的 <code>knownMappers</code> 用做具体保存。</p><p><code>key</code> 是 <code>Mapper</code> 接口对应的 <code>Class</code> 对象，<code>value</code> 为 <code>MapperProxyFactory</code> 工厂对象。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>Class<span style=color:#f92672>&lt;?&gt;</span>, MapperProxyFactory<span style=color:#f92672>&lt;?&gt;&gt;</span> knownMappers <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ConcurrentHashMap<span style=color:#f92672>&lt;&gt;</span>();
+</span></span></code></pre></div><h3 id=addmapper>addMapper
+<a class=anchor href=#addmapper>#</a></h3><p><code>addMapper</code> 会将接口类和包装后的对象放入到 <code>knownMappers</code> 对象中。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addMapper</span>(Class<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> type) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (type.<span style=color:#a6e22e>isInterface</span>()) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (hasMapper(type)) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> BindingException(<span style=color:#e6db74>&#34;Type &#34;</span> <span style=color:#f92672>+</span> type <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; is already known to the MapperRegistry.&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> loadCompleted <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>      knownMappers.<span style=color:#a6e22e>put</span>(type, <span style=color:#66d9ef>new</span> MapperProxyFactory<span style=color:#f92672>&lt;&gt;</span>(type));
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// It&#39;s important that the type is added before the parser is run</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// otherwise the binding may automatically be attempted by the</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// mapper parser. If the type is already known, it won&#39;t try.</span>
+</span></span><span style=display:flex><span>      MapperAnnotationBuilder parser <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> MapperAnnotationBuilder(config, type);
+</span></span><span style=display:flex><span>      parser.<span style=color:#a6e22e>parse</span>();
+</span></span><span style=display:flex><span>      loadCompleted <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span>;
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>finally</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>loadCompleted) {
+</span></span><span style=display:flex><span>        knownMappers.<span style=color:#a6e22e>remove</span>(type);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=getmapper>getMapper
+<a class=anchor href=#getmapper>#</a></h3><p>当使用 <code>SqlSession</code> 类中的 <code>&lt;T> T getMapper(Class&lt;T> type);</code> 方法获取 Mapper 时，会转发到 <code>MapperRegistry</code> 的 <code>getMapper</code> 方法进行具体处理。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> T <span style=color:#a6e22e>getMapper</span>(Class<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> type, SqlSession sqlSession) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>final</span> MapperProxyFactory<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> mapperProxyFactory <span style=color:#f92672>=</span> (MapperProxyFactory<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span>) knownMappers.<span style=color:#a6e22e>get</span>(type);
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (mapperProxyFactory <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> BindingException(<span style=color:#e6db74>&#34;Type &#34;</span> <span style=color:#f92672>+</span> type <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; is not known to the MapperRegistry.&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> mapperProxyFactory.<span style=color:#a6e22e>newInstance</span>(sqlSession);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> BindingException(<span style=color:#e6db74>&#34;Error getting mapper instance. Cause: &#34;</span> <span style=color:#f92672>+</span> e, e);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=mapperproxyfactory>MapperProxyFactory
+<a class=anchor href=#mapperproxyfactory>#</a></h2><h3 id=mapperinterface>mapperInterface
+<a class=anchor href=#mapperinterface>#</a></h3><p><code>MapperProxyFactory</code> 中的 <code>mapperInterface</code> 为 Mapper 接口类。</p><h3 id=newinstance>newInstance
+<a class=anchor href=#newinstance>#</a></h3><p><code>newInstance</code> 的返回值 <code>T</code> 为 Mapper 接口类型（JDK 动态代理需要配合接口使用）。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MapperProxyFactory</span><span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Class<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> mapperInterface;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>Method, MapperMethodInvoker<span style=color:#f92672>&gt;</span> methodCache <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ConcurrentHashMap<span style=color:#f92672>&lt;&gt;</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>MapperProxyFactory</span>(Class<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> mapperInterface) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>mapperInterface</span> <span style=color:#f92672>=</span> mapperInterface;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> Class<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getMapperInterface</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> mapperInterface;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> Map<span style=color:#f92672>&lt;</span>Method, MapperMethodInvoker<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getMethodCache</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> methodCache;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>protected</span> T <span style=color:#a6e22e>newInstance</span>(MapperProxy<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> mapperProxy) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> (T) Proxy.<span style=color:#a6e22e>newProxyInstance</span>(mapperInterface.<span style=color:#a6e22e>getClassLoader</span>(), <span style=color:#66d9ef>new</span> Class<span style=color:#f92672>[]</span> { mapperInterface }, mapperProxy);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> T <span style=color:#a6e22e>newInstance</span>(SqlSession sqlSession) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> MapperProxy<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> mapperProxy <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> MapperProxy<span style=color:#f92672>&lt;&gt;</span>(sqlSession, mapperInterface, methodCache);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> newInstance(mapperProxy);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=mapperproxy>MapperProxy
+<a class=anchor href=#mapperproxy>#</a></h2><p><code>MapperProxy</code> 类是 <code>MyBatis</code> 中最重要的类之一，通过这个代理对象，MyBatis 能够在不显式编写实现类的情况下，将对 Mapper 接口的方法调用转换为相应的 SQL 查询，并执行这些查询。</p><h3 id=invoke>invoke
+<a class=anchor href=#invoke>#</a></h3><p>该类继承自 <code>InvocationHandler</code> 接口，通过重写 <code>invoke</code> 方法提供额外的逻辑。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MapperProxy</span><span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>implements</span> InvocationHandler, Serializable
+</span></span></code></pre></div><p>如果执行的 <code>method</code> 为 <code>Object</code> 类的方法，则不进行动态代理，直接执行。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (Object.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>equals</span>(method.<span style=color:#a6e22e>getDeclaringClass</span>())) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> method.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>this</span>, args);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> cachedInvoker(method).<span style=color:#a6e22e>invoke</span>(proxy, method, args, sqlSession);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (Throwable t) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> ExceptionUtil.<span style=color:#a6e22e>unwrapThrowable</span>(t);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=cachedinvoker>cachedInvoker
+<a class=anchor href=#cachedinvoker>#</a></h3><p>这个方法的主要功能是从 <code>methodCache</code> 缓存中获取或创建一个 <code>MapperMethodInvoker</code>，以优化调用 Mapper 接口方法的性能。</p><p>JDK 1.8 在接口中引入了 <code>default</code> 方法，用于在具体类不提供该方法的实现的情况下，允许接口方法提供实现。</p><hr><p>MyBatis 对 <code>default</code> 方法进行了额外处理，根据是否为 <code>default</code> 方法进行不同的处理：</p><ul><li>不是 <code>default</code> 方法：使用 <code>PlainMethodInvoker</code> 类进行处理，需要交给数据库处理。</li><li>是 <code>default</code> 方法：使用 <code>DefaultMethodInvoker</code> 类进行处理，调用时，直接执行。</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> MapperMethodInvoker <span style=color:#a6e22e>cachedInvoker</span>(Method method) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> MapUtil.<span style=color:#a6e22e>computeIfAbsent</span>(methodCache, method, m <span style=color:#f92672>-&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>m.<span style=color:#a6e22e>isDefault</span>()) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> PlainMethodInvoker(<span style=color:#66d9ef>new</span> MapperMethod(mapperInterface, method, sqlSession.<span style=color:#a6e22e>getConfiguration</span>()));
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (privateLookupInMethod <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>          <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> DefaultMethodInvoker(getMethodHandleJava8(method));
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> DefaultMethodInvoker(getMethodHandleJava9(method));
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>catch</span> (IllegalAccessException <span style=color:#f92672>|</span> InstantiationException <span style=color:#f92672>|</span> InvocationTargetException
+</span></span><span style=display:flex><span>          <span style=color:#f92672>|</span> NoSuchMethodException e) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> RuntimeException(e);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (RuntimeException re) {
+</span></span><span style=display:flex><span>    Throwable cause <span style=color:#f92672>=</span> re.<span style=color:#a6e22e>getCause</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> cause <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>?</span> re : cause;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=methodhandles>MethodHandles
+<a class=anchor href=#methodhandles>#</a></h3><p><code>MethodHandles</code> 在 JDK 1.9 才引入 <code>privateLookupIn</code> 方法用于直接访问 <code>private</code> 方法。</p><p>为了支持 JDK 1.8 之前的代码，下边的代码根据不同的 JDK 版本，设计了两种方式访问私有方法。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>static</span> {
+</span></span><span style=display:flex><span>  Method privateLookupIn;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    privateLookupIn <span style=color:#f92672>=</span> MethodHandles.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getMethod</span>(<span style=color:#e6db74>&#34;privateLookupIn&#34;</span>, Class.<span style=color:#a6e22e>class</span>, MethodHandles.<span style=color:#a6e22e>Lookup</span>.<span style=color:#a6e22e>class</span>);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (NoSuchMethodException e) {
+</span></span><span style=display:flex><span>    privateLookupIn <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  privateLookupInMethod <span style=color:#f92672>=</span> privateLookupIn;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  Constructor<span style=color:#f92672>&lt;</span>Lookup<span style=color:#f92672>&gt;</span> lookup <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (privateLookupInMethod <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// JDK 1.8</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>      lookup <span style=color:#f92672>=</span> MethodHandles.<span style=color:#a6e22e>Lookup</span>.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getDeclaredConstructor</span>(Class.<span style=color:#a6e22e>class</span>, <span style=color:#66d9ef>int</span>.<span style=color:#a6e22e>class</span>);
+</span></span><span style=display:flex><span>      lookup.<span style=color:#a6e22e>setAccessible</span>(<span style=color:#66d9ef>true</span>);
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>catch</span> (NoSuchMethodException e) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalStateException(
+</span></span><span style=display:flex><span>          <span style=color:#e6db74>&#34;There is neither &#39;privateLookupIn(Class, Lookup)&#39; nor &#39;Lookup(Class, int)&#39; method in java.lang.invoke.MethodHandles.&#34;</span>,
+</span></span><span style=display:flex><span>          e);
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>      lookup <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  lookupConstructor <span style=color:#f92672>=</span> lookup;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h4 id=getmethodhandlejava9>getMethodHandleJava9
+<a class=anchor href=#getmethodhandlejava9>#</a></h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> MethodHandle <span style=color:#a6e22e>getMethodHandleJava9</span>(Method method)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>final</span> Class<span style=color:#f92672>&lt;?&gt;</span> declaringClass <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>getDeclaringClass</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> ((Lookup) privateLookupInMethod.<span style=color:#a6e22e>invoke</span>(<span style=color:#66d9ef>null</span>, declaringClass, MethodHandles.<span style=color:#a6e22e>lookup</span>())).<span style=color:#a6e22e>findSpecial</span>(
+</span></span><span style=display:flex><span>      declaringClass, method.<span style=color:#a6e22e>getName</span>(), MethodType.<span style=color:#a6e22e>methodType</span>(method.<span style=color:#a6e22e>getReturnType</span>(), method.<span style=color:#a6e22e>getParameterTypes</span>()),
+</span></span><span style=display:flex><span>      declaringClass);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h4 id=getmethodhandlejava8>getMethodHandleJava8
+<a class=anchor href=#getmethodhandlejava8>#</a></h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> MethodHandle <span style=color:#a6e22e>getMethodHandleJava8</span>(Method method)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throws</span> IllegalAccessException, InstantiationException, InvocationTargetException {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>final</span> Class<span style=color:#f92672>&lt;?&gt;</span> declaringClass <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>getDeclaringClass</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> lookupConstructor.<span style=color:#a6e22e>newInstance</span>(declaringClass, ALLOWED_MODES).<span style=color:#a6e22e>unreflectSpecial</span>(method, declaringClass);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=mappermethodinvoker>MapperMethodInvoker
+<a class=anchor href=#mappermethodinvoker>#</a></h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>MapperMethodInvoker</span> {
+</span></span><span style=display:flex><span>  Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args, SqlSession sqlSession) <span style=color:#66d9ef>throws</span> Throwable;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=plainmethodinvoker>PlainMethodInvoker
+<a class=anchor href=#plainmethodinvoker>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PlainMethodInvoker</span> <span style=color:#66d9ef>implements</span> MapperMethodInvoker {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> MapperMethod mapperMethod;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>PlainMethodInvoker</span>(MapperMethod mapperMethod) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>mapperMethod</span> <span style=color:#f92672>=</span> mapperMethod;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args, SqlSession sqlSession) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> mapperMethod.<span style=color:#a6e22e>execute</span>(sqlSession, args);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=defaultmethodinvoker>DefaultMethodInvoker
+<a class=anchor href=#defaultmethodinvoker>#</a></h3><p>用于处理接口中的 <code>default</code> 方法，直接使用 <code>MethodHandle</code> 执行即可。</p><p><code>bindTo</code> 将对象绑定到 <code>MethodHandle</code> 中，调用时就不需要传递对象了。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>DefaultMethodInvoker</span> <span style=color:#66d9ef>implements</span> MapperMethodInvoker {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> MethodHandle methodHandle;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>DefaultMethodInvoker</span>(MethodHandle methodHandle) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>methodHandle</span> <span style=color:#f92672>=</span> methodHandle;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args, SqlSession sqlSession) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> methodHandle.<span style=color:#a6e22e>bindTo</span>(proxy).<span style=color:#a6e22e>invokeWithArguments</span>(args);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=mappermethod>MapperMethod
+<a class=anchor href=#mappermethod>#</a></h2><p><code>MapperMethod</code> 中封装了 Mapper 接口中对应方法的信息，以及对应 SQL 语句的信息。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> SqlCommand command;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> MethodSignature method;
+</span></span></code></pre></div><h3 id=sqlcommand>SqlCommand
+<a class=anchor href=#sqlcommand>#</a></h3><p><code>SqlCommand</code> 类中的 <code>name</code> 为 <code>MappedStatement</code> 的 <code>id</code>。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> String name;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> SqlCommandType type;
+</span></span></code></pre></div><p><code>type</code> 为 SQL 的类型。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>enum</span> SqlCommandType {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  UNKNOWN,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  INSERT,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  UPDATE,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  DELETE,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SELECT,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  FLUSH
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=methodsignature>MethodSignature
+<a class=anchor href=#methodsignature>#</a></h3><p><code>MethodSignature</code> 类中的属性保存了 Mapper 接口中方法的签名。</p><p>通过不同的返回值，<code>MyBatis</code> 可以动态的返回不同类型的值。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> returnsMany;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> returnsMap;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> returnsVoid;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> returnsCursor;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>boolean</span> returnsOptional;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Class<span style=color:#f92672>&lt;?&gt;</span> returnType;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> String mapKey;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Integer resultHandlerIndex;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Integer rowBoundsIndex;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> ParamNameResolver paramNameResolver;
+</span></span></code></pre></div><h3 id=execute>execute
+<a class=anchor href=#execute>#</a></h3><p><code>execute</code> 方法会根据不同的 <code>SqlCommandType</code> 来动态选择执行。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>execute</span>(SqlSession sqlSession, Object<span style=color:#f92672>[]</span> args) {
+</span></span><span style=display:flex><span>  Object result;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>switch</span> (command.<span style=color:#a6e22e>getType</span>()) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> INSERT: {
+</span></span><span style=display:flex><span>      Object param <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>convertArgsToSqlCommandParam</span>(args);
+</span></span><span style=display:flex><span>      result <span style=color:#f92672>=</span> rowCountResult(sqlSession.<span style=color:#a6e22e>insert</span>(command.<span style=color:#a6e22e>getName</span>(), param));
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> UPDATE: {
+</span></span><span style=display:flex><span>      Object param <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>convertArgsToSqlCommandParam</span>(args);
+</span></span><span style=display:flex><span>      result <span style=color:#f92672>=</span> rowCountResult(sqlSession.<span style=color:#a6e22e>update</span>(command.<span style=color:#a6e22e>getName</span>(), param));
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> DELETE: {
+</span></span><span style=display:flex><span>      Object param <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>convertArgsToSqlCommandParam</span>(args);
+</span></span><span style=display:flex><span>      result <span style=color:#f92672>=</span> rowCountResult(sqlSession.<span style=color:#a6e22e>delete</span>(command.<span style=color:#a6e22e>getName</span>(), param));
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> SELECT:
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>if</span> (method.<span style=color:#a6e22e>returnsVoid</span>() <span style=color:#f92672>&amp;&amp;</span> method.<span style=color:#a6e22e>hasResultHandler</span>()) {
+</span></span><span style=display:flex><span>        executeWithResultHandler(sqlSession, args);
+</span></span><span style=display:flex><span>        result <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (method.<span style=color:#a6e22e>returnsMany</span>()) {
+</span></span><span style=display:flex><span>        result <span style=color:#f92672>=</span> executeForMany(sqlSession, args);
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (method.<span style=color:#a6e22e>returnsMap</span>()) {
+</span></span><span style=display:flex><span>        result <span style=color:#f92672>=</span> executeForMap(sqlSession, args);
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (method.<span style=color:#a6e22e>returnsCursor</span>()) {
+</span></span><span style=display:flex><span>        result <span style=color:#f92672>=</span> executeForCursor(sqlSession, args);
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>        Object param <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>convertArgsToSqlCommandParam</span>(args);
+</span></span><span style=display:flex><span>        result <span style=color:#f92672>=</span> sqlSession.<span style=color:#a6e22e>selectOne</span>(command.<span style=color:#a6e22e>getName</span>(), param);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (method.<span style=color:#a6e22e>returnsOptional</span>() <span style=color:#f92672>&amp;&amp;</span> (result <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>||</span> <span style=color:#f92672>!</span>method.<span style=color:#a6e22e>getReturnType</span>().<span style=color:#a6e22e>equals</span>(result.<span style=color:#a6e22e>getClass</span>()))) {
+</span></span><span style=display:flex><span>          result <span style=color:#f92672>=</span> Optional.<span style=color:#a6e22e>ofNullable</span>(result);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> FLUSH:
+</span></span><span style=display:flex><span>      result <span style=color:#f92672>=</span> sqlSession.<span style=color:#a6e22e>flushStatements</span>();
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>default</span>:
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> BindingException(<span style=color:#e6db74>&#34;Unknown execution method for: &#34;</span> <span style=color:#f92672>+</span> command.<span style=color:#a6e22e>getName</span>());
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (result <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> method.<span style=color:#a6e22e>getReturnType</span>().<span style=color:#a6e22e>isPrimitive</span>() <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>method.<span style=color:#a6e22e>returnsVoid</span>()) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> BindingException(<span style=color:#e6db74>&#34;Mapper method &#39;&#34;</span> <span style=color:#f92672>+</span> command.<span style=color:#a6e22e>getName</span>()
+</span></span><span style=display:flex><span>        <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;&#39; attempted to return null from a method with a primitive return type (&#34;</span> <span style=color:#f92672>+</span> method.<span style=color:#a6e22e>getReturnType</span>() <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;).&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> result;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#mapper>Mapper</a><ul><li><a href=#mapperregistry>MapperRegistry</a><ul><li><a href=#knownmappers>knownMappers</a></li><li><a href=#addmapper>addMapper</a></li><li><a href=#getmapper>getMapper</a></li></ul></li><li><a href=#mapperproxyfactory>MapperProxyFactory</a><ul><li><a href=#mapperinterface>mapperInterface</a></li><li><a href=#newinstance>newInstance</a></li></ul></li><li><a href=#mapperproxy>MapperProxy</a><ul><li><a href=#invoke>invoke</a></li><li><a href=#cachedinvoker>cachedInvoker</a></li><li><a href=#methodhandles>MethodHandles</a></li></ul></li><li><a href=#mappermethodinvoker>MapperMethodInvoker</a><ul><li><a href=#plainmethodinvoker>PlainMethodInvoker</a></li><li><a href=#defaultmethodinvoker>DefaultMethodInvoker</a></li></ul></li><li><a href=#mappermethod>MapperMethod</a><ul><li><a href=#sqlcommand>SqlCommand</a></li><li><a href=#methodsignature>MethodSignature</a></li><li><a href=#execute>execute</a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>
