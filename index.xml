@@ -1,150 +1,869 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>关于我 on Leon' Blog</title><link>https://ileonli.github.io/</link><description>Recent content in 关于我 on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/introduction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/introduction/</guid><description>boltdb 介绍 # https://github.com/boltdb/bolt
-boltdb 是一个使用 Go 语言开发的 KV 存储库。该项目的目标是为那些不需要完整数据库服务器（如：Postgres或MySQL）的项目提供一个简单、快速且可靠的数据库。
-boltdb 目前已不再维护，CoreOS fork 了该项目，并继续维护 bbolt。
-打开数据库 # boltdb 中的顶层对象是 DB。它在磁盘上表示为一个单一文件，并且代表了数据的一个一致性快照。
-要打开数据库，只需使用 bolt.Open() 函数：
-package main import ( &amp;#34;log&amp;#34; &amp;#34;github.com/boltdb/bolt&amp;#34; ) func main() { // Open the my.db data file in your current directory. // It will be created if it doesn&amp;#39;t exist. db, err := bolt.Open(&amp;#34;my.db&amp;#34;, 0600, nil) if err != nil { log.Fatal(err) } defer db.Close() ... } 请注意，boltdb 会对数据文件加锁，因此多个进程不能同时打开同一个数据库。尝试打开一个已经被打开的 boltdb 数据库将导致程序挂起，直到其他进程关闭该数据库。为了防止无限期等待，可以为 Open() 函数传递一个超时选项：</description></item><item><title>BTree</title><link>https://ileonli.github.io/docs/MapDB/BTree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MapDB/BTree/</guid><description> BTree # BTree # 所有节点有 M 度 每个节点至少有 M / 2 个子结点 参考文献 # Modern B-Tree Techniques https://www.cs.usfca.edu/~galles/visualization/BTree.html https://www.youtube.com/watch?v=aZjYr87r1b8</description></item><item><title>Class 文件结构</title><link>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</guid><description>Class 文件结构 # 前言 # 任何一个 class 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 class 文件（如：动态生成的类）。
-// Main.java public class Main { public static class InnerClass { } public static void main(String[] args) { } } 当执行 $javac Main.java 命令后，会生成 Main.class 和 Main$InnerClass.class 两个 class 文件。
-class 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。
-使用 u1、u2 和 u4 分别表示 1 字节、2 字节和 4 字节。
-Names # 二进制类和接口名称 # 在 Java 虚拟机中，类和接口的名称使用二进制名称格式表示。此格式与源代码中的类名表示略有不同。</description></item><item><title>Database Storage</title><link>https://ileonli.github.io/docs/15-445/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/15-445/storage/</guid><description>Database Storage # https://15445.courses.cs.cmu.edu/fall2023/slides/03-storage1.pdf
-DBMS 假设数据库主要使用的存储是非易失的（non-volatile）。DBMS 主要工作之一为：管理数据在易失存储设备和非易失存储设备之间的移动。
-基于磁盘的结构 # 存储结构 # 对于存储设备来说：速度越快 -&amp;gt; 价钱昂贵，速度越慢 -&amp;gt; 价格便宜。因此，要在价格和速度之间进行一部分取舍。
-主流的做法为，采用速度更快的存储设备作为底层设备的缓存。
-此课程只关注非易失存储设备
-Intel 开发了 Optane 非易失存储设备，可以提供类似内存的速度和易失性（volatile），但又具有非易失性的特性（non-volatile）。这意味着数据在断电时仍然保持不变，适合用于需要快速恢复状态的应用场景，如数据库和日志记录。
-由于此业务不赚钱，Intel 已经终止了此设备的研发
-访问时间 # 不同存储设备的延迟对比如下：
-随机和顺序读取 # 在非易失存储设备上进行随机读取（random access）比顺序读取（sequential access）慢的多。
-为了充分利用顺序读取速度较快的优势，DBMS 可以使用下边的优化方法：
-减少写入随机页面的次数：尝试减少对随机存储页面（即内存或磁盘上的页面）的写操作次数。这样做的目的是让数据能够存储在连续的块中。连续的存储块更有利于提高数据的访问速度，因为读取连续的数据比读取散乱分布的数据效率更高。这种优化有助于提高存储系统的性能，特别是在磁盘 I/O 操作方面。 扩展（Extent）：当一次性分配多个页面时，这种分配方式称为扩展。换句话说，一个扩展就是一组连续分配的页面块。通过这种方式，可以更高效地管理存储空间，并进一步确保数据以连续的方式存储，从而提高读写性能。 设计原则 # 一个良好的 DBMS 应该有以下设计原则：
-允许管理的数据库的数据大小超过内存（RAM）。 尽量减少磁盘读写的次数。 最大化使用顺序读取，减少随机读取的次数。 large stalls：当磁盘读写操作没有得到有效管理时，尤其是在面对随机访问过多或磁盘 I/O 负载过重的情况下，系统可能会经历长时间的等待，导致处理速度明显变慢。
-面向磁盘的 DBMS # 当执行引擎（execution engine）需要获取页（page）时，会尝试从缓冲池（buffer pool）中获取。
-缓冲池作用为：将保存在磁盘中的页加载到内存中，由于内存通常远远小于磁盘大小，需要采用一些算法（如：LRU）来保证页的加载和换出。
-加载到缓冲池中后，我们就可以直接使用此页了。
-当需要修改数据时，可以直接对内存中的页进行修改，修改后没写回到磁盘的页称为脏页（dirty page）。
-为什么不使用 OS? # DBMS 可以使用 mmap 技术，将文件的内容直接映射到程序的地址空间中。
-OS 负责管理文件页面的调度和内存交换，因此 DBMS 不需要直接处理这些细节。</description></item><item><title>Git 基础</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</guid><description>Git 基础 # 获取 Git 仓库 # 有两种取得 Git 项目仓库的方法：
-将现有项目或目录下导入所有文件到 Git 中，可以使用 $ git init 命令。 从服务器克隆一个现有的 Git 仓库，使用 $ git clone &amp;lt;project url&amp;gt; 命令。 Git 生命周期 # 工作目录下的所有文件都处于两种状态之一：已跟踪和未跟踪。
-已跟踪：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于未修改、已修改或已放入暂存区。 未跟踪：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。
-编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为已修改文件。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。
-如此反复，使用 Git 的生命周期如下图所示：
-检查当前文件状态 # 如果需要查看文件处于的状态，可以使用 $ git status 命令。
-当我们对 $ git init 后的仓库使用此命令，可以看到下边的输出：
-$ git status On branch main No commits yet nothing to commit (create/copy files and use &amp;#34;git add&amp;#34; to track) 我们可以从上边输出中得到以下信息：</description></item><item><title>SqlSession</title><link>https://ileonli.github.io/docs/MyBatis/SqlSession/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/SqlSession/</guid><description>SqlSession # SalSession 是用于操作数据库的接口，具体的操作都通过此接口。
-SqlSessionFactoryBuilder # 此类可以被实例化、使用和丢弃，一旦使用此类创建了 SqlSessionFactory，后续就不需要使用此类了。因此 SqlSessionFactoryBuilder 实例的最佳作用域是方法作用域（也就是局部方法变量）。
-可以重用 SqlSessionFactoryBuilder 来创建多个 SqlSessionFactory 实例，但最好还是不要一直保留着它，以保证 XML 资源可以被释放。
-SqlSessionFactory # SqlSessionFactory 一旦被创建就应该在应用的运行期间一直存在，没有任何理由丢弃它或重新创建另一个实例。使用 SqlSessionFactory 的最佳实践是在应用运行期间只创建一次。
-SqlSessionFactory 的作用是为了创建 SqlSession 实例。SqlSession 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。
-import java.sql.Connection; /** * Creates an {@link SqlSession} out of a connection or a DataSource * * @author Clinton Begin */ public interface SqlSessionFactory { SqlSession openSession(); SqlSession openSession(boolean autoCommit); SqlSession openSession(Connection connection); SqlSession openSession(TransactionIsolationLevel level); SqlSession openSession(ExecutorType execType); SqlSession openSession(ExecutorType execType, boolean autoCommit); SqlSession openSession(ExecutorType execType, TransactionIsolationLevel level); SqlSession openSession(ExecutorType execType, Connection connection); Configuration getConfiguration(); } SqlSessionFactory 主要有两个具体的实现：</description></item><item><title>网络字节序</title><link>https://ileonli.github.io/docs/system-programming/network-byte-order/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/network-byte-order/</guid><description>网络字节序 # 大小端 # 不同架构的 CPU 中，4 字节整数 1 在内存中存储的方式是不同的。
-大端序（big endian）：最高位有效字节存储在低内存地址，而最低位有效字节存储在高内存地址。 小端序（little endian）：最高位有效字节存储在高内存地址，而最低位有效字节存储在低内存地址。 对于一个 4 字节整数 0x01020304，大小端序存储方式分别如下：
-地址: 0 1 2 3 （大端序保存） 01 02 03 04 地址: 0 1 2 3 （小端序保存） 04 03 02 01 可以使用下边的方法判断机器的字节序：
-通过 endian.h 提供的 BYTE_ORDER 宏。 #include &amp;lt;endian.h&amp;gt; bool big_endian() { return BYTE_ORDER == BIG_ENDIAN; } bool little_endian() { return BYTE_ORDER == LITTLE_ENDIAN; } 将 uint16_t 类型的数字转为 char *，通过高字节和低字节进行判断。 bool big_endian() { uint16_t val = 0x0102; return ((char *) (&amp;amp;val))[0] == 0x01; } bool little_endian() { uint16_t val = 0x0102; return ((char *) (&amp;amp;val))[1] == 0x01; } 和方法 2 类似，利用的是 union 相同的内存位置存储不同的数据类型。 union endian { uint16_t val; char bytes[2]; }; bool big_endian() { union endian en{}; en.</description></item><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>ByteBuf # 基本结构 # +-------------------+------------------+------------------+-------------+ | discardable bytes | readable bytes | writable bytes | ... | | | (CONTENT) | | | +-------------------+------------------+------------------+-------------+ | | | | | 0 &amp;lt;= readerIndex &amp;lt;= writerIndex &amp;lt;= capacity maxCapacity 相关操作 # 有些方法会返回 this，以支持链式调用。
-容量 # ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(); int capacity = buf.capacity();// 获取当前的容量 int maxCapacity = buf.maxCapacity();// 支持的最大容量，通常为 Integer.MAX_VALUE int readableBytes = buf.readableBytes();// writerIndex - readerIndex int writableBytes = buf.writableBytes();// capacity - writerIndex boolean readable; readable = buf.</description></item><item><title>Git 分支</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</guid><description>Git 分支 # 分支创建 # 使用 $ git branch 命令后，会在当前所在的提交对象上创建一个指针。此操作并不会直接切换到新创建的分支上。
-那么，Git 又是怎么知道当前在哪一个分支上呢？有一个名为 HEAD 的特殊指针，指向当前分支。
-$ git branch testing 分支切换 # 要切换到一个已存在的分支，需要使用 $ git switch 命令。
-$ git switch testing 这样 HEAD 就指向 testing 分支了。
-分支合并 # testing 分支提交 # $ touch 1.txt $ git commit -a -m &amp;#39;add: 1.txt&amp;#39; master 分支提交 # $ git switch master $ touch 2.txt $ git commit -a -m &amp;#39;add: 2.txt&amp;#39; 合并 # 使用 $ git merge 即可将 testing 分支中的内容合并到 master 分支中。</description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>Mapper # MapperRegistry # MapperRegistry 是 Mapper 接口及其对应的代理对象工厂的注册中心。
-Configuration 是 MyBatis 全局性的配置对象，在 MyBatis 初始化的过程中，所有配置信息会被解析成相应的对象并记录到 Configuration 对象中。
-knownMappers # MapperRegistry 类中的 knownMappers 用做具体保存。
-key 是 Mapper 接口对应的 Class 对象，value 为 MapperProxyFactory 工厂对象。
-private final Map&amp;lt;Class&amp;lt;?&amp;gt;, MapperProxyFactory&amp;lt;?&amp;gt;&amp;gt; knownMappers = new ConcurrentHashMap&amp;lt;&amp;gt;(); addMapper # addMapper 会将接口类和包装后的对象放入到 knownMappers 对象中。
-public &amp;lt;T&amp;gt; void addMapper(Class&amp;lt;T&amp;gt; type) { if (type.isInterface()) { if (hasMapper(type)) { throw new BindingException(&amp;#34;Type &amp;#34; + type + &amp;#34; is already known to the MapperRegistry.</description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>ResultSetHandler # MyBatis 会将 ResultSet 按照映射配置文件中定义的映射规则（例如 &amp;lt;resultMap&amp;gt; 节点和 resultType 属性等）映射成相应的对象。
-在 StatementHandler 接口执行完指定的 select 语句之后，会将查询得到的 ResultSet 交给 ResultSetHandler 完成映射处理。
-ResultSetHandler 除了负责映射 select 语句查询得到的结果集，还会处理存储过程执行后的输出参数。
-DefaultResultSetHandler # ResultSetHandler 只有一个实现类 DefaultResultSetHandler。
-public interface ResultSetHandler { &amp;lt;E&amp;gt; List&amp;lt;E&amp;gt; handleResultSets(Statement stmt) throws SQLException; &amp;lt;E&amp;gt; Cursor&amp;lt;E&amp;gt; handleCursorResultSets(Statement stmt) throws SQLException; void handleOutputParameters(CallableStatement cs) throws SQLException; } MultiQueries # JDBC # 为了同时执行多条查询语句，需要设置 allowMultiQueries=true。
-Connection conn = DriverManager.getConnection( &amp;#34;jdbc:mysql://localhost/db?allowMultiQueries=true&amp;#34;, &amp;#34;root&amp;#34;, &amp;#34;0987654321&amp;#34;); String sql = &amp;#34;&amp;#34;&amp;#34; SELECT * FROM `user`; SELECT * FROM `blog`; &amp;#34;&amp;#34;&amp;#34;; try (Statement stmt = conn.</description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>StatementHandler # StatementHandler 接口中的功能很多，例如创建 Statement 对象，为 SQL 语句绑定实参，执行 select、insert、update、delete 等多种类型的 SQL 语句，批量执行 SQL 语句，将结果集映射成结果对象。
-public interface StatementHandler { Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException; void parameterize(Statement statement) throws SQLException; void batch(Statement statement) throws SQLException; int update(Statement statement) throws SQLException; &amp;lt;E&amp;gt; List&amp;lt;E&amp;gt; query(Statement statement, ResultHandler resultHandler) throws SQLException; &amp;lt;E&amp;gt; Cursor&amp;lt;E&amp;gt; queryCursor(Statement statement) throws SQLException; BoundSql getBoundSql(); ParameterHandler getParameterHandler(); } prepare：从 Connection 中创建 Statement 对象。 parameterize：绑定 statement 执行时需要的参数。 batch：批量执行 SQL 语句。 update：执行 insert、update 和 delete 操作。 query 和 queryCursor：用于执行 select 操作。 getBoundSql：获取绑定的 SQL。 getParameterHandler：负责处理 SQL 语句中的参数的处理器。 BaseStatementHandler # prepare # BaseStatementHandler 中设计了模板方法 prepare，通过该方法可以获取 Statement 对象。</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>常量池 # 常量池是一个表，所有的表项都有以下的格式。tag 表示表项的类型，info 用于表示 tag 类型所需要存储的信息。
-cp_info { u1 tag; u1 info[]; } 常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。
-为什么设计常量池？ # 复用 # 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。
-下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
-public class Main { public static void main(String[] args) { String str = &amp;#34;Hello World!&amp;#34;; System.out.println(str); System.out.println(&amp;#34;Hello World!&amp;#34;); } } public class io.github.ileonli.Main minor version: 0 major version: 65 flags: (0x0021) ACC_PUBLIC, ACC_SUPER this_class: #21 // io/github/ileonli/Main super_class: #2 // java/lang/Object interfaces: 0, fields: 0, methods: 2, attributes: 1 Constant pool: #1 = Methodref #2.</description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>网络地址族 # 网络地址 # 网络地址分为 IPv4 和 IPv6，分别使用 sockaddr_in 和 sockaddr_in6 结构体表示。
-sockaddr_in # struct sockaddr_in { sa_family_t sin_family; /* address family: AF_INET */ in_port_t sin_port; /* port in network byte order */ struct in_addr sin_addr; /* internet address */ /* Pad to size of `struct sockaddr&amp;#39;. */ unsigned char sin_zero[8]; }; /* Internet address */ struct in_addr { uint32_t s_addr; /* address in network byte order */ }; sin_family：在 IPv4 中设为 AF_INET。 sin_port：网络字节序保存的端口（0～65535）。 sin_addr：网络字节序保存的 32 位 IP 地址信息。 sin_zero：使 sockaddr_in 和 sockaddr 结构体大小保持一致而插入的填充位，需手动设为 0。 https://man7.</description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>EventLoop # 一旦注册，将处理 Channel 的所有 I/O 操作。一个 EventLoop 实例通常会处理多个 Channel，但这可能取决于实现细节和内部机制。
-EventLoop 本质是一个单线程执行器，同时维护了一个 Selector。
-EventLoop 由 Thread 驱动，且不会更改
-try (EventLoop loop = new DefaultEventLoop()) { for (int i = 0; i &amp;lt; 3; i++) { loop.submit(() -&amp;gt; { for (int j = 0; j &amp;lt; 16; j++) { System.out.print(j + &amp;#34; &amp;#34;); } System.out.println(); }); } } 使用 EventLoop 的定时调度功能。
-try (EventLoop loop = new DefaultEventLoop()) { ScheduledFuture&amp;lt;?&amp;gt; future = loop.</description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>Executor # SqlSession 中的具体操作都会通过 Executor 接口进行实现。
-public class DefaultSqlSession implements SqlSession { ... private final Executor executor; ... } ExecutorType # Executor 一共有三种类型：
-SIMPLE： REUSE： BATCH： public enum ExecutorType { SIMPLE, REUSE, BATCH } BaseExecutor # BaseExecutor 是继承自 Executor 接口的抽象类。该类实现了 Executor 中的大部分方法。
-该类使用了模板方法模式，继承 BaseExecutor 的子类只需要实现下边的四个基本方法即可完成数据库的相关操作。
-public abstract class BaseExecutor implements Executor { ... protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQLException; protected abstract List&amp;lt;BatchResult&amp;gt; doFlushStatements(boolean isRollback) throws SQLException; protected abstract &amp;lt;E&amp;gt; List&amp;lt;E&amp;gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException; protected abstract &amp;lt;E&amp;gt; Cursor&amp;lt;E&amp;gt; doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql) throws SQLException; .</description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>一级缓存和二级缓存 # MyBatis 提供了二层缓存架构，分别为：一级缓存和二级缓存。
-一级缓存 # 一级缓存是会话级别的，MyBatis 每创建一个 SqlSession，就表示开启了一次数据库会话。在一次会话内，可能会在短时间内反复执行完全相同的查询语句。
-Executor 对象内会建立一个简单的缓存，在执行查询操作时，会先查询一级缓存，如果其中存在完全一样的查询语句，则直接从一级缓存中取出结果。
-一级缓存的生命周期与 SqlSession 相同，SqlSession 内部有 Executor 对象，当调用 SqlSession 的 close() 方法时，会调用 Executor 的 close() 方法。
-具体流程 # @Override public &amp;lt;E&amp;gt; List&amp;lt;E&amp;gt; query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException { BoundSql boundSql = ms.getBoundSql(parameter); CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql); return query(ms, parameter, rowBounds, resultHandler, key, boundSql); } @SuppressWarnings(&amp;#34;unchecked&amp;#34;) @Override public &amp;lt;E&amp;gt; List&amp;lt;E&amp;gt; query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException { ErrorContext.</description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description> EventLoopGroup #</description></item><item><title>（非）阻塞 I/O</title><link>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</guid><description>（非）阻塞 I/O 和 epoll（翻译） # 原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll
-在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:
-使用 fcntl 函数设置文件描述符的 O_NONBLOCK 时的语义。 非阻塞（nonblocking） I/O 与异步（asynchronous） I/O 的区别。 为什么非阻塞 I/O 经常与诸如 select、epoll 和 kqueue 等 I/O 多路复用器一起使用。 非阻塞模式如何与 epoll 中的边缘触发轮询交互。 阻塞模式 # 默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 read、write 或 connect 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 stdin 读取数据时会发生什么。如果你在 stdin上调用 read，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 stdin 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 read 调用将会阻塞，直到连接的另一端实际上发送数据。
-阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：
-非阻塞模式。 I/O 多路复用系统调用，例如 select 和 epoll。 这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。
-非阻塞模式 # 通过 fcntl 函数在文件描述符的标志集中添加 O_NONBLOCK，可以将文件描述符设置为“非阻塞模式”：
-/* set O_NONBLOCK on fd */ int flags = fcntl(fd, F_GETFL, 0); fcntl(fd, F_SETFL, flags | O_NONBLOCK); 从这一点开始，文件描述符被视为非阻塞的。当发生这种情况时，像 read 和 write 这样的 I/O 系统调用将返回 -1，并且 errno 将被设置为 EWOULDBLOCK。</description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description> Channel #</description></item><item><title>I/O 多路复用</title><link>https://ileonli.github.io/docs/system-programming/multiplexing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/multiplexing/</guid><description>I/O 多路复用 # I/O 复用可以使程序同时监听多个文件描述符。
-select # select 函数允许程序监视多个文件描述符，直到一个或多个文件描述符“准备好”进行某类 I/O 操作。
-select 成功时返回就绪文件描述符的总数，如果超时时间内没有任何文件描述符就绪，则返回 0。失败时返回 -1 并设置 errno。
-#include &amp;lt;sys/select.h&amp;gt; int select(int nfds, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, struct timeval * timeout); 函数参数 # nfds：指定被监听的文件描述符的总数。这个参数应该被设置为三个集合中编号最高的文件描述符，再加 1，因为文件描述符是从 0 开始的。
-readfds、writefds 和 exceptfds：分别指向可读、可写和异常事件对应的文件描述符集合。如果没有文件描述符要监听，则可以将对应的 fd_set 参数设为 NULL。
-fd_set 结构体仅包含一个数组，数组每一位标记一个文件描述符，最大容纳长度由 FD_SETSIZE 指定。
-/* fd_set for select and pselect. */ typedef struct { /* XPG4.2 requires this member name. Otherwise avoid the name from the global namespace.</description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>ChannelHandler # ChannelHandler 共分为两类，ChannelInboundHandler 和 ChannelOutboundHandler。
-ChannelInboundHandler： ChannelOutboundHandler： 常用 # ChannelHandlerAdapter ChannelInboundHandlerAdapter ChannelOutboundHandlerAdapter ChannelDuplexHandler Pipeline 执行顺序 # Inbound 是从 ChannelPipeline 头到尾部，Outbound 是从 ChannelPipeline 尾到头部。
-生命周期 # handlerAdded new ChannelHandler() { @Override public void handlerAdded(ChannelHandlerContext ctx) throws Exception { } @Override public void handlerRemoved(ChannelHandlerContext ctx) throws Exception { } @Override public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception { } } ChannelInboundHandler # ChannelInboundHandlerAdapter # ChannelInboundHandlerAdapter 中的所有方法默认会调用 ctx.fireChannel*() 传递到下一个 Handler。</description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description> Reactor 模型 # Reactor 模型中定义的三种角色：
-Reactor：负责监听和分配事件，将I/O事件分派给对应的 Handler。新的事件包含连接建立就绪、读就绪、写就绪等。 Acceptor：处理客户端新连接，并分派请求到处理器链中。 Handler：将自身与事件绑定，执行非阻塞读/写任务，完成channel的读入，完成处理业务逻辑后，负责将结果写出channel。可用资源池来管理。 One Loop Per Thread # 参考文献 # https://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf https://gee.cs.oswego.edu/dl/cpjslides/nio.pdf</description></item><item><title>套接字（socket）</title><link>https://ileonli.github.io/docs/system-programming/sockets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/sockets/</guid><description>套接字（socket） # 网络编程即编写程序使两台联网的计算机相互交换数据。计算机之间会通过网线、路由器和交换机等设备连接在一起，我们无需直接操控硬件，而使用操作系统提供的套接字（socket）。
-基本函数 # socket # 为了使用套接字，可以使用 socket 函数，创建用于通信的端点（endpoint）。
-#include &amp;lt;sys/socket.h&amp;gt; int socket(int domain, int type, int protocol); 成功时会返回文件描述符，失败时会返回 -1。
-https://man7.org/linux/man-pages/man2/socket.2.html
-bind # 当使用 socket 函数创建套接字后，会存在于名称空间（地址族）中，但没有为其分配地址。bind 函数将 addr 指定的地址分配给文件描述符 sockfd 引用的套接字。
-服务器可以不先调用 bind() 而直接调用 listen()，此时会为该 socket 分配一个 INADDR_ANY IP 地址（0.0.0.0）和临时端口（可通过 getsockname() 获取 socket 的地址）。
-#include &amp;lt;sys/socket.h&amp;gt; int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen); 成功时返回 0，失败时返回 -1。
-https://man7.org/linux/man-pages/man2/bind.2.html
-listen # listen 函数将文件描述符引用的 socket 标记为被动，该 socket 会被用来接受来自其它主动 socket 的连接。</description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>echo 服务器 # 辅助函数 # panic 函数用于错误处理，当发生错误时，调用 exit 函数直接退出程序。
-void panic(const char *format, ...) { va_list args; va_start(args, format); vfprintf(stderr, format, args); va_end(args); exit(EXIT_FAILURE); } readn 和 writen 函数分别用于从 fd 处读和写 n 个字节。
-ssize_t readn(int fd, const void *buf, size_t n) { ssize_t nread; while (nleft &amp;gt; 0) { if ((nread = read(fd, buf, nleft)) &amp;lt; 0) { if (nleft == n) { return -1; // error, return -1 } else { break; // error, return amount read so far } while (nleft &amp;gt; 0) { if ((nread = read(fd, buf, nleft)) &amp;lt; 0) { if (nleft == n) { return -1; // error, return -1 } else { } nleft -= nread; buf += nread; } return n - nleft; } ssize_t writen(int fd, const void *buf, size_t n) { size_t nleft = n; ssize_t nwritten; while (nleft &amp;gt; 0) { if ((nwritten = write(fd, buf, nleft)) &amp;lt; 0) { if (nleft == n) { return -1; } else { break; } } else if (nwritten == 0) { break; } nleft -= nwritten; buf += nwritten; } return n - nleft; } read_line 函数用于从用户处读取一行输入。</description></item><item><title>Agent</title><link>https://ileonli.github.io/docs/Java/Agent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Agent/</guid><description>https://www.cnblogs.com/crazymakercircle/p/16635330.html
-https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#whatIs</description></item><item><title>AsmTools</title><link>https://ileonli.github.io/docs/JVM/AsmTools/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/AsmTools/</guid><description> AsmTools # AsmTools 官网： AsmTools
-编译 AsmTools # GitHub: AsmTools
-How To Build AsmTools
-使用 # java -jar asmtools.jar jdis [option] [filename.class]
-参数 -g 可打印出更详细的信息。</description></item><item><title>boltdb node</title><link>https://ileonli.github.io/docs/boltdb/node/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/node/</guid><description>分裂 # // spill writes the nodes to dirty pages and splits nodes as it goes. // Returns an error if dirty pages cannot be allocated. func (n *node) spill() error { var tx = n.bucket.tx if n.spilled { return nil } // Spill child nodes first. Child nodes can materialize sibling nodes in // the case of split-merge so we cannot use a range loop. We have to check // the children size on every loop iteration.</description></item><item><title>boltdb 事务</title><link>https://ileonli.github.io/docs/boltdb/transaction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/transaction/</guid><description>boltdb 事务 # boltdb 所有操作（Update 和 View）都会生成一个 Tx，用于记录此次事务的信息。
-// txid represents the internal transaction identifier. type txid uint64 // Tx represents a read-only or read/write transaction on the database. // Read-only transactions can be used for retrieving values for keys and creating cursors. // Read/write transactions can create and remove buckets and create and remove keys. // // IMPORTANT: You must commit or rollback transactions when you are done with // them.</description></item><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/bucket/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/bucket/</guid><description>// bucket represents the on-file representation of a bucket. // This is stored as the &amp;#34;value&amp;#34; of a bucket key. If the bucket is small enough, // then its root page can be stored inline in the &amp;#34;value&amp;#34;, after the bucket // header. In the case of inline buckets, the &amp;#34;root&amp;#34; will be 0. type bucket struct { root pgid // page id of the bucket&amp;#39;s root-level page sequence uint64 // monotonically incrementing, used by NextSequence() } // Bucket represents a collection of key/value pairs inside the database.</description></item><item><title>boltdb 存储</title><link>https://ileonli.github.io/docs/boltdb/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/storage/</guid><description>boltdb 存储 # bolt.Open() # bolt.Open() 是使用数据库的第一个方法，也是最重要的方法之一。该代码的作用是初始化一个 DB 对象。
-参数设置 # 首先会创建一个 DB 对象，opened 用于指示数据库是否已成功打开。。
-var db = &amp;amp;DB{opened: true} 对参数进行一些初始化设置。
-// Set default options if no options are provided. if options == nil { options = DefaultOptions } db.NoGrowSync = options.NoGrowSync db.MmapFlags = options.MmapFlags // Set default values for later DB operations. db.MaxBatchSize = DefaultMaxBatchSize db.MaxBatchDelay = DefaultMaxBatchDelay db.AllocSize = DefaultAllocSize OpenFile # 使用 os.OpenFile() 方法打开传入的数据库文件路径，不存在则创建。
-flag := os.</description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>boltdb 页结构 # page # type page struct { id pgid flags uint16 count uint16 overflow uint32 ptr uintptr } id：是页面的标识符，每个页面在数据库文件中都有一个唯一的 ID，用于在数据库中定位和引用该页面。 flags：用来表示页面的类型或其他特性。 count：表示页面中存储的元素数量（通常是键值对的数量或子页面的引用数量）。 overflow：表示页面溢出的数量。如果一个页面装不下所有的数据，它可能会使用多个连续的页面来存储，这些连续的页面被称为溢出页面。 ptr：用于指向页面的数据部分。在内存中指向实际存储键值对或其他数据的区域。这个指针使得可以通过内存地址快速访问页面中的数据。 一个 page 页的结构如下所示：
-根据 flags 的设置，ptr 会指向 4 种结构体之一。
-const ( branchPageFlag = 0x01 leafPageFlag = 0x02 metaPageFlag = 0x04 freelistPageFlag = 0x10 ) branchPageFlag：ptr 指向 branchPageElement[] 数组。 leafPageFlag：ptr 指向 leafPageElement[] 数组。 metaPageFlag：ptr 指向 meta 结构体。 freelistPageFlag：ptr 指向 freelist 结构体。 branchPageElement # // branchPageElement represents a node on a branch page.</description></item><item><title>Cleaner 类</title><link>https://ileonli.github.io/docs/Java/Cleaner/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Cleaner/</guid><description> 参考文献 # https://openjdk.org/jeps/421 https://inside.java/2022/05/25/clean-cleaner/ https://docs.oracle.com/javase/9/docs/api/java/lang/ref/Cleaner.html</description></item><item><title>JDBC</title><link>https://ileonli.github.io/docs/Java/JDBC/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/JDBC/</guid><description>JDBC # 本教程使用 MySQL 数据库。
-主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html
-建立连接 # 数据源可以是数据库管理系统 (DBMS)、传统文件系统或其他带有相应 JDBC 驱动的数据源。通常，JDBC 使用以下两种类之一来连接目标数据源：
-DriverManager：用于将应用程序连接到通过数据库 URL 指定的数据源。当此类首次尝试建立连接时，它会自动加载类路径中找到的任何 JDBC 4.0 驱动程序。必须手动加载任何 4.0 版本之前的 JDBC 驱动程序。 DataSource：相比于 DriverManager，更推荐使用此接口，因为它允许应用程序对底层数据源的细节保持透明。DataSource 对象的属性被设置为表示特定的数据源。 使用 DriverManager 类 # String url = &amp;#34;jdbc:mysql://localhost:3306/db&amp;#34;; String username = &amp;#34;root&amp;#34;, password = &amp;#34;0987654321&amp;#34;; Connection conn = DriverManager.getConnection(url, username, password); 使用 JDBC 处理 SQL 语句 # 新建一个 user 表，如下图所示：
-使用 conn 对象创建 Statement，使用 stmt 执行 SQL 语句。
-ResultSet 保存了执行 SQL 语句的结果，可以遍历保存的结果。
-String query = &amp;#34;SELECT * FROM `user`;&amp;#34;; try (Statement stmt = conn.</description></item><item><title>JVM 加载-链接-初始化</title><link>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</guid><description>JVM 加载-链接-初始化 # 类加载过程 # 加载（loads） # 加载（loads）是查找具有特定名称的类或接口类型的二进制表示，并从该二进制表示创建类或接口的过程。加载过程如下：
-通过一个类的全限定名来获取定义此类的二进制字节流。 将这个字节流所代表的静态存储结构转化为方法区（Method Area）的运行时数据结构。 在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种数据的访问入口。 类加载链接的目的就是在 JVM 中创建相应的类结构
-启动类加载器之外，其他的类加载器都是 java.lang.ClassLoader 的子类
--verbose:class 参数可用于打印类加载的先后顺序
-链接（links） # 链接（links）是获取类或接口，并将其组合到 Java 虚拟机的运行时状态以便执行的过程。
-初始化（initializes） # 类或接口的初始化（initializes）包括执行类或接口初始化方法 &amp;lt;clinit&amp;gt;。
-类加载器（class loader） # 启动类加载器（bootstrap class loader）由 C++ 实现，
-除了启动类加载器之外，其它的类加载器都是 java.lang.ClassLoader 的子类，因此有对应的 Java 对象。这些类加载器需要先由另一个类加载器，比如说启动类加载器，加载至 Java 虚拟机中，方能执行类加载。
-双亲委派模型 # JDK 9 前 # 启动类加载器（Bootstrap Class Loader）：用于加载 扩展类加载器（Extension Class Loader）: 应用程序类加载器（Application Class Loader）: 可输出 BootstrapClassLoader 可加载的类。
-URLClassPath bootstrapClassPath = Launcher.getBootstrapClassPath(); for (URL url : bootstrapClassPath.</description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>MethodHandles # 翻译自： https://dev.java/learn/introduction_to_method_handles/
-什么是方法句柄（What are method handles） # 方法句柄是一种用于查找和调用方法的低级机制。与反射一样，方法句柄也提供了调用方法、调用构造函数以及访问字段的手段。
-那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的引用之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。
-让我们深入探讨一下方法句柄能够提供什么功能以及我们如何有效地使用它们。
-访问检查（Access checking） # 方法句柄的访问检查与反射的执行方式是不同的。使用反射时，每次调用都会对调用者进行访问检查。而对于方法句柄，访问检查只在方法句柄创建时进行。
-需要注意的是，如果在能够访问非公共成员的上下文中创建了方法句柄，那么当该方法句柄被传递到外部时，可以通过方法句柄访问非公共成员。
-因此，非公共成员可能会被不应有访问权限的代码访问。开发者有责任将此类方法句柄限制在其创建的上下文内。另外，可以直接使用合适的查找对象来创建具有访问限制的方法句柄。
-方法句柄查找（Method handle lookup） # 要创建方法句柄，我们首先需要创建一个 LookUp 对象，此为创建方法句柄的工厂。根据 Lookup 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。
-例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。
-通常我们希望避免这种情况。一种办法是将 Lookup 对象和方法句柄设为私有。另一种方法是使用 MethodHandles.publicLookup 方法创建 Lookup 对象，这样它只能查找公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：
-MethodHandles.Lookup publicLookup = MethodHandles.publicLookup(); 如果我们打算将 Lookup 对象和方法句柄设为私有，那么访问私有和受保护的成员是安全的（外部无法访问私有的方法句柄）：
-MethodHandles.Lookup lookup = MethodHandles.lookup(); 方法类型（Method type） # 要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息通过 MethodType 类表示。为了实例化一个 MethodType 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:
-MethodType methodType = MethodType.methodType(int.class /* the method returns integer */, String.class /* and accepts a single String argument*/); 有了 Lookup 和 MethodType 实例后，我们就可以查找方法句柄了。</description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>动态代理 # 在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心。
-Proxy # Proxy 类主要使用 newProxyInstance() 静态方法生成代理对象。
-public static Object newProxyInstance(ClassLoader loader, Class&amp;lt;?&amp;gt;[] interfaces, InvocationHandler h) { ... } 该方法主要有三个参数：
-loader：定义代理类的类加载器。 interfaces：代理类要实现的接口列表。 h：用于分发方法调用的调用处理器。 InvocationHandler # 当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 InvocationHandler 接口类的 invoke 方法来调用。
-public interface InvocationHandler { public Object invoke(Object proxy, Method method, Object[] args) throws Throwable; } 该方法主要有三个参数：
-proxy：动态生成的代理类的实例。 method：代理类对象调用的方法。 args：调用 method 方法的参数。 通过 Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候，实际会调用到实现 InvocationHandler 接口的类的 invoke() 方法。
-具体步骤 # TargetClass 类继承自 InterfaceA 和 InterfaceB 接口。</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>编码器和解码器 # 编码器：将消息转换为适合于传输的格式（通常是字节流）。 解码器：将网络字节流转换为应用程序的消息格式。 因此，编码器处理出站数据，而解码器处理入站数据。
-解码器 # 由于解码器是负责处理入站数据的，因此，解码器是 ChannelInboundHandler。
-解码器主要有下边两种：
-将字节解码为消息的 ByteToMessageDecoder 和 ReplayingDecoder。 将一种消息类型解码为另一种消息的 MessageToMessageDecoder。 ByteToMessageDecoder # ReplayingDecoder # ReplayingDecoder 扩展了 ByteToMessageDecoder 类，使得我们不必调用 readableBytes() 方法。它通过使用一个自定义的 ByteBuf 实现， ReplayingDecoderByteBuf，包装传入的 ByteBuf 实现了这一点，其将在内部执行该调用
-MessageToMessageDecoder # 编码器 # 编解码器类 # 这些类同时实现了 ChannelInboundHandler 和 ChannelOutboundHandler 接口。
-ByteToMessageCodec # MessageToMessageCodec # CombinedChannelDuplexHandler # CombinedChannelDuplexHandler 可将 ChannelInboundHandler 和 ChannelOutboundHandler 结合在一起。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>关于我 on Leon' Blog</title><link>https://ileonli.github.io/</link><description>Recent content in 关于我 on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/introduction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/introduction/</guid><description>&lt;h1 id="boltdb-介绍">
+ boltdb 介绍
+ &lt;a class="anchor" href="#boltdb-%e4%bb%8b%e7%bb%8d">#&lt;/a>
+&lt;/h1>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://github.com/boltdb/bolt">https://github.com/boltdb/bolt&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>boltdb 是一个使用 Go 语言开发的 KV 存储库。该项目的目标是为那些不需要完整数据库服务器（如：Postgres或MySQL）的项目提供一个简单、快速且可靠的数据库。&lt;/p>
+&lt;blockquote>
+&lt;p>boltdb 目前已不再维护，CoreOS fork 了该项目，并继续维护 
+ &lt;a href="https://github.com/etcd-io/bbolt">bbolt&lt;/a>。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="打开数据库">
+ 打开数据库
+ &lt;a class="anchor" href="#%e6%89%93%e5%bc%80%e6%95%b0%e6%8d%ae%e5%ba%93">#&lt;/a>
+&lt;/h2>
+&lt;p>boltdb 中的顶层对象是 &lt;code>DB&lt;/code>。它在磁盘上表示为一个单一文件，并且代表了数据的一个一致性快照。&lt;/p>
+&lt;p>要打开数据库，只需使用 &lt;code>bolt.Open()&lt;/code> 函数：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">package&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#e6db74">&amp;#34;log&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#e6db74">&amp;#34;github.com/boltdb/bolt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Open the my.db data file in your current directory.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// It will be created if it doesn&amp;#39;t exist.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">db&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bolt&lt;/span>.&lt;span style="color:#a6e22e">Open&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;my.db&amp;#34;&lt;/span>, &lt;span style="color:#ae81ff">0600&lt;/span>, &lt;span style="color:#66d9ef">nil&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">log&lt;/span>.&lt;span style="color:#a6e22e">Fatal&lt;/span>(&lt;span style="color:#a6e22e">err&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">Close&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>BTree</title><link>https://ileonli.github.io/docs/MapDB/BTree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MapDB/BTree/</guid><description>&lt;h1 id="btree">
+ BTree
+ &lt;a class="anchor" href="#btree">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="btree-1">
+ BTree
+ &lt;a class="anchor" href="#btree-1">#&lt;/a>
+&lt;/h2>
+&lt;ol>
+&lt;li>所有节点有 &lt;code>M&lt;/code> 度&lt;/li>
+&lt;li>每个节点至少有 &lt;code>M / 2&lt;/code> 个子结点&lt;/li>
+&lt;/ol>
+&lt;h2 id="参考文献">
+ 参考文献
+ &lt;a class="anchor" href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae">#&lt;/a>
+&lt;/h2>
+&lt;blockquote>
+&lt;ol>
+&lt;li>Modern B-Tree Techniques&lt;/li>
+&lt;li>
+ &lt;a href="https://www.cs.usfca.edu/~galles/visualization/BTree.html">https://www.cs.usfca.edu/~galles/visualization/BTree.html&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://www.youtube.com/watch?v=aZjYr87r1b8">https://www.youtube.com/watch?v=aZjYr87r1b8&lt;/a>&lt;/li>
+&lt;/ol>
+&lt;/blockquote></description></item><item><title>Class 文件结构</title><link>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</guid><description>&lt;h1 id="class-文件结构">
+ Class 文件结构
+ &lt;a class="anchor" href="#class-%e6%96%87%e4%bb%b6%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="前言">
+ 前言
+ &lt;a class="anchor" href="#%e5%89%8d%e8%a8%80">#&lt;/a>
+&lt;/h2>
+&lt;p>任何一个 &lt;code>class&lt;/code> 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 &lt;code>class&lt;/code> 文件（如：动态生成的类）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Main.java&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Main&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">InnerClass&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Database Storage</title><link>https://ileonli.github.io/docs/15-445/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/15-445/storage/</guid><description>&lt;h1 id="database-storage">
+ Database Storage
+ &lt;a class="anchor" href="#database-storage">#&lt;/a>
+&lt;/h1>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://15445.courses.cs.cmu.edu/fall2023/slides/03-storage1.pdf">https://15445.courses.cs.cmu.edu/fall2023/slides/03-storage1.pdf&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>DBMS 假设数据库主要使用的存储是非易失的（non-volatile）。DBMS 主要工作之一为：管理数据在易失存储设备和非易失存储设备之间的移动。&lt;/p>
+&lt;h2 id="基于磁盘的结构">
+ 基于磁盘的结构
+ &lt;a class="anchor" href="#%e5%9f%ba%e4%ba%8e%e7%a3%81%e7%9b%98%e7%9a%84%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="存储结构">
+ 存储结构
+ &lt;a class="anchor" href="#%e5%ad%98%e5%82%a8%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h3>
+&lt;p>对于存储设备来说：&lt;strong>速度越快-&amp;gt;价钱昂贵&lt;/strong>，&lt;strong>速度越慢-&amp;gt;价格便宜&lt;/strong>。因此，要在价格和速度之间进行一部分取舍。&lt;/p>
+&lt;p>主流的做法为，采用速度更快的存储设备作为底层设备的缓存。&lt;/p>
+&lt;blockquote>
+&lt;p>此课程只关注非易失存储设备&lt;/p>
+&lt;/blockquote>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/6.jpg" alt="" />&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/7.jpg" alt="" />&lt;/p>
+&lt;hr>
+&lt;p>Intel 开发了 Optane 非易失存储设备，可以提供类似内存的速度和易失性（volatile），但又具有非易失性的特性（non-volatile）。这意味着数据在断电时仍然保持不变，适合用于需要快速恢复状态的应用场景，如数据库和日志记录。&lt;/p></description></item><item><title>Git 基础</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</guid><description>&lt;h1 id="git-基础">
+ Git 基础
+ &lt;a class="anchor" href="#git-%e5%9f%ba%e7%a1%80">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="获取-git-仓库">
+ 获取 Git 仓库
+ &lt;a class="anchor" href="#%e8%8e%b7%e5%8f%96-git-%e4%bb%93%e5%ba%93">#&lt;/a>
+&lt;/h2>
+&lt;p>有两种取得 Git 项目仓库的方法：&lt;/p>
+&lt;ol>
+&lt;li>将现有项目或目录下导入所有文件到 Git 中，可以使用 &lt;code>$ git init&lt;/code> 命令。&lt;/li>
+&lt;li>从服务器克隆一个现有的 Git 仓库，使用 &lt;code>$ git clone &amp;lt;project url&amp;gt;&lt;/code> 命令。&lt;/li>
+&lt;/ol>
+&lt;h2 id="git-生命周期">
+ Git 生命周期
+ &lt;a class="anchor" href="#git-%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f">#&lt;/a>
+&lt;/h2>
+&lt;p>工作目录下的所有文件都处于两种状态之一：&lt;strong>已跟踪&lt;/strong>和&lt;strong>未跟踪&lt;/strong>。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>已跟踪&lt;/strong>：是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能处于&lt;strong>未修改&lt;/strong>、&lt;strong>已修改&lt;/strong>或&lt;strong>已放入暂存区&lt;/strong>。&lt;/li>
+&lt;li>&lt;strong>未跟踪&lt;/strong>：工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有放入暂存区。&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。&lt;/p>
+&lt;/blockquote>
+&lt;hr>
+&lt;p>编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为&lt;strong>已修改文件&lt;/strong>。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。&lt;/p></description></item><item><title>SqlSession</title><link>https://ileonli.github.io/docs/MyBatis/SqlSession/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/SqlSession/</guid><description>&lt;h1 id="sqlsession">
+ SqlSession
+ &lt;a class="anchor" href="#sqlsession">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;code>SalSession&lt;/code> 是用于操作数据库的接口，具体的操作都通过此接口。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/MyBatis/SqlSession.png" alt="" />&lt;/p>
+&lt;h2 id="sqlsessionfactorybuilder">
+ SqlSessionFactoryBuilder
+ &lt;a class="anchor" href="#sqlsessionfactorybuilder">#&lt;/a>
+&lt;/h2>
+&lt;p>此类可以被实例化、使用和丢弃，一旦使用此类创建了 &lt;code>SqlSessionFactory&lt;/code>，后续就不需要使用此类了。因此 &lt;code>SqlSessionFactoryBuilder&lt;/code> 实例的最佳作用域是方法作用域（也就是局部方法变量）。&lt;/p>
+&lt;p>可以重用 &lt;code>SqlSessionFactoryBuilder&lt;/code> 来创建多个 &lt;code>SqlSessionFactory&lt;/code> 实例，但最好还是不要一直保留着它，以保证 XML 资源可以被释放。&lt;/p>
+&lt;h2 id="sqlsessionfactory">
+ SqlSessionFactory
+ &lt;a class="anchor" href="#sqlsessionfactory">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 一旦被创建就应该在应用的运行期间一直存在，没有任何理由丢弃它或重新创建另一个实例。使用 &lt;code>SqlSessionFactory&lt;/code> 的最佳实践是在应用运行期间只创建一次。&lt;/p>
+&lt;hr>
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 的作用是为了创建 &lt;code>SqlSession&lt;/code> 实例。&lt;code>SqlSession&lt;/code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。&lt;/p></description></item><item><title>网络字节序</title><link>https://ileonli.github.io/docs/system-programming/network-byte-order/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/network-byte-order/</guid><description>&lt;h1 id="网络字节序">
+ 网络字节序
+ &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%ad%97%e8%8a%82%e5%ba%8f">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="大小端">
+ 大小端
+ &lt;a class="anchor" href="#%e5%a4%a7%e5%b0%8f%e7%ab%af">#&lt;/a>
+&lt;/h2>
+&lt;p>不同架构的 CPU 中，4 字节整数 1 在内存中存储的方式是不同的。&lt;/p>
+&lt;ul>
+&lt;li>大端序（big endian）：&lt;strong>最高位&lt;/strong>有效字节存储在&lt;strong>低内存地址&lt;/strong>，而&lt;strong>最低位&lt;/strong>有效字节存储在&lt;strong>高内存地址&lt;/strong>。&lt;/li>
+&lt;li>小端序（little endian）：&lt;strong>最高位&lt;/strong>有效字节存储在&lt;strong>高内存地址&lt;/strong>，而&lt;strong>最低位&lt;/strong>有效字节存储在&lt;strong>低内存地址&lt;/strong>。&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>对于一个 4 字节整数 &lt;code>0x01020304&lt;/code>，大小端序存储方式分别如下：&lt;/p>
+&lt;pre tabindex="0">&lt;code>地址: 0 1 2 3 （大端序保存）
+ 01 02 03 04
+&lt;/code>&lt;/pr</description></item><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>&lt;h1 id="bytebuf">
+ ByteBuf
+ &lt;a class="anchor" href="#bytebuf">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="基本结构">
+ 基本结构
+ &lt;a class="anchor" href="#%e5%9f%ba%e6%9c%ac%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h2>
+&lt;pre tabindex="0">&lt;code>+-------------------+------------------+------------------+-------------+
+| discardable bytes | readable bytes | writable bytes | ... |
+| | (CONTENT) | | |
++-------------------+------------------+------------------+-------------+
+| | | | |
+0 &amp;lt;= readerIndex &amp;lt;= writerIndex &amp;lt;= capacity maxCapacity
+&lt;/code>&lt;/pr</description></item><item><title>Git 分支</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</guid><description>&lt;h1 id="git-分支">
+ Git 分支
+ &lt;a class="anchor" href="#git-%e5%88%86%e6%94%af">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="分支创建">
+ 分支创建
+ &lt;a class="anchor" href="#%e5%88%86%e6%94%af%e5%88%9b%e5%bb%ba">#&lt;/a>
+&lt;/h2>
+&lt;p>使用 &lt;code>$ git branch&lt;/code> 命令后，会在当前所在的提交对象上创建一个指针。此操作并不会直接切换到新创建的分支上。&lt;/p>
+&lt;p>那么，Git 又是怎么知道当前在哪一个分支上呢？有一个名为 &lt;code>HEAD&lt;/code> 的特殊指针，指向当前分支。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ git branch testing
+&lt;/code>&lt;/pre>&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/two-branches.png" alt="" />&lt;/p>
+&lt;h2 id="分支切换">
+ 分支切换
+ &lt;a class="anchor" href="#%e5%88%86%e6%94%af%e5%88%87%e6%8d%a2">#&lt;/a>
+&lt;/h2>
+&lt;p>要切换到一个已存在的分支，需要使用 &lt;code>$ git switch&lt;/code> 命令。&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ git switch testing
+&lt;/code>&lt;/pr</description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>&lt;h1 id="mapper">
+ Mapper
+ &lt;a class="anchor" href="#mapper">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="mapperregistry">
+ MapperRegistry
+ &lt;a class="anchor" href="#mapperregistry">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>MapperRegistry&lt;/code> 是 Mapper 接口及其对应的代理对象工厂的注册中心。&lt;/p>
+&lt;p>&lt;code>Configuration&lt;/code> 是 MyBatis 全局性的配置对象，在 MyBatis 初始化的过程中，所有配置信息会被解析成相应的对象并记录到 &lt;code>Configuration&lt;/code> 对象中。&lt;/p>
+&lt;h3 id="knownmappers">
+ knownMappers
+ &lt;a class="anchor" href="#knownmappers">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>MapperRegistry&lt;/code> 类中的 &lt;code>knownMappers&lt;/code> 用做具体保存。&lt;/p>
+&lt;p>&lt;code>key&lt;/code> 是 &lt;code>Mapper&lt;/code> 接口对应的 &lt;code>Class&lt;/code> 对象，&lt;code>value&lt;/code> 为 &lt;code>MapperProxyFactory&lt;/code> 工厂对象。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Map&lt;span style="color:#f92672">&amp;lt;&lt;/span>Class&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&lt;/span>, MapperProxyFactory&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&amp;gt;&lt;/span> knownMappers &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ConcurrentHashMap&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>&lt;h1 id="resultsethandler">
+ ResultSetHandler
+ &lt;a class="anchor" href="#resultsethandler">#&lt;/a>
+&lt;/h1>
+&lt;p>MyBatis 会将 &lt;code>ResultSet&lt;/code> 按照映射配置文件中定义的映射规则（例如 &lt;code>&amp;lt;resultMap&amp;gt;&lt;/code> 节点和 &lt;code>resultType&lt;/code> 属性等）映射成相应的对象。&lt;/p>
+&lt;p>在 &lt;code>StatementHandler&lt;/code> 接口执行完指定的 select 语句之后，会将查询得到的 &lt;code>ResultSet&lt;/code> 交给 &lt;code>ResultSetHandler&lt;/code> 完成映射处理。&lt;/p>
+&lt;p>&lt;code>ResultSetHandler&lt;/code> 除了负责映射 select 语句查询得到的结果集，还会处理存储过程执行后的输出参数。&lt;/p>
+&lt;h2 id="defaultresultsethandler">
+ DefaultResultSetHandler
+ &lt;a class="anchor" href="#defaultresultsethandler">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>ResultSetHandler&lt;/code> 只有一个实现类 &lt;code>DefaultResultSetHandler&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">ResultSetHandler&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">handleResultSets&lt;/span>(Statement stmt) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">handleCursorResultSets&lt;/span>(Statement stmt) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handleOutputParameters&lt;/span>(CallableStatement cs) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>&lt;h1 id="statementhandler">
+ StatementHandler
+ &lt;a class="anchor" href="#statementhandler">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;code>StatementHandler&lt;/code> 接口中的功能很多，例如创建 &lt;code>Statement&lt;/code> 对象，为 SQL 语句绑定实参，执行 select、insert、update、delete 等多种类型的 SQL 语句，批量执行 SQL 语句，将结果集映射成结果对象。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/MyBatis/StatementHandler.png" alt="" />&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">StatementHandler&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement &lt;span style="color:#a6e22e">prepare&lt;/span>(Connection connection, Integer transactionTimeout) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">parameterize&lt;/span>(Statement statement) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">batch&lt;/span>(Statement statement) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">update&lt;/span>(Statement statement) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">query&lt;/span>(Statement statement, ResultHandler resultHandler) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">queryCursor&lt;/span>(Statement statement) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql &lt;span style="color:#a6e22e">getBoundSql&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ParameterHandler &lt;span style="color:#a6e22e">getParameterHandler&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
+ 常量池
+ &lt;a class="anchor" href="#%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
+&lt;/h1>
+&lt;p>常量池是一个表，所有的表项都有以下的格式。&lt;code>tag&lt;/code> 表示表项的类型，&lt;code>info&lt;/code> 用于表示 &lt;code>tag&lt;/code> 类型所需要存储的信息。&lt;/p>
+&lt;pre tabindex="0">&lt;code>cp_info {
+ u1 tag;
+ u1 info[];
+}
+&lt;/code>&lt;/pre>&lt;p>常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。&lt;/p>
+&lt;h2 id="为什么设计常量池">
+ 为什么设计常量池？
+ &lt;a class="anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%ae%be%e8%ae%a1%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="复用">
+ 复用
+ &lt;a class="anchor" href="#%e5%a4%8d%e7%94%a8">#&lt;/a>
+&lt;/h3>
+&lt;p>常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。&lt;/p>
+&lt;hr>
+&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p></description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>&lt;h1 id="网络地址族">
+ 网络地址族
+ &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%9c%b0%e5%9d%80%e6%97%8f">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="网络地址">
+ 网络地址
+ &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%9c%b0%e5%9d%80">#&lt;/a>
+&lt;/h2>
+&lt;p>网络地址分为 IPv4 和 IPv6，分别使用 &lt;code>sockaddr_in&lt;/code> 和 &lt;code>sockaddr_in6&lt;/code> 结构体表示。&lt;/p>
+&lt;h3 id="sockaddr_in">
+ sockaddr_in
+ &lt;a class="anchor" href="#sockaddr_in">#&lt;/a>
+&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> sockaddr_in {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">sa_family_t&lt;/span> sin_family; &lt;span style="color:#75715e">/* address family: AF_INET */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">in_port_t&lt;/span> sin_port; &lt;span style="color:#75715e">/* port in network byte order */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> in_addr sin_addr; &lt;span style="color:#75715e">/* internet address */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">/* Pad to size of `struct sockaddr&amp;#39;. */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">unsigned&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> sin_zero[&lt;span style="color:#ae81ff">8&lt;/span>];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* Internet address */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> in_addr {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint32_t&lt;/span> s_addr; &lt;span style="color:#75715e">/* address in network byte order */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>&lt;h1 id="eventloop">
+ EventLoop
+ &lt;a class="anchor" href="#eventloop">#&lt;/a>
+&lt;/h1>
+&lt;p>一旦注册，将处理 &lt;code>Channel&lt;/code> 的所有 I/O 操作。一个 &lt;code>EventLoop&lt;/code> 实例通常会处理多个 &lt;code>Channel&lt;/code>，但这可能取决于实现细节和内部机制。&lt;/p>
+&lt;p>&lt;code>EventLoop&lt;/code> 本质是一个单线程执行器，同时维护了一个 &lt;code>Selector&lt;/code>。&lt;/p>
+&lt;p>&lt;code>EventLoop&lt;/code> 由 &lt;code>Thread&lt;/code> 驱动，且不会更改&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (EventLoop loop &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> DefaultEventLoop()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> 0; i &lt;span style="color:#f92672">&amp;lt;&lt;/span> 3; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> loop.&lt;span style="color:#a6e22e">submit&lt;/span>(() &lt;span style="color:#f92672">-&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> j &lt;span style="color:#f92672">=&lt;/span> 0; j &lt;span style="color:#f92672">&amp;lt;&lt;/span> 16; j&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">print&lt;/span>(j &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34; &amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>&lt;h1 id="executor">
+ Executor
+ &lt;a class="anchor" href="#executor">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;code>SqlSession&lt;/code> 中的具体操作都会通过 &lt;code>Executor&lt;/code> 接口进行实现。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">DefaultSqlSession&lt;/span> &lt;span style="color:#66d9ef">implements&lt;/span> SqlSession {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Executor executor;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>
+ &lt;img src="https://ileonli.github.io/img/MyBatis/Executor.png" alt="" />&lt;/p>
+&lt;h2 id="executortype">
+ ExecutorType
+ &lt;a class="anchor" href="#executortype">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>Executor&lt;/code> 一共有三种类型：&lt;/p></description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>&lt;h1 id="一级缓存和二级缓存">
+ 一级缓存和二级缓存
+ &lt;a class="anchor" href="#%e4%b8%80%e7%ba%a7%e7%bc%93%e5%ad%98%e5%92%8c%e4%ba%8c%e7%ba%a7%e7%bc%93%e5%ad%98">#&lt;/a>
+&lt;/h1>
+&lt;p>MyBatis 提供了二层缓存架构，分别为：&lt;strong>一级缓存&lt;/strong>和&lt;strong>二级缓存&lt;/strong>。&lt;/p>
+&lt;h2 id="一级缓存">
+ 一级缓存
+ &lt;a class="anchor" href="#%e4%b8%80%e7%ba%a7%e7%bc%93%e5%ad%98">#&lt;/a>
+&lt;/h2>
+&lt;p>一级缓存是会话级别的，MyBatis 每创建一个 &lt;code>SqlSession&lt;/code>，就表示开启了一次数据库会话。在一次会话内，可能会在短时间内反复执行完全相同的查询语句。&lt;/p>
+&lt;p>&lt;code>Executor&lt;/code> 对象内会建立一个简单的缓存，在执行查询操作时，会先查询一级缓存，如果其中存在完全一样的查询语句，则直接从一级缓存中取出结果。&lt;/p>
+&lt;p>一级缓存的生命周期与 &lt;code>SqlSession&lt;/code> 相同，&lt;code>SqlSession&lt;/code> 内部有 &lt;code>Executor&lt;/code> 对象，当调用 &lt;code>SqlSession&lt;/code> 的 &lt;code>close()&lt;/code> 方法时，会调用 &lt;code>Executor&lt;/code> 的 &lt;code>close()&lt;/code> 方法。&lt;/p>
+&lt;h3 id="具体流程">
+ 具体流程
+ &lt;a class="anchor" href="#%e5%85%b7%e4%bd%93%e6%b5%81%e7%a8%8b">#&lt;/a>
+&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">query&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql boundSql &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getBoundSql&lt;/span>(parameter);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CacheKey key &lt;span style="color:#f92672">=&lt;/span> createCacheKey(ms, parameter, rowBounds, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@SuppressWarnings&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;unchecked&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">query&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CacheKey key, BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ErrorContext.&lt;span style="color:#a6e22e">instance&lt;/span>().&lt;span style="color:#a6e22e">resource&lt;/span>(ms.&lt;span style="color:#a6e22e">getResource&lt;/span>()).&lt;span style="color:#a6e22e">activity&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;executing a query&amp;#34;&lt;/span>).&lt;span style="color:#a6e22e">object&lt;/span>(ms.&lt;span style="color:#a6e22e">getId&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (closed) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ExecutorException(&lt;span style="color:#e6db74">&amp;#34;Executor was closed.&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (queryStack &lt;span style="color:#f92672">==&lt;/span> 0 &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> ms.&lt;span style="color:#a6e22e">isFlushCacheRequired&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> clearLocalCache();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> list;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> queryStack&lt;span style="color:#f92672">++&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> list &lt;span style="color:#f92672">=&lt;/span> resultHandler &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span> &lt;span style="color:#f92672">?&lt;/span> (List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span>) localCache.&lt;span style="color:#a6e22e">getObject&lt;/span>(key) : &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (list &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> list &lt;span style="color:#f92672">=&lt;/span> queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> queryStack&lt;span style="color:#f92672">--&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (queryStack &lt;span style="color:#f92672">==&lt;/span> 0) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (DeferredLoad deferredLoad : deferredLoads) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> deferredLoad.&lt;span style="color:#a6e22e">load&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// issue #601&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> deferredLoads.&lt;span style="color:#a6e22e">clear&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (configuration.&lt;span style="color:#a6e22e">getLocalCacheScope&lt;/span>() &lt;span style="color:#f92672">==&lt;/span> LocalCacheScope.&lt;span style="color:#a6e22e">STATEMENT&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// issue #482&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> clearLocalCache();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> list;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description>&lt;h1 id="eventloopgroup">
+ EventLoopGroup
+ &lt;a class="anchor" href="#eventloopgroup">#&lt;/a>
+&lt;/h1></description></item><item><title>（非）阻塞 I/O</title><link>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="非阻塞-io-和-epoll翻译">
+ （非）阻塞 I/O 和 epoll（翻译）
+ &lt;a class="anchor" href="#%e9%9d%9e%e9%98%bb%e5%a1%9e-io-%e5%92%8c-epoll%e7%bf%bb%e8%af%91">#&lt;/a>
+&lt;/h1>
+&lt;blockquote>
+&lt;p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll&lt;/p>
+&lt;/blockquote>
+&lt;p>在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:&lt;/p>
+&lt;ol>
+&lt;li>使用 &lt;code>fcntl&lt;/code> 函数设置文件描述符的 &lt;code>O_NONBLOCK&lt;/code> 时的语义。&lt;/li>
+&lt;li>非阻塞（nonblocking） I/O 与异步（asynchronous） I/O 的区别。&lt;/li>
+&lt;li>为什么非阻塞 I/O 经常与诸如 &lt;code>select&lt;/code>、&lt;code>epoll&lt;/code> 和 &lt;code>kqueue&lt;/code> 等 I/O 多路复用器一起使用。&lt;/li>
+&lt;li>非阻塞模式如何与 &lt;code>epoll&lt;/code> 中的边缘触发轮询交互。&lt;/li>
+&lt;/ol>
+&lt;h2 id="阻塞模式">
+ 阻塞模式
+ &lt;a class="anchor" href="#%e9%98%bb%e5%a1%9e%e6%a8%a1%e5%bc%8f">#&lt;/a>
+&lt;/h2>
+&lt;p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 &lt;code>read&lt;/code>、&lt;code>write&lt;/code> 或 &lt;code>connect&lt;/code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 &lt;code>stdin&lt;/code> 读取数据时会发生什么。如果你在 &lt;code>stdin&lt;/code>上调用 &lt;code>read&lt;/code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 &lt;code>stdin&lt;/code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 &lt;code>read&lt;/code> 调用将会阻塞，直到连接的另一端实际上发送数据。&lt;/p></description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description>&lt;h1 id="channel">
+ Channel
+ &lt;a class="anchor" href="#channel">#&lt;/a>
+&lt;/h1></description></item><item><title>I/O 多路复用</title><link>https://ileonli.github.io/docs/system-programming/multiplexing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/multiplexing/</guid><description>&lt;h1 id="io-多路复用">
+ I/O 多路复用
+ &lt;a class="anchor" href="#io-%e5%a4%9a%e8%b7%af%e5%a4%8d%e7%94%a8">#&lt;/a>
+&lt;/h1>
+&lt;p>I/O 复用可以使程序同时监听多个文件描述符。&lt;/p>
+&lt;h2 id="select">
+ select
+ &lt;a class="anchor" href="#select">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>select&lt;/code> 函数允许程序监视多个文件描述符，直到一个或多个文件描述符“准备好”进行某类 I/O 操作。&lt;/p>
+&lt;p>&lt;code>select&lt;/code> 成功时返回就绪文件描述符的总数，如果超时时间内没有任何文件描述符就绪，则返回 0。失败时返回 -1 并设置 &lt;code>errno&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/select.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">select&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> nfds, fd_set&lt;span style="color:#f92672">*&lt;/span> readfds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> writefds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> exceptfds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> timeval &lt;span style="color:#f92672">*&lt;/span> timeout);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>&lt;h1 id="channelhandler">
+ ChannelHandler
+ &lt;a class="anchor" href="#channelhandler">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;code>ChannelHandler&lt;/code> 共分为两类，&lt;code>ChannelInboundHandler&lt;/code> 和 &lt;code>ChannelOutboundHandler&lt;/code>。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>ChannelInboundHandler&lt;/code>：&lt;/li>
+&lt;li>&lt;code>ChannelOutboundHandler&lt;/code>：&lt;/li>
+&lt;/ul>
+&lt;h2 id="常用">
+ 常用
+ &lt;a class="anchor" href="#%e5%b8%b8%e7%94%a8">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>ChannelHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelInboundHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelOutboundHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelDuplexHandler&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="pipeline-执行顺序">
+ Pipeline 执行顺序
+ &lt;a class="anchor" href="#pipeline-%e6%89%a7%e8%a1%8c%e9%a1%ba%e5%ba%8f">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>Inbound&lt;/code> 是从 &lt;code>ChannelPipeline&lt;/code> 头到尾部，&lt;code>Outbound&lt;/code> 是从 &lt;code>ChannelPipeline&lt;/code> 尾到头部。&lt;/p>
+&lt;h2 id="生命周期">
+ 生命周期
+ &lt;a class="anchor" href="#%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>handlerAdded&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">new&lt;/span> ChannelHandler() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handlerAdded&lt;/span>(ChannelHandlerContext ctx) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handlerRemoved&lt;/span>(ChannelHandlerContext ctx) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">exceptionCaught&lt;/span>(ChannelHandlerContext ctx, Throwable cause) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description>&lt;h1 id="reactor-模型">
+ Reactor 模型
+ &lt;a class="anchor" href="#reactor-%e6%a8%a1%e5%9e%8b">#&lt;/a>
+&lt;/h1>
+&lt;p>Reactor 模型中定义的三种角色：&lt;/p>
+&lt;ul>
+&lt;li>Reactor：负责监听和分配事件，将I/O事件分派给对应的 Handler。新的事件包含连接建立就绪、读就绪、写就绪等。&lt;/li>
+&lt;li>Acceptor：处理客户端新连接，并分派请求到处理器链中。&lt;/li>
+&lt;li>Handler：将自身与事件绑定，执行非阻塞读/写任务，完成channel的读入，完成处理业务逻辑后，负责将结果写出channel。可用资源池来管理。&lt;/li>
+&lt;/ul>
+&lt;h2 id="one-loop-per-thread">
+ One Loop Per Thread
+ &lt;a class="anchor" href="#one-loop-per-thread">#&lt;/a>
+&lt;/h2>
+&lt;h2 id="参考文献">
+ 参考文献
+ &lt;a class="anchor" href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae">#&lt;/a>
+&lt;/h2>
+&lt;ol>
+&lt;li>
+ &lt;a href="https://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf">https://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://gee.cs.oswego.edu/dl/cpjslides/nio.pdf">https://gee.cs.oswego.edu/dl/cpjslides/nio.pdf&lt;/a>&lt;/li>
+&lt;/ol></description></item><item><title>套接字（socket）</title><link>https://ileonli.github.io/docs/system-programming/sockets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/sockets/</guid><description>&lt;h1 id="套接字socket">
+ 套接字（socket）
+ &lt;a class="anchor" href="#%e5%a5%97%e6%8e%a5%e5%ad%97socket">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;strong>网络编程&lt;/strong>即编写程序使两台联网的计算机相互交换数据。计算机之间会通过网线、路由器和交换机等设备连接在一起，我们无需直接操控硬件，而使用操作系统提供的&lt;strong>套接字（socket）&lt;/strong>。&lt;/p>
+&lt;h2 id="基本函数">
+ 基本函数
+ &lt;a class="anchor" href="#%e5%9f%ba%e6%9c%ac%e5%87%bd%e6%95%b0">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="socket">
+ socket
+ &lt;a class="anchor" href="#socket">#&lt;/a>
+&lt;/h3>
+&lt;p>为了使用套接字，可以使用 &lt;code>socket&lt;/code> 函数，创建用于通信的端点（endpoint）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/socket.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">socket&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> domain, &lt;span style="color:#66d9ef">int&lt;/span> type, &lt;span style="color:#66d9ef">int&lt;/span> protocol);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>会返回文件描述符，&lt;strong>失败时&lt;/strong>会返回 -1。&lt;/p>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://man7.org/linux/man-pages/man2/socket.2.html">https://man7.org/linux/man-pages/man2/socket.2.html&lt;/a>&lt;/p></description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>&lt;h1 id="echo-服务器">
+ echo 服务器
+ &lt;a class="anchor" href="#echo-%e6%9c%8d%e5%8a%a1%e5%99%a8">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="辅助函数">
+ 辅助函数
+ &lt;a class="anchor" href="#%e8%be%85%e5%8a%a9%e5%87%bd%e6%95%b0">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>panic&lt;/code> 函数用于错误处理，当发生错误时，调用 &lt;code>exit&lt;/code> 函数直接退出程序。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">panic&lt;/span>(&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>format, ...) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> va_list args;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">va_start&lt;/span>(args, format);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">vfprintf&lt;/span>(stderr, format, args);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">va_end&lt;/span>(args);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">exit&lt;/span>(EXIT_FAILURE);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Agent</title><link>https://ileonli.github.io/docs/Java/Agent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Agent/</guid><description>&lt;blockquote>
+&lt;p>
+ &lt;a href="https://www.cnblogs.com/crazymakercircle/p/16635330.html">https://www.cnblogs.com/crazymakercircle/p/16635330.html&lt;/a>&lt;/p>
+&lt;p>
+ &lt;a href="https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#whatIs">https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#whatIs&lt;/a>&lt;/p>
+&lt;/blockquote></description></item><item><title>AsmTools</title><link>https://ileonli.github.io/docs/JVM/AsmTools/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/AsmTools/</guid><description>&lt;h1 id="asmtools">
+ AsmTools
+ &lt;a class="anchor" href="#asmtools">#&lt;/a>
+&lt;/h1>
+&lt;p>AsmTools 官网：
+ &lt;a href="https://wiki.openjdk.org/display/CodeTools/asmtools">AsmTools&lt;/a>&lt;/p>
+&lt;h2 id="编译-asmtools">
+ 编译 AsmTools
+ &lt;a class="anchor" href="#%e7%bc%96%e8%af%91-asmtools">#&lt;/a>
+&lt;/h2>
+&lt;p>GitHub: 
+ &lt;a href="https://github.com/openjdk/asmtools">AsmTools&lt;/a>&lt;/p>
+&lt;p>
+ &lt;a href="https://wiki.openjdk.org/display/CodeTools/How&amp;#43;to&amp;#43;build&amp;#43;AsmTools">How To Build AsmTools&lt;/a>&lt;/p>
+&lt;h2 id="使用">
+ 使用
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>java -jar asmtools.jar jdis [option] [filename.class]&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>参数 &lt;code>-g&lt;/code> 可打印出更详细的信息。&lt;/li>
+&lt;/ul></description></item><item><title>boltdb node</title><link>https://ileonli.github.io/docs/boltdb/node/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/node/</guid><description>&lt;h2 id="分裂">
+ 分裂
+ &lt;a class="anchor" href="#%e5%88%86%e8%a3%82">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// spill writes the nodes to dirty pages and splits nodes as it goes.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Returns an error if dirty pages cannot be allocated.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">n&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">node&lt;/span>) &lt;span style="color:#a6e22e">spill&lt;/span>() &lt;span style="color:#66d9ef">error&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">tx&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">tx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">spilled&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Spill child nodes first. Child nodes can materialize sibling nodes in
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// the case of split-merge so we cannot use a range loop. We have to check
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// the children size on every loop iteration.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">sort&lt;/span>.&lt;span style="color:#a6e22e">Sort&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>; &lt;span style="color:#a6e22e">i&lt;/span> &amp;lt; len(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>); &lt;span style="color:#a6e22e">i&lt;/span>&lt;span style="color:#f92672">++&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>[&lt;span style="color:#a6e22e">i&lt;/span>].&lt;span style="color:#a6e22e">spill&lt;/span>(); &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// We no longer need the child list because it&amp;#39;s only used for spill tracking.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span> = &lt;span style="color:#66d9ef">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Split nodes into appropriate sizes. The first node will always be n.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">nodes&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">split&lt;/span>(&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">pageSize&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">node&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">nodes&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Add node&amp;#39;s page to the freelist if it&amp;#39;s not new.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span> &amp;gt; &lt;span style="color:#ae81ff">0&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">freelist&lt;/span>.&lt;span style="color:#a6e22e">free&lt;/span>(&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">meta&lt;/span>.&lt;span style="color:#a6e22e">txid&lt;/span>, &lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">page&lt;/span>(&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span> = &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Allocate contiguous space for the node.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#a6e22e">p&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">allocate&lt;/span>((&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">size&lt;/span>() &lt;span style="color:#f92672">/&lt;/span> &lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">pageSize&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Write the node.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">id&lt;/span> &lt;span style="color:#f92672">&amp;gt;=&lt;/span> &lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">meta&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			panic(&lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Sprintf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;pgid (%d) above high water mark (%d)&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">id&lt;/span>, &lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">meta&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span> = &lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">id&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">write&lt;/span>(&lt;span style="color:#a6e22e">p&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">spilled&lt;/span> = &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Insert into parent inodes.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">key&lt;/span> = &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">key&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">key&lt;/span> = &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>].&lt;span style="color:#a6e22e">key&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">put&lt;/span>(&lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>].&lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#66d9ef">nil&lt;/span>, &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span> = &lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>].&lt;span style="color:#a6e22e">key&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">_assert&lt;/span>(len(&lt;span style="color:#a6e22e">node&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span>) &amp;gt; &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;spill: zero-length node key&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Update the statistics.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">stats&lt;/span>.&lt;span style="color:#a6e22e">Spill&lt;/span>&lt;span style="color:#f92672">++&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// If the root node split and created a new root then we need to spill that
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// as well. We&amp;#39;ll clear out the children to make sure it doesn&amp;#39;t try to respill.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span> = &lt;span style="color:#66d9ef">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">spill&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 事务</title><link>https://ileonli.github.io/docs/boltdb/transaction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/transaction/</guid><description>&lt;h1 id="boltdb-事务">
+ boltdb 事务
+ &lt;a class="anchor" href="#boltdb-%e4%ba%8b%e5%8a%a1">#&lt;/a>
+&lt;/h1>
+&lt;p>boltdb 所有操作（&lt;code>Update&lt;/code> 和 &lt;code>View&lt;/code>）都会生成一个 &lt;code>Tx&lt;/code>，用于记录此次事务的信息。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// txid represents the internal transaction identifier.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">txid&lt;/span> &lt;span style="color:#66d9ef">uint64&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Tx represents a read-only or read/write transaction on the database.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Read-only transactions can be used for retrieving values for keys and creating cursors.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Read/write transactions can create and remove buckets and create and remove keys.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// IMPORTANT: You must commit or rollback transactions when you are done with
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// them. Pages can not be reclaimed by the writer until no more transactions
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// are using them. A long running read transaction can cause the database to
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// quickly grow.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Tx&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">writable&lt;/span> &lt;span style="color:#66d9ef">bool&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">managed&lt;/span> &lt;span style="color:#66d9ef">bool&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">db&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">DB&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">meta&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">meta&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">root&lt;/span> &lt;span style="color:#a6e22e">Bucket&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">pages&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#a6e22e">pgid&lt;/span>]&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">page&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">stats&lt;/span> &lt;span style="color:#a6e22e">TxStats&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">commitHandlers&lt;/span> []&lt;span style="color:#66d9ef">func&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// WriteFlag specifies the flag for write-related methods like WriteTo().
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// Tx opens the database file with the specified flag to copy the data.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// By default, the flag is unset, which works well for mostly in-memory
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// workloads. For databases that are much larger than available RAM,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// set the flag to syscall.O_DIRECT to avoid trashing the page cache.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">WriteFlag&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/bucket/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/bucket/</guid><description>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// bucket represents the on-file representation of a bucket.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// This is stored as the &amp;#34;value&amp;#34; of a bucket key. If the bucket is small enough,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// then its root page can be stored inline in the &amp;#34;value&amp;#34;, after the bucket
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// header. In the case of inline buckets, the &amp;#34;root&amp;#34; will be 0.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">bucket&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">root&lt;/span> &lt;span style="color:#a6e22e">pgid&lt;/span> &lt;span style="color:#75715e">// page id of the bucket&amp;#39;s root-level page
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">sequence&lt;/span> &lt;span style="color:#66d9ef">uint64&lt;/span> &lt;span style="color:#75715e">// monotonically incrementing, used by NextSequence()
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 存储</title><link>https://ileonli.github.io/docs/boltdb/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/storage/</guid><description>&lt;h1 id="boltdb-存储">
+ boltdb 存储
+ &lt;a class="anchor" href="#boltdb-%e5%ad%98%e5%82%a8">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="boltopen">
+ bolt.Open()
+ &lt;a class="anchor" href="#boltopen">#&lt;/a>
+&lt;/h2>
+&lt;p>
+ &lt;a href="https://github.com/boltdb/bolt/blob/master/db.go#L150">&lt;code>bolt.Open()&lt;/code>&lt;/a> 是使用数据库的第一个方法，也是最重要的方法之一。该代码的作用是初始化一个 &lt;code>DB&lt;/code> 对象。&lt;/p>
+&lt;h3 id="参数设置">
+ 参数设置
+ &lt;a class="anchor" href="#%e5%8f%82%e6%95%b0%e8%ae%be%e7%bd%ae">#&lt;/a>
+&lt;/h3>
+&lt;p>首先会创建一个 &lt;code>DB&lt;/code> 对象，&lt;code>opened&lt;/code> 用于指示数据库是否已成功打开。。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">db&lt;/span> = &lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">DB&lt;/span>{&lt;span style="color:#a6e22e">opened&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>对参数进行一些初始化设置。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Set default options if no options are provided.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">options&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">options&lt;/span> = &lt;span style="color:#a6e22e">DefaultOptions&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">NoGrowSync&lt;/span> = &lt;span style="color:#a6e22e">options&lt;/span>.&lt;span style="color:#a6e22e">NoGrowSync&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">MmapFlags&lt;/span> = &lt;span style="color:#a6e22e">options&lt;/span>.&lt;span style="color:#a6e22e">MmapFlags&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Set default values for later DB operations.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">MaxBatchSize&lt;/span> = &lt;span style="color:#a6e22e">DefaultMaxBatchSize&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">MaxBatchDelay&lt;/span> = &lt;span style="color:#a6e22e">DefaultMaxBatchDelay&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">AllocSize&lt;/span> = &lt;span style="color:#a6e22e">DefaultAllocSize&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>&lt;h1 id="boltdb-页结构">
+ boltdb 页结构
+ &lt;a class="anchor" href="#boltdb-%e9%a1%b5%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="page">
+ page
+ &lt;a class="anchor" href="#page">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">page&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">id&lt;/span> &lt;span style="color:#a6e22e">pgid&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">flags&lt;/span> &lt;span style="color:#66d9ef">uint16&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">count&lt;/span> &lt;span style="color:#66d9ef">uint16&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">overflow&lt;/span> &lt;span style="color:#66d9ef">uint32&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ptr&lt;/span> &lt;span style="color:#66d9ef">uintptr&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Cleaner 类</title><link>https://ileonli.github.io/docs/Java/Cleaner/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Cleaner/</guid><description>&lt;h1 id="参考文献">
+ 参考文献
+ &lt;a class="anchor" href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae">#&lt;/a>
+&lt;/h1>
+&lt;ol>
+&lt;li>
+ &lt;a href="https://openjdk.org/jeps/421">https://openjdk.org/jeps/421&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://inside.java/2022/05/25/clean-cleaner/">https://inside.java/2022/05/25/clean-cleaner/&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://docs.oracle.com/javase/9/docs/api/java/lang/ref/Cleaner.html">https://docs.oracle.com/javase/9/docs/api/java/lang/ref/Cleaner.html&lt;/a>&lt;/li>
+&lt;/ol></description></item><item><title>JDBC</title><link>https://ileonli.github.io/docs/Java/JDBC/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/JDBC/</guid><description>&lt;h1 id="jdbc">
+ JDBC
+ &lt;a class="anchor" href="#jdbc">#&lt;/a>
+&lt;/h1>
+&lt;blockquote>
+&lt;p>本教程使用 MySQL 数据库。&lt;/p>
+&lt;p>主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="建立连接">
+ 建立连接
+ &lt;a class="anchor" href="#%e5%bb%ba%e7%ab%8b%e8%bf%9e%e6%8e%a5">#&lt;/a>
+&lt;/h2>
+&lt;p>数据源可以是数据库管理系统 (DBMS)、传统文件系统或其他带有相应 JDBC 驱动的数据源。通常，JDBC 使用以下两种类之一来连接目标数据源：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>DriverManager&lt;/code>：用于将应用程序连接到通过数据库 URL 指定的数据源。当此类首次尝试建立连接时，它会自动加载类路径中找到的任何 JDBC 4.0 驱动程序。必须手动加载任何 4.0 版本之前的 JDBC 驱动程序。&lt;/li>
+&lt;li>&lt;code>DataSource&lt;/code>：相比于 &lt;code>DriverManager&lt;/code>，更推荐使用此接口，因为它允许应用程序对底层数据源的细节保持透明。&lt;code>DataSource&lt;/code> 对象的属性被设置为表示特定的数据源。&lt;/li>
+&lt;/ul>
+&lt;h3 id="使用-drivermanager-类">
+ 使用 &lt;code>DriverManager&lt;/code> 类
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8-drivermanager-%e7%b1%bb">#&lt;/a>
+&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>String url &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;jdbc:mysql://localhost:3306/db&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String username &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;root&amp;#34;&lt;/span>, password &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;0987654321&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Connection conn &lt;span style="color:#f92672">=&lt;/span> DriverManager.&lt;span style="color:#a6e22e">getConnection&lt;/span>(url, username, password);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>JVM 加载-链接-初始化</title><link>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</guid><description>&lt;h1 id="jvm-加载-链接-初始化">
+ JVM 加载-链接-初始化
+ &lt;a class="anchor" href="#jvm-%e5%8a%a0%e8%bd%bd-%e9%93%be%e6%8e%a5-%e5%88%9d%e5%a7%8b%e5%8c%96">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="类加载过程">
+ 类加载过程
+ &lt;a class="anchor" href="#%e7%b1%bb%e5%8a%a0%e8%bd%bd%e8%bf%87%e7%a8%8b">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="加载loads">
+ 加载（loads）
+ &lt;a class="anchor" href="#%e5%8a%a0%e8%bd%bdloads">#&lt;/a>
+&lt;/h3>
+&lt;p>加载（loads）是查找具有特定名称的类或接口类型的二进制表示，并从该二进制表示创建类或接口的过程。加载过程如下：&lt;/p>
+&lt;ol>
+&lt;li>通过一个类的全限定名来获取定义此类的二进制字节流。&lt;/li>
+&lt;li>将这个字节流所代表的静态存储结构转化为方法区（Method Area）的运行时数据结构。&lt;/li>
+&lt;li>在内存中生成一个代表这个类的 &lt;code>java.lang.Class&lt;/code> 对象，作为方法区这个类的各种数据的访问入口。&lt;/li>
+&lt;/ol>
+&lt;p>类加载链接的目的就是在 JVM 中创建相应的类结构&lt;/p>
+&lt;p>启动类加载器之外，其他的类加载器都是 &lt;code>java.lang.ClassLoader&lt;/code> 的子类&lt;/p>
+&lt;p>&lt;code>-verbose:class&lt;/code> 参数可用于打印类加载的先后顺序&lt;/p>
+&lt;h3 id="链接links">
+ 链接（links）
+ &lt;a class="anchor" href="#%e9%93%be%e6%8e%a5links">#&lt;/a>
+&lt;/h3>
+&lt;p>链接（links）是获取类或接口，并将其组合到 Java 虚拟机的运行时状态以便执行的过程。&lt;/p>
+&lt;h3 id="初始化initializes">
+ 初始化（initializes）
+ &lt;a class="anchor" href="#%e5%88%9d%e5%a7%8b%e5%8c%96initializes">#&lt;/a>
+&lt;/h3>
+&lt;p>类或接口的初始化（initializes）包括执行类或接口初始化方法 &lt;code>&amp;lt;clinit&amp;gt;&lt;/code>。&lt;/p></description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>&lt;h1 id="methodhandles">
+ MethodHandles
+ &lt;a class="anchor" href="#methodhandles">#&lt;/a>
+&lt;/h1>
+&lt;blockquote>
+&lt;p>翻译自：
+ &lt;a href="https://dev.java/learn/introduction_to_method_handles/">https://dev.java/learn/introduction_to_method_handles/&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="什么是方法句柄what-are-method-handles">
+ 什么是方法句柄（What are method handles）
+ &lt;a class="anchor" href="#%e4%bb%80%e4%b9%88%e6%98%af%e6%96%b9%e6%b3%95%e5%8f%a5%e6%9f%84what-are-method-handles">#&lt;/a>
+&lt;/h2>
+&lt;p>方法句柄是一种用于查找和调用方法的低级机制。与反射一样，方法句柄也提供了调用方法、调用构造函数以及访问字段的手段。&lt;/p>
+&lt;p>那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的引用之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。&lt;/p>
+&lt;p>让我们深入探讨一下方法句柄能够提供什么功能以及我们如何有效地使用它们。&lt;/p>
+&lt;h2 id="访问检查access-checking">
+ 访问检查（Access checking）
+ &lt;a class="anchor" href="#%e8%ae%bf%e9%97%ae%e6%a3%80%e6%9f%a5access-checking">#&lt;/a>
+&lt;/h2>
+&lt;p>方法句柄的访问检查与反射的执行方式是不同的。&lt;strong>使用反射时&lt;/strong>，每次调用都会对调用者进行访问检查。&lt;strong>而对于方法句柄&lt;/strong>，访问检查只在方法句柄创建时进行。&lt;/p>
+&lt;p>需要注意的是，如果在能够访问非公共成员的上下文中创建了方法句柄，那么当该方法句柄被传递到外部时，可以通过方法句柄访问非公共成员。&lt;/p>
+&lt;p>因此，非公共成员可能会被不应有访问权限的代码访问。开发者有责任将此类方法句柄限制在其创建的上下文内。另外，可以直接使用合适的查找对象来创建具有访问限制的方法句柄。&lt;/p>
+&lt;h2 id="方法句柄查找method-handle-lookup">
+ 方法句柄查找（Method handle lookup）
+ &lt;a class="anchor" href="#%e6%96%b9%e6%b3%95%e5%8f%a5%e6%9f%84%e6%9f%a5%e6%89%bemethod-handle-lookup">#&lt;/a>
+&lt;/h2>
+&lt;p>要创建方法句柄，我们首先需要创建一个 
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html">&lt;code>LookUp&lt;/code>&lt;/a> 对象，此为创建方法句柄的工厂。根据 &lt;code>Lookup&lt;/code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。&lt;/p></description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>&lt;h1 id="动态代理">
+ 动态代理
+ &lt;a class="anchor" href="#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86">#&lt;/a>
+&lt;/h1>
+&lt;p>在 Java 动态代理机制中，&lt;code>InvocationHandler&lt;/code> 接口和 &lt;code>Proxy&lt;/code> 类是核心。&lt;/p>
+&lt;h2 id="proxy">
+ Proxy
+ &lt;a class="anchor" href="#proxy">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>Proxy&lt;/code> 类主要使用 &lt;code>newProxyInstance()&lt;/code> 静态方法生成代理对象。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> Object &lt;span style="color:#a6e22e">newProxyInstance&lt;/span>(ClassLoader loader,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Class&lt;span style="color:#f92672">&amp;lt;?&amp;gt;[]&lt;/span> interfaces,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> InvocationHandler h) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>&lt;h1 id="编码器和解码器">
+ 编码器和解码器
+ &lt;a class="anchor" href="#%e7%bc%96%e7%a0%81%e5%99%a8%e5%92%8c%e8%a7%a3%e7%a0%81%e5%99%a8">#&lt;/a>
+&lt;/h1>
+&lt;ul>
+&lt;li>编码器：将&lt;strong>消息&lt;/strong>转换为适合于传输的格式（通常是字节流）。&lt;/li>
+&lt;li>解码器：将&lt;strong>网络字节流&lt;/strong>转换为应用程序的消息格式。&lt;/li>
+&lt;/ul>
+&lt;p>因此，编码器处理&lt;strong>出站&lt;/strong>数据，而解码器处理&lt;strong>入站&lt;/strong>数据。&lt;/p>
+&lt;h2 id="解码器">
+ 解码器
+ &lt;a class="anchor" href="#%e8%a7%a3%e7%a0%81%e5%99%a8">#&lt;/a>
+&lt;/h2>
+&lt;p>由于解码器是负责处理入站数据的，因此，解码器是 &lt;code>ChannelInboundHandler&lt;/code>。&lt;/p>
+&lt;p>解码器主要有下边两种：&lt;/p>
+&lt;ul>
+&lt;li>将字节解码为消息的 &lt;code>ByteToMessageDecoder&lt;/code> 和 &lt;code>ReplayingDecoder&lt;/code>。&lt;/li>
+&lt;li>将一种消息类型解码为另一种消息的 &lt;code>MessageToMessageDecoder&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;h3 id="bytetomessagedecoder">
+ ByteToMessageDecoder
+ &lt;a class="anchor" href="#bytetomessagedecoder">#&lt;/a>
+&lt;/h3>
+&lt;h3 id="replayingdecoder">
+ ReplayingDecoder
+ &lt;a class="anchor" href="#replayingdecoder">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>ReplayingDecoder&lt;/code> 扩展了 &lt;code>ByteToMessageDecoder&lt;/code> 类，使得我们不必调用 &lt;code>readableBytes()&lt;/code> 方法。它通过使用一个自定义的 &lt;code>ByteBuf&lt;/code> 实现，
+&lt;code>ReplayingDecoderByteBuf&lt;/code>，包装传入的 &lt;code>ByteBuf&lt;/code> 实现了这一点，其将在内部执行该调用&lt;/p></description></item></channel></rss>

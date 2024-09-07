@@ -1,13 +1,111 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Netty on Leon' Blog</title><link>https://ileonli.github.io/docs/Netty/</link><description>Recent content in Netty on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/Netty/index.xml" rel="self" type="application/rss+xml"/><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>ByteBuf # 基本结构 # +-------------------+------------------+------------------+-------------+ | discardable bytes | readable bytes | writable bytes | ... | | | (CONTENT) | | | +-------------------+------------------+------------------+-------------+ | | | | | 0 &amp;lt;= readerIndex &amp;lt;= writerIndex &amp;lt;= capacity maxCapacity 相关操作 # 有些方法会返回 this，以支持链式调用。
-容量 # ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(); int capacity = buf.capacity();// 获取当前的容量 int maxCapacity = buf.maxCapacity();// 支持的最大容量，通常为 Integer.MAX_VALUE int readableBytes = buf.readableBytes();// writerIndex - readerIndex int writableBytes = buf.writableBytes();// capacity - writerIndex boolean readable; readable = buf.</description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>EventLoop # 一旦注册，将处理 Channel 的所有 I/O 操作。一个 EventLoop 实例通常会处理多个 Channel，但这可能取决于实现细节和内部机制。
-EventLoop 本质是一个单线程执行器，同时维护了一个 Selector。
-EventLoop 由 Thread 驱动，且不会更改
-try (EventLoop loop = new DefaultEventLoop()) { for (int i = 0; i &amp;lt; 3; i++) { loop.submit(() -&amp;gt; { for (int j = 0; j &amp;lt; 16; j++) { System.out.print(j + &amp;#34; &amp;#34;); } System.out.println(); }); } } 使用 EventLoop 的定时调度功能。
-try (EventLoop loop = new DefaultEventLoop()) { ScheduledFuture&amp;lt;?&amp;gt; future = loop.</description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description> EventLoopGroup #</description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description> Channel #</description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>ChannelHandler # ChannelHandler 共分为两类，ChannelInboundHandler 和 ChannelOutboundHandler。
-ChannelInboundHandler： ChannelOutboundHandler： 常用 # ChannelHandlerAdapter ChannelInboundHandlerAdapter ChannelOutboundHandlerAdapter ChannelDuplexHandler Pipeline 执行顺序 # Inbound 是从 ChannelPipeline 头到尾部，Outbound 是从 ChannelPipeline 尾到头部。
-生命周期 # handlerAdded new ChannelHandler() { @Override public void handlerAdded(ChannelHandlerContext ctx) throws Exception { } @Override public void handlerRemoved(ChannelHandlerContext ctx) throws Exception { } @Override public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception { } } ChannelInboundHandler # ChannelInboundHandlerAdapter # ChannelInboundHandlerAdapter 中的所有方法默认会调用 ctx.fireChannel*() 传递到下一个 Handler。</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>编码器和解码器 # 编码器：将消息转换为适合于传输的格式（通常是字节流）。 解码器：将网络字节流转换为应用程序的消息格式。 因此，编码器处理出站数据，而解码器处理入站数据。
-解码器 # 由于解码器是负责处理入站数据的，因此，解码器是 ChannelInboundHandler。
-解码器主要有下边两种：
-将字节解码为消息的 ByteToMessageDecoder 和 ReplayingDecoder。 将一种消息类型解码为另一种消息的 MessageToMessageDecoder。 ByteToMessageDecoder # ReplayingDecoder # ReplayingDecoder 扩展了 ByteToMessageDecoder 类，使得我们不必调用 readableBytes() 方法。它通过使用一个自定义的 ByteBuf 实现， ReplayingDecoderByteBuf，包装传入的 ByteBuf 实现了这一点，其将在内部执行该调用
-MessageToMessageDecoder # 编码器 # 编解码器类 # 这些类同时实现了 ChannelInboundHandler 和 ChannelOutboundHandler 接口。
-ByteToMessageCodec # MessageToMessageCodec # CombinedChannelDuplexHandler # CombinedChannelDuplexHandler 可将 ChannelInboundHandler 和 ChannelOutboundHandler 结合在一起。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Netty on Leon' Blog</title><link>https://ileonli.github.io/docs/Netty/</link><description>Recent content in Netty on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/Netty/index.xml" rel="self" type="application/rss+xml"/><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>&lt;h1 id="bytebuf">
+ ByteBuf
+ &lt;a class="anchor" href="#bytebuf">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="基本结构">
+ 基本结构
+ &lt;a class="anchor" href="#%e5%9f%ba%e6%9c%ac%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h2>
+&lt;pre tabindex="0">&lt;code>+-------------------+------------------+------------------+-------------+
+| discardable bytes | readable bytes | writable bytes | ... |
+| | (CONTENT) | | |
++-------------------+------------------+------------------+-------------+
+| | | | |
+0 &amp;lt;= readerIndex &amp;lt;= writerIndex &amp;lt;= capacity maxCapacity
+&lt;/code>&lt;/pr</description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>&lt;h1 id="eventloop">
+ EventLoop
+ &lt;a class="anchor" href="#eventloop">#&lt;/a>
+&lt;/h1>
+&lt;p>一旦注册，将处理 &lt;code>Channel&lt;/code> 的所有 I/O 操作。一个 &lt;code>EventLoop&lt;/code> 实例通常会处理多个 &lt;code>Channel&lt;/code>，但这可能取决于实现细节和内部机制。&lt;/p>
+&lt;p>&lt;code>EventLoop&lt;/code> 本质是一个单线程执行器，同时维护了一个 &lt;code>Selector&lt;/code>。&lt;/p>
+&lt;p>&lt;code>EventLoop&lt;/code> 由 &lt;code>Thread&lt;/code> 驱动，且不会更改&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (EventLoop loop &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> DefaultEventLoop()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> 0; i &lt;span style="color:#f92672">&amp;lt;&lt;/span> 3; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> loop.&lt;span style="color:#a6e22e">submit&lt;/span>(() &lt;span style="color:#f92672">-&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> j &lt;span style="color:#f92672">=&lt;/span> 0; j &lt;span style="color:#f92672">&amp;lt;&lt;/span> 16; j&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">print&lt;/span>(j &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34; &amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description>&lt;h1 id="eventloopgroup">
+ EventLoopGroup
+ &lt;a class="anchor" href="#eventloopgroup">#&lt;/a>
+&lt;/h1></description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description>&lt;h1 id="channel">
+ Channel
+ &lt;a class="anchor" href="#channel">#&lt;/a>
+&lt;/h1></description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>&lt;h1 id="channelhandler">
+ ChannelHandler
+ &lt;a class="anchor" href="#channelhandler">#&lt;/a>
+&lt;/h1>
+&lt;p>&lt;code>ChannelHandler&lt;/code> 共分为两类，&lt;code>ChannelInboundHandler&lt;/code> 和 &lt;code>ChannelOutboundHandler&lt;/code>。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>ChannelInboundHandler&lt;/code>：&lt;/li>
+&lt;li>&lt;code>ChannelOutboundHandler&lt;/code>：&lt;/li>
+&lt;/ul>
+&lt;h2 id="常用">
+ 常用
+ &lt;a class="anchor" href="#%e5%b8%b8%e7%94%a8">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>ChannelHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelInboundHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelOutboundHandlerAdapter&lt;/code>&lt;/li>
+&lt;li>&lt;code>ChannelDuplexHandler&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="pipeline-执行顺序">
+ Pipeline 执行顺序
+ &lt;a class="anchor" href="#pipeline-%e6%89%a7%e8%a1%8c%e9%a1%ba%e5%ba%8f">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>Inbound&lt;/code> 是从 &lt;code>ChannelPipeline&lt;/code> 头到尾部，&lt;code>Outbound&lt;/code> 是从 &lt;code>ChannelPipeline&lt;/code> 尾到头部。&lt;/p>
+&lt;h2 id="生命周期">
+ 生命周期
+ &lt;a class="anchor" href="#%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>&lt;code>handlerAdded&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">new&lt;/span> ChannelHandler() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handlerAdded&lt;/span>(ChannelHandlerContext ctx) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handlerRemoved&lt;/span>(ChannelHandlerContext ctx) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">exceptionCaught&lt;/span>(ChannelHandlerContext ctx, Throwable cause) &lt;span style="color:#66d9ef">throws&lt;/span> Exception {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>&lt;h1 id="编码器和解码器">
+ 编码器和解码器
+ &lt;a class="anchor" href="#%e7%bc%96%e7%a0%81%e5%99%a8%e5%92%8c%e8%a7%a3%e7%a0%81%e5%99%a8">#&lt;/a>
+&lt;/h1>
+&lt;ul>
+&lt;li>编码器：将&lt;strong>消息&lt;/strong>转换为适合于传输的格式（通常是字节流）。&lt;/li>
+&lt;li>解码器：将&lt;strong>网络字节流&lt;/strong>转换为应用程序的消息格式。&lt;/li>
+&lt;/ul>
+&lt;p>因此，编码器处理&lt;strong>出站&lt;/strong>数据，而解码器处理&lt;strong>入站&lt;/strong>数据。&lt;/p>
+&lt;h2 id="解码器">
+ 解码器
+ &lt;a class="anchor" href="#%e8%a7%a3%e7%a0%81%e5%99%a8">#&lt;/a>
+&lt;/h2>
+&lt;p>由于解码器是负责处理入站数据的，因此，解码器是 &lt;code>ChannelInboundHandler&lt;/code>。&lt;/p>
+&lt;p>解码器主要有下边两种：&lt;/p>
+&lt;ul>
+&lt;li>将字节解码为消息的 &lt;code>ByteToMessageDecoder&lt;/code> 和 &lt;code>ReplayingDecoder&lt;/code>。&lt;/li>
+&lt;li>将一种消息类型解码为另一种消息的 &lt;code>MessageToMessageDecoder&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;h3 id="bytetomessagedecoder">
+ ByteToMessageDecoder
+ &lt;a class="anchor" href="#bytetomessagedecoder">#&lt;/a>
+&lt;/h3>
+&lt;h3 id="replayingdecoder">
+ ReplayingDecoder
+ &lt;a class="anchor" href="#replayingdecoder">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>ReplayingDecoder&lt;/code> 扩展了 &lt;code>ByteToMessageDecoder&lt;/code> 类，使得我们不必调用 &lt;code>readableBytes()&lt;/code> 方法。它通过使用一个自定义的 &lt;code>ByteBuf&lt;/code> 实现，
+&lt;code>ReplayingDecoderByteBuf&lt;/code>，包装传入的 &lt;code>ByteBuf&lt;/code> 实现了这一点，其将在内部执行该调用&lt;/p></description></item></channel></rss>

@@ -1,9 +1,37 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>字节码 on Leon' Blog</title><link>https://ileonli.github.io/docs/JVM/ByteCode/</link><description>Recent content in 字节码 on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/JVM/ByteCode/index.xml" rel="self" type="application/rss+xml"/><item><title>Class 文件结构</title><link>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</guid><description>Class 文件结构 # 前言 # 任何一个 class 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 class 文件（如：动态生成的类）。
-// Main.java public class Main { public static class InnerClass { } public static void main(String[] args) { } } 当执行 $javac Main.java 命令后，会生成 Main.class 和 Main$InnerClass.class 两个 class 文件。
-class 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。
-使用 u1、u2 和 u4 分别表示 1 字节、2 字节和 4 字节。
-Names # 二进制类和接口名称 # 在 Java 虚拟机中，类和接口的名称使用二进制名称格式表示。此格式与源代码中的类名表示略有不同。</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>常量池 # 常量池是一个表，所有的表项都有以下的格式。tag 表示表项的类型，info 用于表示 tag 类型所需要存储的信息。
-cp_info { u1 tag; u1 info[]; } 常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。
-为什么设计常量池？ # 复用 # 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。
-下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
-public class Main { public static void main(String[] args) { String str = &amp;#34;Hello World!&amp;#34;; System.out.println(str); System.out.println(&amp;#34;Hello World!&amp;#34;); } } public class io.github.ileonli.Main minor version: 0 major version: 65 flags: (0x0021) ACC_PUBLIC, ACC_SUPER this_class: #21 // io/github/ileonli/Main super_class: #2 // java/lang/Object interfaces: 0, fields: 0, methods: 2, attributes: 1 Constant pool: #1 = Methodref #2.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>字节码 on Leon' Blog</title><link>https://ileonli.github.io/docs/JVM/ByteCode/</link><description>Recent content in 字节码 on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/JVM/ByteCode/index.xml" rel="self" type="application/rss+xml"/><item><title>Class 文件结构</title><link>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/ClassFile/</guid><description>&lt;h1 id="class-文件结构">
+ Class 文件结构
+ &lt;a class="anchor" href="#class-%e6%96%87%e4%bb%b6%e7%bb%93%e6%9e%84">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="前言">
+ 前言
+ &lt;a class="anchor" href="#%e5%89%8d%e8%a8%80">#&lt;/a>
+&lt;/h2>
+&lt;p>任何一个 &lt;code>class&lt;/code> 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 &lt;code>class&lt;/code> 文件（如：动态生成的类）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Main.java&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Main&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">InnerClass&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
+ 常量池
+ &lt;a class="anchor" href="#%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
+&lt;/h1>
+&lt;p>常量池是一个表，所有的表项都有以下的格式。&lt;code>tag&lt;/code> 表示表项的类型，&lt;code>info&lt;/code> 用于表示 &lt;code>tag&lt;/code> 类型所需要存储的信息。&lt;/p>
+&lt;pre tabindex="0">&lt;code>cp_info {
+ u1 tag;
+ u1 info[];
+}
+&lt;/code>&lt;/pre>&lt;p>常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。&lt;/p>
+&lt;h2 id="为什么设计常量池">
+ 为什么设计常量池？
+ &lt;a class="anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%ae%be%e8%ae%a1%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="复用">
+ 复用
+ &lt;a class="anchor" href="#%e5%a4%8d%e7%94%a8">#&lt;/a>
+&lt;/h3>
+&lt;p>常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。&lt;/p>
+&lt;hr>
+&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p></description></item></channel></rss>
