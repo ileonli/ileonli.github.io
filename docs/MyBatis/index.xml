@@ -17,7 +17,37 @@
 &lt;/h2>
 &lt;p>&lt;code>SqlSessionFactory&lt;/code> 一旦被创建就应该在应用的运行期间一直存在，没有任何理由丢弃它或重新创建另一个实例。使用 &lt;code>SqlSessionFactory&lt;/code> 的最佳实践是在应用运行期间只创建一次。&lt;/p>
 &lt;hr>
-&lt;p>&lt;code>SqlSessionFactory&lt;/code> 的作用是为了创建 &lt;code>SqlSession&lt;/code> 实例。&lt;code>SqlSession&lt;/code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。&lt;/p></description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>&lt;h1 id="mapper">
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 的作用是为了创建 &lt;code>SqlSession&lt;/code> 实例。&lt;code>SqlSession&lt;/code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.sql.Connection;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Creates an {@link SqlSession} out of a connection or a DataSource
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @author Clinton Begin
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">SqlSessionFactory&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> autoCommit);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(Connection connection);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(TransactionIsolationLevel level);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, &lt;span style="color:#66d9ef">boolean&lt;/span> autoCommit);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, TransactionIsolationLevel level);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, Connection connection);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration &lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 主要有两个具体的实现：&lt;/p></description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>&lt;h1 id="mapper">
  Mapper
  &lt;a class="anchor" href="#mapper">#&lt;/a>
 &lt;/h1>
@@ -34,7 +64,37 @@
 &lt;p>&lt;code>MapperRegistry&lt;/code> 类中的 &lt;code>knownMappers&lt;/code> 用做具体保存。&lt;/p>
 &lt;p>&lt;code>key&lt;/code> 是 &lt;code>Mapper&lt;/code> 接口对应的 &lt;code>Class&lt;/code> 对象，&lt;code>value&lt;/code> 为 &lt;code>MapperProxyFactory&lt;/code> 工厂对象。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Map&lt;span style="color:#f92672">&amp;lt;&lt;/span>Class&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&lt;/span>, MapperProxyFactory&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&amp;gt;&lt;/span> knownMappers &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ConcurrentHashMap&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>();
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>&lt;h1 id="resultsethandler">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="addmapper">
+ addMapper
+ &lt;a class="anchor" href="#addmapper">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>addMapper&lt;/code> 会将接口类和包装后的对象放入到 &lt;code>knownMappers&lt;/code> 对象中。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">addMapper&lt;/span>(Class&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> type) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (type.&lt;span style="color:#a6e22e">isInterface&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (hasMapper(type)) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> BindingException(&lt;span style="color:#e6db74">&amp;#34;Type &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> type &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34; is already known to the MapperRegistry.&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">boolean&lt;/span> loadCompleted &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> knownMappers.&lt;span style="color:#a6e22e">put&lt;/span>(type, &lt;span style="color:#66d9ef">new&lt;/span> MapperProxyFactory&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>(type));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// It&amp;#39;s important that the type is added before the parser is run&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// otherwise the binding may automatically be attempted by the&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// mapper parser. If the type is already known, it won&amp;#39;t try.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MapperAnnotationBuilder parser &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> MapperAnnotationBuilder(config, type);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> parser.&lt;span style="color:#a6e22e">parse&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> loadCompleted &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span>loadCompleted) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> knownMappers.&lt;span style="color:#a6e22e">remove&lt;/span>(type);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="getmapper">
+ getMapper
+ &lt;a class="anchor" href="#getmapper">#&lt;/a>
+&lt;/h3>
+&lt;p>当使用 &lt;code>SqlSession&lt;/code> 类中的 &lt;code>&amp;lt;T&amp;gt; T getMapper(Class&amp;lt;T&amp;gt; type);&lt;/code> 方法获取 Mapper 时，会转发到 &lt;code>MapperRegistry&lt;/code> 的 &lt;code>getMapper&lt;/code> 方法进行具体处理。&lt;/p></description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>&lt;h1 id="resultsethandler">
  ResultSetHandler
  &lt;a class="anchor" href="#resultsethandler">#&lt;/a>
 &lt;/h1>
@@ -55,7 +115,38 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handleOutputParameters&lt;/span>(CallableStatement cs) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>&lt;h1 id="statementhandler">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="multiqueries">
+ MultiQueries
+ &lt;a class="anchor" href="#multiqueries">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="jdbc">
+ JDBC
+ &lt;a class="anchor" href="#jdbc">#&lt;/a>
+&lt;/h3>
+&lt;p>为了同时执行多条查询语句，需要设置 &lt;code>allowMultiQueries=true&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>Connection conn &lt;span style="color:#f92672">=&lt;/span> DriverManager.&lt;span style="color:#a6e22e">getConnection&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;jdbc:mysql://localhost/db?allowMultiQueries=true&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;root&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;0987654321&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String sql &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">SELECT * FROM `user`;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">SELECT * FROM `blog`;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;&amp;#34;&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (Statement stmt &lt;span style="color:#f92672">=&lt;/span> conn.&lt;span style="color:#a6e22e">createStatement&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt.&lt;span style="color:#a6e22e">execute&lt;/span>(sql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> cnt &lt;span style="color:#f92672">=&lt;/span> 0;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultSet rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">getResultSet&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (rs &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (stmt.&lt;span style="color:#a6e22e">getMoreResults&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">getResultSet&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rs &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cnt&lt;span style="color:#f92672">++&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(cnt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>每一个查询语句会返回一个 &lt;code>ResultSet&lt;/code>。上边的代码执行后，会返回两个 &lt;code>ResultSet&lt;/code>。因此，&lt;code>cnt&lt;/code> 的结果为 2（一共有两个 &lt;code>SELECT&lt;/code> 查询）。&lt;/p></description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>&lt;h1 id="statementhandler">
  StatementHandler
  &lt;a class="anchor" href="#statementhandler">#&lt;/a>
 &lt;/h1>
@@ -81,7 +172,24 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ParameterHandler &lt;span style="color:#a6e22e">getParameterHandler&lt;/span>();
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>&lt;h1 id="executor">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>prepare&lt;/code>：从 &lt;code>Connection&lt;/code> 中创建 &lt;code>Statement&lt;/code> 对象。&lt;/li>
+&lt;li>&lt;code>parameterize&lt;/code>：绑定 &lt;code>statement&lt;/code> 执行时需要的参数。&lt;/li>
+&lt;li>&lt;code>batch&lt;/code>：批量执行 SQL 语句。&lt;/li>
+&lt;li>&lt;code>update&lt;/code>：执行 insert、update 和 delete 操作。&lt;/li>
+&lt;li>&lt;code>query&lt;/code> 和 &lt;code>queryCursor&lt;/code>：用于执行 select 操作。&lt;/li>
+&lt;li>&lt;code>getBoundSql&lt;/code>：获取绑定的 SQL。&lt;/li>
+&lt;li>&lt;code>getParameterHandler&lt;/code>：负责处理 SQL 语句中的参数的处理器。&lt;/li>
+&lt;/ul>
+&lt;h2 id="basestatementhandler">
+ BaseStatementHandler
+ &lt;a class="anchor" href="#basestatementhandler">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="prepare">
+ prepare
+ &lt;a class="anchor" href="#prepare">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>BaseStatementHandler&lt;/code> 中设计了模板方法 &lt;code>prepare&lt;/code>，通过该方法可以获取 &lt;code>Statement&lt;/code> 对象。&lt;/p></description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>&lt;h1 id="executor">
  Executor
  &lt;a class="anchor" href="#executor">#&lt;/a>
 &lt;/h1>
@@ -97,7 +205,85 @@
  ExecutorType
  &lt;a class="anchor" href="#executortype">#&lt;/a>
 &lt;/h2>
-&lt;p>&lt;code>Executor&lt;/code> 一共有三种类型：&lt;/p></description></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>&lt;h1 id="一级缓存和二级缓存">
+&lt;p>&lt;code>Executor&lt;/code> 一共有三种类型：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>SIMPLE&lt;/code>：&lt;/li>
+&lt;li>&lt;code>REUSE&lt;/code>：&lt;/li>
+&lt;li>&lt;code>BATCH&lt;/code>：&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">enum&lt;/span> ExecutorType {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SIMPLE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> REUSE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BATCH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="baseexecutor">
+ BaseExecutor
+ &lt;a class="anchor" href="#baseexecutor">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>BaseExecutor&lt;/code> 是继承自 &lt;code>Executor&lt;/code> 接口的抽象类。该类实现了 &lt;code>Executor&lt;/code> 中的大部分方法。&lt;/p>
+&lt;p>该类使用了模板方法模式，继承 &lt;code>BaseExecutor&lt;/code> 的子类只需要实现下边的四个基本方法即可完成数据库的相关操作。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">BaseExecutor&lt;/span> &lt;span style="color:#66d9ef">implements&lt;/span> Executor {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">doUpdate&lt;/span>(MappedStatement ms, Object parameter) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>BatchResult&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doFlushStatements&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> isRollback) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQuery&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultHandler resultHandler, BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQueryCursor&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="simpleexecutor">
+ SimpleExecutor
+ &lt;a class="anchor" href="#simpleexecutor">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">doUpdate&lt;/span>(MappedStatement ms, Object parameter) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(&lt;span style="color:#66d9ef">this&lt;/span>, ms, parameter, RowBounds.&lt;span style="color:#a6e22e">DEFAULT&lt;/span>, &lt;span style="color:#66d9ef">null&lt;/span>, &lt;span style="color:#66d9ef">null&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> handler.&lt;span style="color:#a6e22e">update&lt;/span>(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closeStatement(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQuery&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(wrapper, ms, parameter, rowBounds, resultHandler,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> handler.&lt;span style="color:#a6e22e">query&lt;/span>(stmt, resultHandler);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closeStatement(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQueryCursor&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(wrapper, ms, parameter, rowBounds, &lt;span style="color:#66d9ef">null&lt;/span>, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> cursor &lt;span style="color:#f92672">=&lt;/span> handler.&lt;span style="color:#a6e22e">queryCursor&lt;/span>(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt.&lt;span style="color:#a6e22e">closeOnCompletion&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> cursor;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>BatchResult&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doFlushStatements&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> isRollback) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> Collections.&lt;span style="color:#a6e22e">emptyList&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>&lt;h1 id="一级缓存和二级缓存">
  一级缓存和二级缓存
  &lt;a class="anchor" href="#%e4%b8%80%e7%ba%a7%e7%bc%93%e5%ad%98%e5%92%8c%e4%ba%8c%e7%ba%a7%e7%bc%93%e5%ad%98">#&lt;/a>
 &lt;/h1>
@@ -157,4 +343,8 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> list;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="cachekey">
+ CacheKey
+ &lt;a class="anchor" href="#cachekey">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>CacheKey&lt;/code> 由 &lt;code>MappedStatement&lt;/code> 的 &lt;code>id&lt;/code>、对应的 &lt;code>offset&lt;/code> 和 &lt;code>limit&lt;/code>、SQL 语句（包含 ? 占位符）、用户传入的参数和 &lt;code>Environment&lt;/code> 的 &lt;code>id&lt;/code> 组成。&lt;/p></description></item></channel></rss>

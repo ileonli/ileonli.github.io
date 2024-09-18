@@ -1,0 +1,241 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="
+  Skip List
+  #
+
+
+  Introduction
+  #
+
+在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：
+
+链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。
+对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。
+
+为了加快链表查找过程，设计了跳表，跳表可以看作可二分查找的链表。
+
+跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。
+
+概率算法（Probabilistic Algorithm）：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。
+
+每个元素在跳表中由一个节点表示（如下图所示），节点是以 key 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。
+当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。
+
+  
+对于上图中的链表，我们可以发现下边的规律：
+
+第 0 层：这是完整的链表，包含所有按顺序排列的元素。
+第 1 层：这一层包含第 0 层中大约一半的元素。通过从第 0 层中随机选择大约一半的节点，并将它们链接到第 1 层。
+第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。
+第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。
+
+
+  Search
+  #
+
+
+在跳表上插入的元素需要使用比较算法比较 key 的大小。为了处理尾部节点，设定 null 比任何 key 都大
+
+在跳表上进行查找操作时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：
+
+  
+
+  
+
+  Insert
+  #
+
+插入操作需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 update 数组记录存储了每一层中小于待插入键的最后一个节点。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/DataStructure/skiplist/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="Skip List"><meta property="og:description" content=" Skip List # Introduction # 在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：
+链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。 对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。 为了加快链表查找过程，设计了跳表，跳表可以看作可二分查找的链表。
+跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。
+概率算法（Probabilistic Algorithm）：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。
+每个元素在跳表中由一个节点表示（如下图所示），节点是以 key 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。
+当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。
+对于上图中的链表，我们可以发现下边的规律：
+第 0 层：这是完整的链表，包含所有按顺序排列的元素。 第 1 层：这一层包含第 0 层中大约一半的元素。通过从第 0 层中随机选择大约一半的节点，并将它们链接到第 1 层。 第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。 第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。 Search # 在跳表上插入的元素需要使用比较算法比较 key 的大小。为了处理尾部节点，设定 null 比任何 key 都大
+在跳表上进行查找操作时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：
+Insert # 插入操作需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 update 数组记录存储了每一层中小于待插入键的最后一个节点。"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-09-18T21:04:34+08:00"><title>Skip List | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.0cb83f41dff236af4990cd82c7758a72fd6ff0c9ef6390c4a5626f97158e477d.js integrity="sha256-DLg/Qd/yNq9JkM2Cx3WKcv1v8MnvY5DEpWJvlxWOR30=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
+<label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li><li><a href=/docs/Java/JDBC/>JDBC</a></li><li><a href=/docs/Java/MethodHandles/>MethodHandles</a></li><li><a href=/docs/Java/DynamicProxy/>动态代理</a></li></ul></li><li><input type=checkbox id=section-068f5864eab5429f74d44490ac7dda4f class=toggle>
+<label for=section-068f5864eab5429f74d44490ac7dda4f class="flex justify-between"><a role=button>boltdb</a></label><ul><li><a href=/docs/boltdb/introduction/>boltdb 介绍</a></li><li><a href=/docs/boltdb/node/>boltdb node</a></li><li><a href=/docs/boltdb/transaction/>boltdb 事务</a></li><li><a href=/docs/boltdb/bucket/>boltdb 介绍</a></li><li><a href=/docs/boltdb/storage/>boltdb 存储</a></li><li><a href=/docs/boltdb/page/>boltdb 页结构</a></li></ul></li><li><input type=checkbox id=section-6a1b1f139889384d884552bee56583cd class=toggle>
+<label for=section-6a1b1f139889384d884552bee56583cd class="flex justify-between"><a role=button>15-445</a></label><ul><li><a href=/docs/15-445/storage/>Database Storage</a></li></ul></li><li><input type=checkbox id=section-3dfb06d56069fc22bb179a4001826101 class=toggle checked>
+<label for=section-3dfb06d56069fc22bb179a4001826101 class="flex justify-between"><a role=button>Data Structure</a></label><ul><li><a href=/docs/DataStructure/skiplist/ class=active>Skip List</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle>
+<label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle>
+<label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
+<label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-bcab9cce661800a90eaf0ba45525a392 class=toggle>
+<label for=section-bcab9cce661800a90eaf0ba45525a392 class="flex justify-between"><a role=button>MapDB</a></label><ul><li><a href=/docs/MapDB/BTree/>BTree</a></li></ul></li><li><input type=checkbox id=section-be784f006af4b056e801791bd4131884 class=toggle>
+<label for=section-be784f006af4b056e801791bd4131884 class="flex justify-between"><a role=button>MyBatis</a></label><ul><li><a href=/docs/MyBatis/SqlSession/>SqlSession</a></li><li><a href=/docs/MyBatis/Mapper/>Mapper</a></li><li><a href=/docs/MyBatis/ResultSetHandler/>ResultSetHandler</a></li><li><a href=/docs/MyBatis/StatementHandler/>StatementHandler</a></li><li><a href=/docs/MyBatis/Executor/>Executor</a></li><li><a href=/docs/MyBatis/Cache/>Cache</a></li></ul></li><li><input type=checkbox id=section-53f18a28714f2e0ba277c362c8e2fe7d class=toggle>
+<label for=section-53f18a28714f2e0ba277c362c8e2fe7d class="flex justify-between"><a role=button>MySQL</a></label><ul></ul></li><li><input type=checkbox id=section-8e8ae3b760618e1158c1946d2d023ca5 class=toggle>
+<label for=section-8e8ae3b760618e1158c1946d2d023ca5 class="flex justify-between"><a role=button>Netty</a></label><ul><li><a href=/docs/Netty/ByteBuf/>ByteBuf</a></li><li><a href=/docs/Netty/EventLoop/>EventLoop</a></li><li><a href=/docs/Netty/EventLoopGroup/>EventLoopGroup</a></li><li><a href=/docs/Netty/Channel/>Channel</a></li><li><a href=/docs/Netty/ChannelHandler/>ChannelHandler</a></li><li><a href=/docs/Netty/encoder-and-decoder/>编码器和解码器</a></li></ul></li><li><input type=checkbox id=section-bccb031e3769927ed8f05e90efe74959 class=toggle>
+<label for=section-bccb031e3769927ed8f05e90efe74959 class="flex justify-between"><a role=button>Pro Git</a></label><ul><li><a href=/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/>Git 基础</a></li><li><a href=/docs/ProGit/Git-%E5%88%86%E6%94%AF/>Git 分支</a></li></ul></li><li><span>计算机网络</span><ul></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>Skip List</strong>
+<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#skip-list>Skip List</a><ul><li><a href=#introduction>Introduction</a></li><li><a href=#search>Search</a></li><li><a href=#insert>Insert</a></li><li><a href=#delete>Delete</a></li><li><a href=#implementation>Implementation</a></li><li><a href=#reference>Reference</a></li></ul></li></ul></nav></aside></header><article class="markdown book-article"><h1 id=skip-list>Skip List
+<a class=anchor href=#skip-list>#</a></h1><h2 id=introduction>Introduction
+<a class=anchor href=#introduction>#</a></h2><p>在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：</p><ul><li>链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。</li><li>对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。</li></ul><p>为了加快链表查找过程，设计了跳表，跳表可以看作<strong>可二分查找的链表</strong>。</p><hr><p>跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。</p><blockquote><p><strong>概率算法（Probabilistic Algorithm）</strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。</p></blockquote><p>每个元素在跳表中由一个节点表示（如下图所示），节点是以 <code>key</code> 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。</p><p>当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。</p><p><img src=/img/DataStructure/skiplist/1.png alt></p><p>对于上图中的链表，我们可以发现下边的规律：</p><ul><li>第 0 层：这是完整的链表，包含所有按顺序排列的元素。</li><li>第 1 层：这一层包含第 0 层中大约一半的元素。通过从第 0 层中随机选择大约一半的节点，并将它们链接到第 1 层。</li><li>第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。</li><li>第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。</li></ul><h2 id=search>Search
+<a class=anchor href=#search>#</a></h2><blockquote><p>在跳表上插入的元素需要使用比较算法比较 <code>key</code> 的大小。为了处理尾部节点，设定 <code>null</code> 比任何 <code>key</code> 都大</p></blockquote><p>在跳表上进行<strong>查找操作</strong>时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：</p><p><img src=/img/DataStructure/skiplist/search.jpg alt></p><p><img src=/img/DataStructure/skiplist/search-code.png alt></p><h2 id=insert>Insert
+<a class=anchor href=#insert>#</a></h2><p><strong>插入操作</strong>需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 <code>update</code> 数组记录存储了每一层中小于待插入键的最后一个节点。</p><p>我们使用 <code>height = randomLevel()</code> 生成该节点的高度：</p><ul><li>如果 <code>height</code> 高于当前跳表，我们需要把高于的部分的指向尾节点（null）。为方便操作，先把 <code>update[i]</code> 指向 <code>header</code>，后续使用 <code>update[i].forward[i]</code> 获取尾节点。</li><li>如果 <code>height</code> 低于当前跳表，我们把 <code>update</code> 中高度小与等于 <code>height</code> 的节点的 <code>forward</code> 进行更新。左边索引指向当前插入的节点，当前节点指向右边索引。</li></ul><p><img src=/img/DataStructure/skiplist/insert.jpg alt></p><p><img src=/img/DataStructure/skiplist/insert-code.png alt></p><h2 id=delete>Delete
+<a class=anchor href=#delete>#</a></h2><p><strong>删除操作</strong>需要先找到要删除的节点，并使用 <code>update</code> 数组记录存储了每一层中小于键的最后一个节点。</p><p>如果找到要删除的节点，遍历所有高度小与等于删除节点的节点，把上一个节点的 <code>forwards</code> 指向删除节点的 <code>forwards</code> 即可。</p><p>在删除跳表中高度最高的节点后，可能导致某些高层级变为空的节点后，需要适当降低跳表的最高层级。</p><blockquote><p>删除节点 16 后，最高层就变空了，我们需要将当前跳表高度降低一层以去除空层</p></blockquote><p><img src=/img/DataStructure/skiplist/delete.png alt></p><p><img src=/img/DataStructure/skiplist/delete-code.png alt></p><h2 id=implementation>Implementation
+<a class=anchor href=#implementation>#</a></h2><p>我们首先定义存储 <code>k</code> 和 <code>v</code> 的类 <code>Node</code>，<code>forwards</code> 表示指向的节点</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Node</span><span style=color:#f92672>&lt;</span>K <span style=color:#66d9ef>extends</span> Comparable<span style=color:#f92672>&lt;</span>K<span style=color:#f92672>&gt;</span>, V<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    K key;
+</span></span><span style=display:flex><span>    V value;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;[]</span> forwards;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Node</span>(K key, V value, <span style=color:#66d9ef>int</span> level) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>key</span> <span style=color:#f92672>=</span> key;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span> <span style=color:#f92672>=</span> value;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>forwards</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Node<span style=color:#f92672>[</span>level<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><hr><p><code>randomLevel()</code> 用于生成节点的高度，每一层有 <code>probability</code> 的概率（通常为 0.5）继续向上（即高度增加一层）。跳表高度不可能无止境的高，因此引入 <code>maxLevel</code> 限制高度（通常为 32）。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>randomLevel</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> level <span style=color:#f92672>=</span> 1;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> (ThreadLocalRandom.<span style=color:#a6e22e>current</span>().<span style=color:#a6e22e>nextDouble</span>() <span style=color:#f92672>&lt;</span> probability <span style=color:#f92672>&amp;&amp;</span> level <span style=color:#f92672>&lt;</span> maxLevel) {
+</span></span><span style=display:flex><span>        level<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> level;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#f92672>import</span> java.util.concurrent.ThreadLocalRandom;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SkipList</span><span style=color:#f92672>&lt;</span>K <span style=color:#66d9ef>extends</span> Comparable<span style=color:#f92672>&lt;</span>K<span style=color:#f92672>&gt;</span>, V<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>double</span> DEFAULT_PROBABILITY <span style=color:#f92672>=</span> 0.<span style=color:#a6e22e>5</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> DEFAULT_MAX_LEVEL <span style=color:#f92672>=</span> 32;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>double</span> probability;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> maxLevel;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;</span> head;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> level;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> size;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SkipList</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>(DEFAULT_PROBABILITY, DEFAULT_MAX_LEVEL);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SkipList</span>(<span style=color:#66d9ef>int</span> maxLevel) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>(DEFAULT_PROBABILITY, maxLevel);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SkipList</span>(<span style=color:#66d9ef>double</span> probability, <span style=color:#66d9ef>int</span> maxLevel) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (probability <span style=color:#f92672>&lt;=</span> 0 <span style=color:#f92672>||</span> probability <span style=color:#f92672>&gt;=</span> 1) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalArgumentException(<span style=color:#e6db74>&#34;Probability must be between 0 and 1&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (maxLevel <span style=color:#f92672>&lt;=</span> 0) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalArgumentException(<span style=color:#e6db74>&#34;Max level must be positive&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>probability</span> <span style=color:#f92672>=</span> probability;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>maxLevel</span> <span style=color:#f92672>=</span> maxLevel;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>head</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Node<span style=color:#f92672>&lt;&gt;</span>(<span style=color:#66d9ef>null</span>, <span style=color:#66d9ef>null</span>, maxLevel);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>level</span> <span style=color:#f92672>=</span> 1;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>size</span> <span style=color:#f92672>=</span> 0;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>randomLevel</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> level <span style=color:#f92672>=</span> 1;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (ThreadLocalRandom.<span style=color:#a6e22e>current</span>().<span style=color:#a6e22e>nextDouble</span>() <span style=color:#f92672>&lt;</span> probability <span style=color:#f92672>&amp;&amp;</span> level <span style=color:#f92672>&lt;</span> maxLevel) {
+</span></span><span style=display:flex><span>            level<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> level;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> V <span style=color:#a6e22e>search</span>(K key) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (key <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NullPointerException(<span style=color:#e6db74>&#34;Key cannot be null&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;</span> current <span style=color:#f92672>=</span> head;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> level <span style=color:#f92672>-</span> 1; i <span style=color:#f92672>&gt;=</span> 0; i<span style=color:#f92672>--</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>compareTo</span>(key) <span style=color:#f92672>&lt;</span> 0) {
+</span></span><span style=display:flex><span>                current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>0<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (current <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>equals</span>(key)) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> current.<span style=color:#a6e22e>value</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> V <span style=color:#a6e22e>insert</span>(K key, V value) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (key <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NullPointerException(<span style=color:#e6db74>&#34;Key cannot be null&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;[]</span> update <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Node<span style=color:#f92672>[</span>maxLevel<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;</span> current <span style=color:#f92672>=</span> head;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> level <span style=color:#f92672>-</span> 1; i <span style=color:#f92672>&gt;=</span> 0; i<span style=color:#f92672>--</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>compareTo</span>(key) <span style=color:#f92672>&lt;</span> 0) {
+</span></span><span style=display:flex><span>                current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> current;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>0<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (current <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>equals</span>(key)) {
+</span></span><span style=display:flex><span>            V oldValue <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>value</span>;
+</span></span><span style=display:flex><span>            current.<span style=color:#a6e22e>value</span> <span style=color:#f92672>=</span> value;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> oldValue;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> newLevel <span style=color:#f92672>=</span> randomLevel();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (newLevel <span style=color:#f92672>&gt;</span> level) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> level; i <span style=color:#f92672>&lt;</span> newLevel; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>                update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> head;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            level <span style=color:#f92672>=</span> newLevel;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;</span> newNode <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Node<span style=color:#f92672>&lt;&gt;</span>(key, value, newLevel);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0; i <span style=color:#f92672>&lt;</span> newLevel; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>            newNode.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>            update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> newNode;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        size<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> V <span style=color:#a6e22e>delete</span>(K key) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (key <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> NullPointerException(<span style=color:#e6db74>&#34;Key cannot be null&#34;</span>);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;[]</span> update <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Node<span style=color:#f92672>[</span>maxLevel<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>        Node<span style=color:#f92672>&lt;</span>K, V<span style=color:#f92672>&gt;</span> current <span style=color:#f92672>=</span> head;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> level <span style=color:#f92672>-</span> 1; i <span style=color:#f92672>&gt;=</span> 0; i<span style=color:#f92672>--</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>compareTo</span>(key) <span style=color:#f92672>&lt;</span> 0) {
+</span></span><span style=display:flex><span>                current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> current;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        current <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>0<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (current <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> current.<span style=color:#a6e22e>key</span>.<span style=color:#a6e22e>equals</span>(key)) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0; i <span style=color:#f92672>&lt;</span> level; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>if</span> (update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>!=</span> current) {
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                update<span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> current.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>i<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (level <span style=color:#f92672>&gt;</span> 1 <span style=color:#f92672>&amp;&amp;</span> head.<span style=color:#a6e22e>forwards</span><span style=color:#f92672>[</span>level <span style=color:#f92672>-</span> 1<span style=color:#f92672>]</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>                level<span style=color:#f92672>--</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            size<span style=color:#f92672>--</span>;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> current.<span style=color:#a6e22e>value</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>size</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> size;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>isEmpty</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> size <span style=color:#f92672>==</span> 0;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=reference>Reference
+<a class=anchor href=#reference>#</a></h2><ol><li><a href=https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/skiplists.pdf>https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/skiplists.pdf</a></li><li><a href=https://api.drum.lib.umd.edu/server/api/core/bitstreams/17176ef8-8330-4a6c-8b75-4cd18c570bec/content>https://api.drum.lib.umd.edu/server/api/core/bitstreams/17176ef8-8330-4a6c-8b75-4cd18c570bec/content</a></li><li><a href=https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf>https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf</a></li></ol></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#skip-list>Skip List</a><ul><li><a href=#introduction>Introduction</a></li><li><a href=#search>Search</a></li><li><a href=#insert>Insert</a></li><li><a href=#delete>Delete</a></li><li><a href=#implementation>Implementation</a></li><li><a href=#reference>Reference</a></li></ul></li></ul></nav></div></aside></main></body></html>

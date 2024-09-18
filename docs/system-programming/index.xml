@@ -15,7 +15,52 @@
 &lt;p>对于一个 4 字节整数 &lt;code>0x01020304&lt;/code>，大小端序存储方式分别如下：&lt;/p>
 &lt;pre tabindex="0">&lt;code>地址: 0 1 2 3 （大端序保存）
  01 02 03 04
-&lt;/code>&lt;/pr</description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>&lt;h1 id="网络地址族">
+&lt;/code>&lt;/pre>&lt;pre tabindex="0">&lt;code>地址: 0 1 2 3 （小端序保存）
+ 04 03 02 01
+&lt;/code>&lt;/pre>&lt;hr>
+&lt;p>可以使用下边的方法判断机器的字节序：&lt;/p>
+&lt;ol>
+&lt;li>通过 &lt;code>endian.h&lt;/code> 提供的 &lt;code>BYTE_ORDER&lt;/code> 宏。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;endian.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> BYTE_ORDER &lt;span style="color:#f92672">==&lt;/span> BIG_ENDIAN;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> BYTE_ORDER &lt;span style="color:#f92672">==&lt;/span> LITTLE_ENDIAN;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="2">
+&lt;li>将 &lt;code>uint16_t&lt;/code> 类型的数字转为 &lt;code>char *&lt;/code>，通过高字节和低字节进行判断。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> ((&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) (&lt;span style="color:#f92672">&amp;amp;&lt;/span>val))[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> ((&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) (&lt;span style="color:#f92672">&amp;amp;&lt;/span>val))[&lt;span style="color:#ae81ff">1&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="3">
+&lt;li>和方法 2 类似，利用的是 &lt;code>union&lt;/code> 相同的内存位置存储不同的数据类型。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">union&lt;/span> endian {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">char&lt;/span> bytes[&lt;span style="color:#ae81ff">2&lt;/span>];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">union&lt;/span> endian en{};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> en.val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> en.bytes[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">union&lt;/span> endian en{};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> en.val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> en.bytes[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x02&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>为什么有两种不同的字节序？&lt;/p></description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>&lt;h1 id="网络地址族">
  网络地址族
  &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%9c%b0%e5%9d%80%e6%97%8f">#&lt;/a>
 &lt;/h1>
@@ -41,7 +86,15 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> in_addr {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint32_t&lt;/span> s_addr; &lt;span style="color:#75715e">/* address in network byte order */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>（非）阻塞 I/O</title><link>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="非阻塞-io-和-epoll翻译">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>sin_family&lt;/code>：在 IPv4 中设为 &lt;code>AF_INET&lt;/code>。&lt;/li>
+&lt;li>&lt;code>sin_port&lt;/code>：&lt;strong>网络字节序&lt;/strong>保存的端口（0～65535）。&lt;/li>
+&lt;li>&lt;code>sin_addr&lt;/code>：&lt;strong>网络字节序&lt;/strong>保存的 32 位 IP 地址信息。&lt;/li>
+&lt;li>&lt;code>sin_zero&lt;/code>：使 &lt;code>sockaddr_in&lt;/code> 和 &lt;code>sockaddr&lt;/code> 结构体大小保持一致而插入的填充位，需手动设为 0。&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://man7.org/linux/man-pages/man7/ip.7.html">https://man7.org/linux/man-pages/man7/ip.7.html&lt;/a>&lt;/p></description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>（非）阻塞 I/O</title><link>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="非阻塞-io-和-epoll翻译">
  （非）阻塞 I/O 和 epoll（翻译）
  &lt;a class="anchor" href="#%e9%9d%9e%e9%98%bb%e5%a1%9e-io-%e5%92%8c-epoll%e7%bf%bb%e8%af%91">#&lt;/a>
 &lt;/h1>
@@ -59,7 +112,18 @@
  阻塞模式
  &lt;a class="anchor" href="#%e9%98%bb%e5%a1%9e%e6%a8%a1%e5%bc%8f">#&lt;/a>
 &lt;/h2>
-&lt;p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 &lt;code>read&lt;/code>、&lt;code>write&lt;/code> 或 &lt;code>connect&lt;/code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 &lt;code>stdin&lt;/code> 读取数据时会发生什么。如果你在 &lt;code>stdin&lt;/code>上调用 &lt;code>read&lt;/code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 &lt;code>stdin&lt;/code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 &lt;code>read&lt;/code> 调用将会阻塞，直到连接的另一端实际上发送数据。&lt;/p></description></item><item><title>I/O 多路复用</title><link>https://ileonli.github.io/docs/system-programming/multiplexing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/multiplexing/</guid><description>&lt;h1 id="io-多路复用">
+&lt;p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 &lt;code>read&lt;/code>、&lt;code>write&lt;/code> 或 &lt;code>connect&lt;/code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 &lt;code>stdin&lt;/code> 读取数据时会发生什么。如果你在 &lt;code>stdin&lt;/code>上调用 &lt;code>read&lt;/code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 &lt;code>stdin&lt;/code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 &lt;code>read&lt;/code> 调用将会阻塞，直到连接的另一端实际上发送数据。&lt;/p>
+&lt;p>阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：&lt;/p>
+&lt;ol>
+&lt;li>非阻塞模式。&lt;/li>
+&lt;li>I/O 多路复用系统调用，例如 &lt;code>select&lt;/code> 和 &lt;code>epoll&lt;/code>。&lt;/li>
+&lt;/ol>
+&lt;p>这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。&lt;/p>
+&lt;h2 id="非阻塞模式">
+ 非阻塞模式
+ &lt;a class="anchor" href="#%e9%9d%9e%e9%98%bb%e5%a1%9e%e6%a8%a1%e5%bc%8f">#&lt;/a>
+&lt;/h2>
+&lt;p>通过 &lt;code>fcntl&lt;/code> 函数在文件描述符的标志集中添加 &lt;code>O_NONBLOCK&lt;/code>，可以将文件描述符设置为“非阻塞模式”：&lt;/p></description></item><item><title>I/O 多路复用</title><link>https://ileonli.github.io/docs/system-programming/multiplexing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/multiplexing/</guid><description>&lt;h1 id="io-多路复用">
  I/O 多路复用
  &lt;a class="anchor" href="#io-%e5%a4%9a%e8%b7%af%e5%a4%8d%e7%94%a8">#&lt;/a>
 &lt;/h1>
@@ -76,7 +140,28 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> writefds,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> exceptfds,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> timeval &lt;span style="color:#f92672">*&lt;/span> timeout);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description>&lt;h1 id="reactor-模型">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="函数参数">
+ 函数参数
+ &lt;a class="anchor" href="#%e5%87%bd%e6%95%b0%e5%8f%82%e6%95%b0">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>nfds&lt;/code>：指定被监听的文件描述符的总数。这个参数应该被设置为三个集合中编号最高的文件描述符，再加 1，因为文件描述符是从 0 开始的。&lt;/p>
+&lt;hr>
+&lt;p>&lt;code>readfds&lt;/code>、&lt;code>writefds&lt;/code> 和 &lt;code>exceptfds&lt;/code>：分别指向可读、可写和异常事件对应的文件描述符集合。如果没有文件描述符要监听，则可以将对应的 &lt;code>fd_set&lt;/code> 参数设为 &lt;code>NULL&lt;/code>。&lt;/p>
+&lt;p>&lt;code>fd_set&lt;/code> 结构体仅包含一个数组，数组每一位标记一个文件描述符，最大容纳长度由 &lt;code>FD_SETSIZE&lt;/code> 指定。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* fd_set for select and pselect. */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">typedef&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">/* XPG4.2 requires this member name. Otherwise avoid the name
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> from the global namespace. */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#ifdef __USE_XOPEN
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> __fd_mask fds_bits[__FD_SETSIZE &lt;span style="color:#f92672">/&lt;/span> __NFDBITS];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># define __FDS_BITS(set) ((set)-&amp;gt;fds_bits)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#else
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> __fd_mask __fds_bits[__FD_SETSIZE &lt;span style="color:#f92672">/&lt;/span> __NFDBITS];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#endif
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } fd_set;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>为方便对此结构体进行操作，提供了以下几个宏函数对其进行操作，宏函数如下：&lt;/p></description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description>&lt;h1 id="reactor-模型">
  Reactor 模型
  &lt;a class="anchor" href="#reactor-%e6%a8%a1%e5%9e%8b">#&lt;/a>
 &lt;/h1>
@@ -119,7 +204,32 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>会返回文件描述符，&lt;strong>失败时&lt;/strong>会返回 -1。&lt;/p>
 &lt;blockquote>
 &lt;p>
- &lt;a href="https://man7.org/linux/man-pages/man2/socket.2.html">https://man7.org/linux/man-pages/man2/socket.2.html&lt;/a>&lt;/p></description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>&lt;h1 id="echo-服务器">
+ &lt;a href="https://man7.org/linux/man-pages/man2/socket.2.html">https://man7.org/linux/man-pages/man2/socket.2.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="bind">
+ bind
+ &lt;a class="anchor" href="#bind">#&lt;/a>
+&lt;/h3>
+&lt;p>当使用 &lt;code>socket&lt;/code> 函数创建套接字后，会存在于名称空间（地址族）中，但没有为其分配地址。&lt;code>bind&lt;/code> 函数将 &lt;code>addr&lt;/code> 指定的地址分配给文件描述符 &lt;code>sockfd&lt;/code> 引用的套接字。&lt;/p>
+&lt;p>服务器可以不先调用 &lt;code>bind()&lt;/code> 而直接调用 &lt;code>listen()&lt;/code>，此时会为该 &lt;code>socket&lt;/code> 分配一个 &lt;strong>&lt;code>INADDR_ANY&lt;/code> IP 地址&lt;/strong>（0.0.0.0）和&lt;strong>临时端口&lt;/strong>（可通过 &lt;code>getsockname()&lt;/code> 获取 &lt;code>socket&lt;/code> 的地址）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/socket.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">bind&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> sockfd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> sockaddr &lt;span style="color:#f92672">*&lt;/span>addr,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">socklen_t&lt;/span> addrlen);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>返回 0，&lt;strong>失败时&lt;/strong>返回 -1。&lt;/p>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://man7.org/linux/man-pages/man2/bind.2.html">https://man7.org/linux/man-pages/man2/bind.2.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="listen">
+ listen
+ &lt;a class="anchor" href="#listen">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>listen&lt;/code> 函数将文件描述符引用的 &lt;code>socket&lt;/code> 标记为被动，该 &lt;code>socket&lt;/code> 会被用来接受来自其它主动 &lt;code>socket&lt;/code> 的连接。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/socket.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">listen&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> sockfd, &lt;span style="color:#66d9ef">int&lt;/span> backlog);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>返回 0，&lt;strong>失败时&lt;/strong>返回 -1。&lt;/p></description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>&lt;h1 id="echo-服务器">
  echo 服务器
  &lt;a class="anchor" href="#echo-%e6%9c%8d%e5%8a%a1%e5%99%a8">#&lt;/a>
 &lt;/h1>
@@ -137,4 +247,46 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">exit&lt;/span>(EXIT_FAILURE);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>readn&lt;/code> 和 &lt;code>writen&lt;/code> 函数分别用于从 &lt;code>fd&lt;/code> 处读和写 &lt;code>n&lt;/code> 个字节。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">ssize_t&lt;/span> &lt;span style="color:#a6e22e">readn&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> fd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>buf, &lt;span style="color:#66d9ef">size_t&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">ssize_t&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nread &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">read&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#75715e">// error, return -1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>; &lt;span style="color:#75715e">// error, return amount read so far
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nread &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">read&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#75715e">// error, return -1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nleft &lt;span style="color:#f92672">-=&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> buf &lt;span style="color:#f92672">+=&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> n &lt;span style="color:#f92672">-&lt;/span> nleft;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">ssize_t&lt;/span> &lt;span style="color:#a6e22e">writen&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> fd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>buf, &lt;span style="color:#66d9ef">size_t&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">size_t&lt;/span> nleft &lt;span style="color:#f92672">=&lt;/span> n;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">ssize_t&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nwritten &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">write&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (nwritten &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nleft &lt;span style="color:#f92672">-=&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> buf &lt;span style="color:#f92672">+=&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> n &lt;span style="color:#f92672">-&lt;/span> nleft;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>read_line&lt;/code> 函数用于从用户处读取一行输入。&lt;/p></description></item></channel></rss>

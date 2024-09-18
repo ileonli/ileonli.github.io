@@ -1,4 +1,4 @@
-<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content='
   常量池
   #
 
@@ -18,15 +18,93 @@ cp_info {
 
 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。
 
-下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="常量池"><meta property="og:description" content=" 常量池 # 常量池是一个表，所有的表项都有以下的格式。tag 表示表项的类型，info 用于表示 tag 类型所需要存储的信息。
+下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
+public class Main {
+    public static void main(String[] args) {
+        String str = "Hello World!";
+        System.out.println(str);
+        System.out.println("Hello World!");
+    }
+}
+public class io.github.ileonli.Main
+  minor version: 0
+  major version: 65
+  flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+  this_class: #21                         // io/github/ileonli/Main
+  super_class: #2                         // java/lang/Object
+  interfaces: 0, fields: 0, methods: 2, attributes: 1
+Constant pool:
+   #1 = Methodref          #2.#3          // java/lang/Object."<init>":()V
+   #2 = Class              #4             // java/lang/Object
+   #3 = NameAndType        #5:#6          // "<init>":()V
+   #4 = Utf8               java/lang/Object
+   #5 = Utf8               <init>
+   #6 = Utf8               ()V
+   #7 = String             #8             // Hello World!
+   #8 = Utf8               Hello World!
+   #9 = Fieldref           #10.#11        // java/lang/System.out:Ljava/io/PrintStream;
+  #10 = Class              #12            // java/lang/System
+  #11 = NameAndType        #13:#14        // out:Ljava/io/PrintStream;
+  #12 = Utf8               java/lang/System
+  #13 = Utf8               out
+  #14 = Utf8               Ljava/io/PrintStream;
+  #15 = Methodref          #16.#17        // java/io/PrintStream.println:(Ljava/lang/String;)V
+  #16 = Class              #18            // java/io/PrintStream
+  #17 = NameAndType        #19:#20        // println:(Ljava/lang/String;)V
+  #18 = Utf8               java/io/PrintStream
+  #19 = Utf8               println
+  #20 = Utf8               (Ljava/lang/String;)V
+  #21 = Class              #22            // io/github/ileonli/Main
+  #22 = Utf8               io/github/ileonli/Main
+  #23 = Utf8               Code
+  #24 = Utf8               LineNumberTable
+  #25 = Utf8               main
+  #26 = Utf8               ([Ljava/lang/String;)V
+  #27 = Utf8               SourceFile
+  #28 = Utf8               Main.java
+{
+  public io.github.ileonli.Main();
+    descriptor: ()V
+    flags: (0x0001) ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 3: 0
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: ldc           #7                  // String Hello World!
+         2: astore_1
+         3: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         6: aload_1
+         7: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        10: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        13: ldc           #7                  // String Hello World!
+        15: invokevirtual #15                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        18: return
+      LineNumberTable:
+        line 5: 0
+        line 6: 3
+        line 7: 10
+        line 8: 18
+}
+从 class 文件的反编译结果可以看出 main 方法中有大量的复用：'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/"><meta property="og:site_name" content="Leon' Blog"><meta property="og:title" content="常量池"><meta property="og:description" content=' 常量池 # 常量池是一个表，所有的表项都有以下的格式。tag 表示表项的类型，info 用于表示 tag 类型所需要存储的信息。
 cp_info { u1 tag; u1 info[]; } 常量池索引是从 1 开始的，不是直接从 0 开始。如果需要表达“不引用任何一个常量池项目”的含义，可以把索引值设置为 0 来表示。
 为什么设计常量池？ # 复用 # 常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。
-下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-08-06T21:41:58+08:00"><title>常量池 | Leon' Blog</title>
-<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.643b6a7026e150b598c03377835c22e9d8c047f9919b38c88d70eaab1e5f7aa7.js integrity="sha256-ZDtqcCbhULWYwDN3g1wi6djAR/mRmzjIjXDqqx5feqc=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+下边的代码，通过 $javac Main.java 编译后，使用 $javap -v Main.class 进行反编译。
+public class Main { public static void main(String[] args) { String str = "Hello World!"; System.out.println(str); System.out.println("Hello World!"); } } public class io.github.ileonli.Main minor version: 0 major version: 65 flags: (0x0021) ACC_PUBLIC, ACC_SUPER this_class: #21 // io/github/ileonli/Main super_class: #2 // java/lang/Object interfaces: 0, fields: 0, methods: 2, attributes: 1 Constant pool: #1 = Methodref #2.#3 // java/lang/Object."<init>":()V #2 = Class #4 // java/lang/Object #3 = NameAndType #5:#6 // "<init>":()V #4 = Utf8 java/lang/Object #5 = Utf8 <init> #6 = Utf8 ()V #7 = String #8 // Hello World! #8 = Utf8 Hello World! #9 = Fieldref #10.#11 // java/lang/System.out:Ljava/io/PrintStream; #10 = Class #12 // java/lang/System #11 = NameAndType #13:#14 // out:Ljava/io/PrintStream; #12 = Utf8 java/lang/System #13 = Utf8 out #14 = Utf8 Ljava/io/PrintStream; #15 = Methodref #16.#17 // java/io/PrintStream.println:(Ljava/lang/String;)V #16 = Class #18 // java/io/PrintStream #17 = NameAndType #19:#20 // println:(Ljava/lang/String;)V #18 = Utf8 java/io/PrintStream #19 = Utf8 println #20 = Utf8 (Ljava/lang/String;)V #21 = Class #22 // io/github/ileonli/Main #22 = Utf8 io/github/ileonli/Main #23 = Utf8 Code #24 = Utf8 LineNumberTable #25 = Utf8 main #26 = Utf8 ([Ljava/lang/String;)V #27 = Utf8 SourceFile #28 = Utf8 Main.java { public io.github.ileonli.Main(); descriptor: ()V flags: (0x0001) ACC_PUBLIC Code: stack=1, locals=1, args_size=1 0: aload_0 1: invokespecial #1 // Method java/lang/Object."<init>":()V 4: return LineNumberTable: line 3: 0 public static void main(java.lang.String[]); descriptor: ([Ljava/lang/String;)V flags: (0x0009) ACC_PUBLIC, ACC_STATIC Code: stack=2, locals=2, args_size=1 0: ldc #7 // String Hello World! 2: astore_1 3: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream; 6: aload_1 7: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V 10: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream; 13: ldc #7 // String Hello World! 15: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V 18: return LineNumberTable: line 5: 0 line 6: 3 line 7: 10 line 8: 18 } 从 class 文件的反编译结果可以看出 main 方法中有大量的复用：'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2024-08-06T21:41:58+08:00"><title>常量池 | Leon' Blog</title>
+<link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png><link rel=stylesheet href=/book.min.c4648f90e7f239143d6b1f74326dc2ce1794185b23b8cbbf3f813cfdf5d576ca.css integrity="sha256-xGSPkOfyORQ9ax90Mm3CzheUGFsjuMu/P4E8/fXVdso=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script><script defer src=/en.search.min.0cb83f41dff236af4990cd82c7758a72fd6ff0c9ef6390c4a5626f97158e477d.js integrity="sha256-DLg/Qd/yNq9JkM2Cx3WKcv1v8MnvY5DEpWJvlxWOR30=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EL04QEY330"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EL04QEY330")}</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>Leon' Blog</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><input type=checkbox id=section-dfc62bc51fd10e15afc9a11c29a21438 class=toggle>
 <label for=section-dfc62bc51fd10e15afc9a11c29a21438 class="flex justify-between"><a role=button>Java</a></label><ul><li><a href=/docs/Java/Agent/>Agent</a></li><li><a href=/docs/Java/Cleaner/>Cleaner 类</a></li><li><a href=/docs/Java/JDBC/>JDBC</a></li><li><a href=/docs/Java/MethodHandles/>MethodHandles</a></li><li><a href=/docs/Java/DynamicProxy/>动态代理</a></li></ul></li><li><input type=checkbox id=section-068f5864eab5429f74d44490ac7dda4f class=toggle>
 <label for=section-068f5864eab5429f74d44490ac7dda4f class="flex justify-between"><a role=button>boltdb</a></label><ul><li><a href=/docs/boltdb/introduction/>boltdb 介绍</a></li><li><a href=/docs/boltdb/node/>boltdb node</a></li><li><a href=/docs/boltdb/transaction/>boltdb 事务</a></li><li><a href=/docs/boltdb/bucket/>boltdb 介绍</a></li><li><a href=/docs/boltdb/storage/>boltdb 存储</a></li><li><a href=/docs/boltdb/page/>boltdb 页结构</a></li></ul></li><li><input type=checkbox id=section-6a1b1f139889384d884552bee56583cd class=toggle>
-<label for=section-6a1b1f139889384d884552bee56583cd class="flex justify-between"><a role=button>15-445</a></label><ul><li><a href=/docs/15-445/storage/>Database Storage</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle checked>
+<label for=section-6a1b1f139889384d884552bee56583cd class="flex justify-between"><a role=button>15-445</a></label><ul><li><a href=/docs/15-445/storage/>Database Storage</a></li></ul></li><li><input type=checkbox id=section-3dfb06d56069fc22bb179a4001826101 class=toggle>
+<label for=section-3dfb06d56069fc22bb179a4001826101 class="flex justify-between"><a role=button>Data Structure</a></label><ul><li><a href=/docs/DataStructure/skiplist/>Skip List</a></li></ul></li><li><input type=checkbox id=section-dd174040a908659982d53d695ff59f6c class=toggle checked>
 <label for=section-dd174040a908659982d53d695ff59f6c class="flex justify-between"><a role=button>JVM</a></label><ul><li><a href=/docs/JVM/AsmTools/>AsmTools</a></li><li><a href=/docs/JVM/loading-linking-initializing/>JVM 加载-链接-初始化</a></li><li><input type=checkbox id=section-8116e10cba9ea1a7d22332ccf696967c class=toggle checked>
 <label for=section-8116e10cba9ea1a7d22332ccf696967c class="flex justify-between"><a role=button>字节码</a></label><ul><li><a href=/docs/JVM/ByteCode/ClassFile/>Class 文件结构</a></li><li><a href=/docs/JVM/ByteCode/constant_pool/ class=active>常量池</a></li></ul></li></ul></li><li><input type=checkbox id=section-322adad93406759f98a33491e2ecc8af class=toggle>
 <label for=section-322adad93406759f98a33491e2ecc8af class="flex justify-between"><a role=button>Linux 网络编程</a></label><ul><li><a href=/docs/system-programming/network-byte-order/>网络字节序</a></li><li><a href=/docs/system-programming/address-families/>网络地址族</a></li><li><a href=/docs/system-programming/block-and-nonblock-io/>（非）阻塞 I/O</a></li><li><a href=/docs/system-programming/multiplexing/>I/O 多路复用</a></li><li><a href=/docs/system-programming/reactor-pattern/>Reactor 模型</a></li><li><a href=/docs/system-programming/sockets/>套接字（socket）</a></li><li><a href=/docs/system-programming/echo-server/>echo 服务器</a></li></ul></li><li><input type=checkbox id=section-bcab9cce661800a90eaf0ba45525a392 class=toggle>

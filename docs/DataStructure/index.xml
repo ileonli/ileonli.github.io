@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Data Structure on Leon' Blog</title><link>https://ileonli.github.io/docs/DataStructure/</link><description>Recent content in Data Structure on Leon' Blog</description><generator>Hugo</generator><language>en</language><atom:link href="https://ileonli.github.io/docs/DataStructure/index.xml" rel="self" type="application/rss+xml"/><item><title>Skip List</title><link>https://ileonli.github.io/docs/DataStructure/skiplist/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/DataStructure/skiplist/</guid><description>&lt;h1 id="skip-list">
+ Skip List
+ &lt;a class="anchor" href="#skip-list">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="introduction">
+ Introduction
+ &lt;a class="anchor" href="#introduction">#&lt;/a>
+&lt;/h2>
+&lt;p>在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：&lt;/p>
+&lt;ul>
+&lt;li>链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。&lt;/li>
+&lt;li>对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。&lt;/li>
+&lt;/ul>
+&lt;p>为了加快链表查找过程，设计了跳表，跳表可以看作&lt;strong>可二分查找的链表&lt;/strong>。&lt;/p>
+&lt;hr>
+&lt;p>跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>概率算法（Probabilistic Algorithm）&lt;/strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。&lt;/p>
+&lt;/blockquote>
+&lt;p>每个元素在跳表中由一个节点表示（如下图所示），节点是以 &lt;code>key&lt;/code> 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。&lt;/p>
+&lt;p>当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/1.png" alt="" />&lt;/p>
+&lt;p>对于上图中的链表，我们可以发现下边的规律：&lt;/p>
+&lt;ul>
+&lt;li>第 0 层：这是完整的链表，包含所有按顺序排列的元素。&lt;/li>
+&lt;li>第 1 层：这一层包含第 0 层中大约一半的元素。通过从第 0 层中随机选择大约一半的节点，并将它们链接到第 1 层。&lt;/li>
+&lt;li>第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。&lt;/li>
+&lt;li>第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。&lt;/li>
+&lt;/ul>
+&lt;h2 id="search">
+ Search
+ &lt;a class="anchor" href="#search">#&lt;/a>
+&lt;/h2>
+&lt;blockquote>
+&lt;p>在跳表上插入的元素需要使用比较算法比较 &lt;code>key&lt;/code> 的大小。为了处理尾部节点，设定 &lt;code>null&lt;/code> 比任何 &lt;code>key&lt;/code> 都大&lt;/p>
+&lt;/blockquote>
+&lt;p>在跳表上进行&lt;strong>查找操作&lt;/strong>时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/search.jpg" alt="" />&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/search-code.png" alt="" />&lt;/p>
+&lt;h2 id="insert">
+ Insert
+ &lt;a class="anchor" href="#insert">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;strong>插入操作&lt;/strong>需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 &lt;code>update&lt;/code> 数组记录存储了每一层中小于待插入键的最后一个节点。&lt;/p></description></item></channel></rss>

@@ -36,7 +36,13 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">...&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>BTree</title><link>https://ileonli.github.io/docs/MapDB/BTree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MapDB/BTree/</guid><description>&lt;h1 id="btree">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>请注意，boltdb 会对数据文件加锁，因此多个进程不能同时打开同一个数据库。尝试打开一个已经被打开的 boltdb 数据库将导致程序挂起，直到其他进程关闭该数据库。为了防止无限期等待，可以为 &lt;code>Open()&lt;/code> 函数传递一个超时选项：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bolt&lt;/span>.&lt;span style="color:#a6e22e">Open&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;my.db&amp;#34;&lt;/span>, &lt;span style="color:#ae81ff">0600&lt;/span>, &lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">bolt&lt;/span>.&lt;span style="color:#a6e22e">Options&lt;/span>{&lt;span style="color:#a6e22e">Timeout&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">*&lt;/span> &lt;span style="color:#a6e22e">time&lt;/span>.&lt;span style="color:#a6e22e">Second&lt;/span>})
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="事务">
+ 事务
+ &lt;a class="anchor" href="#%e4%ba%8b%e5%8a%a1">#&lt;/a>
+&lt;/h2>
+&lt;p>boltdb 一次只允许一个读写事务（transaction），同时允许任意数量的只读事务。每个事务在开始时都有一个一致的数据视图，即该事务开始时的数据状态。&lt;/p></description></item><item><title>BTree</title><link>https://ileonli.github.io/docs/MapDB/BTree/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MapDB/BTree/</guid><description>&lt;h1 id="btree">
  BTree
  &lt;a class="anchor" href="#btree">#&lt;/a>
 &lt;/h1>
@@ -76,7 +82,30 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Database Storage</title><link>https://ileonli.github.io/docs/15-445/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/15-445/storage/</guid><description>&lt;h1 id="database-storage">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当执行 &lt;code>$javac Main.java&lt;/code> 命令后，会生成 &lt;strong>Main.class&lt;/strong> 和 &lt;strong>Main$InnerClass.class&lt;/strong> 两个 &lt;code>class&lt;/code> 文件。&lt;/p>
+&lt;hr>
+&lt;p>&lt;code>class&lt;/code> 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。&lt;/p>
+&lt;p>使用 &lt;code>u1&lt;/code>、&lt;code>u2&lt;/code> 和 &lt;code>u4&lt;/code> 分别表示 &lt;strong>1 字节&lt;/strong>、&lt;strong>2 字节&lt;/strong>和 &lt;strong>4 字节&lt;/strong>。&lt;/p>
+&lt;h2 id="names">
+ Names
+ &lt;a class="anchor" href="#names">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="二进制类和接口名称">
+ 二进制类和接口名称
+ &lt;a class="anchor" href="#%e4%ba%8c%e8%bf%9b%e5%88%b6%e7%b1%bb%e5%92%8c%e6%8e%a5%e5%8f%a3%e5%90%8d%e7%a7%b0">#&lt;/a>
+&lt;/h3>
+&lt;p>在 Java 虚拟机中，类和接口的名称使用&lt;strong>二进制名称&lt;/strong>格式表示。此格式与源代码中的类名表示略有不同。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>类名和接口名&lt;/strong>：二进制名称使用斜杠（&lt;code>/&lt;/code>）而不是点（&lt;code>.&lt;/code>）来分隔包和类的名称。例如，&lt;code>java.lang.Object&lt;/code> 的二进制名称是 &lt;code>java/lang/Object&lt;/code>。&lt;/li>
+&lt;li>&lt;strong>内部类&lt;/strong>：对于内部类，二进制名称中使用美元符号（&lt;code>$&lt;/code>）来分隔外部类和内部类的名称。例如，&lt;code>OuterClass.InnerClass&lt;/code> 的二进制名称是 &lt;code>OuterClass$InnerClass&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;h3 id="二进制名称的使用场景">
+ 二进制名称的使用场景
+ &lt;a class="anchor" href="#%e4%ba%8c%e8%bf%9b%e5%88%b6%e5%90%8d%e7%a7%b0%e7%9a%84%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">#&lt;/a>
+&lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>字节码指令&lt;/strong>：&lt;/p></description></item><item><title>Database Storage</title><link>https://ileonli.github.io/docs/15-445/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/15-445/storage/</guid><description>&lt;h1 id="database-storage">
  Database Storage
  &lt;a class="anchor" href="#database-storage">#&lt;/a>
 &lt;/h1>
@@ -103,7 +132,118 @@
 &lt;p>
  &lt;img src="https://ileonli.github.io/img/15445/storage1/7.jpg" alt="" />&lt;/p>
 &lt;hr>
-&lt;p>Intel 开发了 Optane 非易失存储设备，可以提供类似内存的速度和易失性（volatile），但又具有非易失性的特性（non-volatile）。这意味着数据在断电时仍然保持不变，适合用于需要快速恢复状态的应用场景，如数据库和日志记录。&lt;/p></description></item><item><title>Git 基础</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</guid><description>&lt;h1 id="git-基础">
+&lt;p>Intel 开发了 Optane 非易失存储设备，可以提供类似内存的速度和易失性（volatile），但又具有非易失性的特性（non-volatile）。这意味着数据在断电时仍然保持不变，适合用于需要快速恢复状态的应用场景，如数据库和日志记录。&lt;/p>
+&lt;blockquote>
+&lt;p>由于此业务不赚钱，Intel 已经终止了此设备的研发&lt;/p>
+&lt;/blockquote>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/11.jpg" alt="" />&lt;/p>
+&lt;h3 id="访问时间">
+ 访问时间
+ &lt;a class="anchor" href="#%e8%ae%bf%e9%97%ae%e6%97%b6%e9%97%b4">#&lt;/a>
+&lt;/h3>
+&lt;p>不同存储设备的延迟对比如下：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/16.jpg" alt="" />&lt;/p>
+&lt;h3 id="随机和顺序读取">
+ 随机和顺序读取
+ &lt;a class="anchor" href="#%e9%9a%8f%e6%9c%ba%e5%92%8c%e9%a1%ba%e5%ba%8f%e8%af%bb%e5%8f%96">#&lt;/a>
+&lt;/h3>
+&lt;p>在&lt;strong>非易失存储设备&lt;/strong>上进行随机读取（random access）比顺序读取（sequential access）慢的多。&lt;/p>
+&lt;p>为了充分利用顺序读取速度较快的优势，DBMS 可以使用下边的优化方法：&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>减少写入随机页面的次数&lt;/strong>：尝试减少对随机存储页面（即内存或磁盘上的页面）的写操作次数。这样做的目的是让数据能够存储在连续的块中。连续的存储块更有利于提高数据的访问速度，因为读取连续的数据比读取散乱分布的数据效率更高。这种优化有助于提高存储系统的性能，特别是在磁盘 I/O 操作方面。&lt;/li>
+&lt;li>&lt;strong>扩展（Extent）&lt;/strong>：当一次性分配多个页面时，这种分配方式称为&lt;strong>扩展&lt;/strong>。换句话说，一个&lt;strong>扩展&lt;/strong>就是一组连续分配的页面块。通过这种方式，可以更高效地管理存储空间，并进一步确保数据以连续的方式存储，从而提高读写性能。&lt;/li>
+&lt;/ol>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/17.jpg" alt="" />&lt;/p>
+&lt;h3 id="设计原则">
+ 设计原则
+ &lt;a class="anchor" href="#%e8%ae%be%e8%ae%a1%e5%8e%9f%e5%88%99">#&lt;/a>
+&lt;/h3>
+&lt;p>一个良好的 DBMS 应该有以下设计原则：&lt;/p>
+&lt;ol>
+&lt;li>允许管理的数据库的数据大小超过内存（RAM）。&lt;/li>
+&lt;li>尽量减少磁盘读写的次数。&lt;/li>
+&lt;li>最大化使用顺序读取，减少随机读取的次数。&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+&lt;p>&lt;strong>large stalls&lt;/strong>：当磁盘读写操作没有得到有效管理时，尤其是在面对随机访问过多或磁盘 I/O 负载过重的情况下，系统可能会经历长时间的等待，导致处理速度明显变慢。&lt;/p>
+&lt;/blockquote>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/18.jpg" alt="" />&lt;/p>
+&lt;h3 id="面向磁盘的-dbms">
+ 面向磁盘的 DBMS
+ &lt;a class="anchor" href="#%e9%9d%a2%e5%90%91%e7%a3%81%e7%9b%98%e7%9a%84-dbms">#&lt;/a>
+&lt;/h3>
+&lt;p>当执行引擎（execution engine）需要获取页（page）时，会尝试从缓冲池（buffer pool）中获取。&lt;/p>
+&lt;p>&lt;strong>缓冲池&lt;/strong>作用为：将保存在磁盘中的页加载到内存中，由于内存通常远远小于磁盘大小，需要采用一些算法（如：LRU）来保证页的加载和换出。&lt;/p>
+&lt;p>加载到缓冲池中后，我们就可以直接使用此页了。当需要修改数据时，可以直接对内存中的页进行修改，修改后没写回到磁盘的页称为脏页（dirty page）。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/15445/storage1/19.jpg" alt="" />&lt;/p>
+&lt;!-- ### 为什么不使用 OS?
+
+DBMS 可以使用 `mmap` 技术，将文件的内容直接映射到程序的地址空间中。
+
+OS 负责管理文件页面的调度和内存交换，因此 DBMS 不需要直接处理这些细节。
+
+![](/img/15445/storage1/19.jpg)
+
+当访问 `page1` 时，会触发**缺页中断**，将磁盘数据加载到内存中。
+
+![](/img/15445/storage1/20.jpg)
+
+当访问 `page3` 时，会触发**缺页中断**，将磁盘数据加载到内存中。
+
+![](/img/15445/storage1/21.jpg)
+
+---
+
+当物理内存满了后，操作系统会采用**置换算法**将内存中的页换出到磁盘中。
+
+但操作系统不知道内存中的页正在进行的操作，如：正处于事务中的页在事务完成前不应该换出。
+
+![](/img/15445/storage1/22.jpg)
+
+---
+
+当多线程访问 `mmap` 文件时，就会发生一些问题。
+
+![](/img/15445/storage1/23.jpg)
+
+---
+
+使用 `mmap` 会有下边各种各样的问题：
+
+1. **事务安全（Transaction Safety）**：OS 可能在任意时间将脏页刷新磁盘中。
+2. **I/O 停顿（I/O Stalls）**：DBMS 不知道有哪些页在内存中，当发生缺页时，OS 会将线程停顿。
+3. **错误处理（Error Handling）**：DBMS 必须处理由于访问无效页产生的 `SIGBUS` 信号。
+4. **性能问题（Performance Issues）**：会发生 OS 数据结构冲突，TLB 清空。
+
+![](/img/15445/storage1/24.jpg)
+
+---
+
+可以使用 `madvise`、`mlock` 和 `msync` 来解决 `mmap` 带来的问题。
+
+![](/img/15445/storage1/25.jpg)
+
+---
+
+DBMS 会尽可能控制任何事情，可以比 OS 做的更好。
+
+![](/img/15445/storage1/27.jpg)
+
+---
+
+[Are You Sure You Want to Use MMAP in Your Database Management System?](https://db.cs.cmu.edu/papers/2022/cidr2022-p13-crotty.pdf) 介绍了为什么不推荐在 DBMS 中使用 `mmap` 的原因。
+
+![](/img/15445/storage1/28.jpg) -->
+&lt;h2 id="文件存储">
+ 文件存储
+ &lt;a class="anchor" href="#%e6%96%87%e4%bb%b6%e5%ad%98%e5%82%a8">#&lt;/a>
+&lt;/h2>
+&lt;p>DBMS 会将数据库在磁盘上以特有的格式保存为一个或多个文件。&lt;/p></description></item><item><title>Git 基础</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%9F%BA%E7%A1%80/</guid><description>&lt;h1 id="git-基础">
  Git 基础
  &lt;a class="anchor" href="#git-%e5%9f%ba%e7%a1%80">#&lt;/a>
 &lt;/h1>
@@ -129,7 +269,23 @@
 &lt;p>初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。&lt;/p>
 &lt;/blockquote>
 &lt;hr>
-&lt;p>编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为&lt;strong>已修改文件&lt;/strong>。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。&lt;/p></description></item><item><title>SqlSession</title><link>https://ileonli.github.io/docs/MyBatis/SqlSession/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/SqlSession/</guid><description>&lt;h1 id="sqlsession">
+&lt;p>编辑已跟踪的文件后（如：修改代码），Git 会将这些修改的文件标记为&lt;strong>已修改文件&lt;/strong>。随后我们会逐步将修改过的文件加入暂存区中，然后提交暂存区中的所有文件。&lt;/p>
+&lt;p>如此反复，使用 Git 的生命周期如下图所示：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/lifecycle.png" alt="" />&lt;/p>
+&lt;h3 id="检查当前文件状态">
+ 检查当前文件状态
+ &lt;a class="anchor" href="#%e6%a3%80%e6%9f%a5%e5%bd%93%e5%89%8d%e6%96%87%e4%bb%b6%e7%8a%b6%e6%80%81">#&lt;/a>
+&lt;/h3>
+&lt;p>如果需要查看文件处于的状态，可以使用 &lt;code>$ git status&lt;/code> 命令。&lt;/p>
+&lt;p>当我们对 &lt;code>$ git init&lt;/code> 后的仓库使用此命令，可以看到下边的输出：&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ git status
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use &amp;#34;git add&amp;#34; to track)
+&lt;/code>&lt;/pre>&lt;p>我们可以从上边输出中得到以下信息：&lt;/p></description></item><item><title>SqlSession</title><link>https://ileonli.github.io/docs/MyBatis/SqlSession/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/SqlSession/</guid><description>&lt;h1 id="sqlsession">
  SqlSession
  &lt;a class="anchor" href="#sqlsession">#&lt;/a>
 &lt;/h1>
@@ -148,7 +304,37 @@
 &lt;/h2>
 &lt;p>&lt;code>SqlSessionFactory&lt;/code> 一旦被创建就应该在应用的运行期间一直存在，没有任何理由丢弃它或重新创建另一个实例。使用 &lt;code>SqlSessionFactory&lt;/code> 的最佳实践是在应用运行期间只创建一次。&lt;/p>
 &lt;hr>
-&lt;p>&lt;code>SqlSessionFactory&lt;/code> 的作用是为了创建 &lt;code>SqlSession&lt;/code> 实例。&lt;code>SqlSession&lt;/code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。&lt;/p></description></item><item><title>网络字节序</title><link>https://ileonli.github.io/docs/system-programming/network-byte-order/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/network-byte-order/</guid><description>&lt;h1 id="网络字节序">
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 的作用是为了创建 &lt;code>SqlSession&lt;/code> 实例。&lt;code>SqlSession&lt;/code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.sql.Connection;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Creates an {@link SqlSession} out of a connection or a DataSource
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @author Clinton Begin
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">SqlSessionFactory&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> autoCommit);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(Connection connection);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(TransactionIsolationLevel level);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, &lt;span style="color:#66d9ef">boolean&lt;/span> autoCommit);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, TransactionIsolationLevel level);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SqlSession &lt;span style="color:#a6e22e">openSession&lt;/span>(ExecutorType execType, Connection connection);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration &lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>&lt;code>SqlSessionFactory&lt;/code> 主要有两个具体的实现：&lt;/p></description></item><item><title>网络字节序</title><link>https://ileonli.github.io/docs/system-programming/network-byte-order/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/network-byte-order/</guid><description>&lt;h1 id="网络字节序">
  网络字节序
  &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%ad%97%e8%8a%82%e5%ba%8f">#&lt;/a>
 &lt;/h1>
@@ -165,7 +351,52 @@
 &lt;p>对于一个 4 字节整数 &lt;code>0x01020304&lt;/code>，大小端序存储方式分别如下：&lt;/p>
 &lt;pre tabindex="0">&lt;code>地址: 0 1 2 3 （大端序保存）
  01 02 03 04
-&lt;/code>&lt;/pr</description></item><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>&lt;h1 id="bytebuf">
+&lt;/code>&lt;/pre>&lt;pre tabindex="0">&lt;code>地址: 0 1 2 3 （小端序保存）
+ 04 03 02 01
+&lt;/code>&lt;/pre>&lt;hr>
+&lt;p>可以使用下边的方法判断机器的字节序：&lt;/p>
+&lt;ol>
+&lt;li>通过 &lt;code>endian.h&lt;/code> 提供的 &lt;code>BYTE_ORDER&lt;/code> 宏。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;endian.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> BYTE_ORDER &lt;span style="color:#f92672">==&lt;/span> BIG_ENDIAN;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> BYTE_ORDER &lt;span style="color:#f92672">==&lt;/span> LITTLE_ENDIAN;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="2">
+&lt;li>将 &lt;code>uint16_t&lt;/code> 类型的数字转为 &lt;code>char *&lt;/code>，通过高字节和低字节进行判断。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> ((&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) (&lt;span style="color:#f92672">&amp;amp;&lt;/span>val))[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> ((&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>) (&lt;span style="color:#f92672">&amp;amp;&lt;/span>val))[&lt;span style="color:#ae81ff">1&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="3">
+&lt;li>和方法 2 类似，利用的是 &lt;code>union&lt;/code> 相同的内存位置存储不同的数据类型。&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">union&lt;/span> endian {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint16_t&lt;/span> val;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">char&lt;/span> bytes[&lt;span style="color:#ae81ff">2&lt;/span>];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">big_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">union&lt;/span> endian en{};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> en.val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> en.bytes[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x01&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">bool&lt;/span> &lt;span style="color:#a6e22e">little_endian&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">union&lt;/span> endian en{};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> en.val &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0x0102&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> en.bytes[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x02&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;p>为什么有两种不同的字节序？&lt;/p></description></item><item><title>ByteBuf</title><link>https://ileonli.github.io/docs/Netty/ByteBuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ByteBuf/</guid><description>&lt;h1 id="bytebuf">
  ByteBuf
  &lt;a class="anchor" href="#bytebuf">#&lt;/a>
 &lt;/h1>
@@ -179,7 +410,37 @@
 +-------------------+------------------+------------------+-------------+
 | | | | |
 0 &amp;lt;= readerIndex &amp;lt;= writerIndex &amp;lt;= capacity maxCapacity
-&lt;/code>&lt;/pr</description></item><item><title>Git 分支</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</guid><description>&lt;h1 id="git-分支">
+&lt;/code>&lt;/pre>&lt;h2 id="相关操作">
+ 相关操作
+ &lt;a class="anchor" href="#%e7%9b%b8%e5%85%b3%e6%93%8d%e4%bd%9c">#&lt;/a>
+&lt;/h2>
+&lt;p>有些方法会返回 &lt;code>this&lt;/code>，以支持链式调用。&lt;/p>
+&lt;h3 id="容量">
+ 容量
+ &lt;a class="anchor" href="#%e5%ae%b9%e9%87%8f">#&lt;/a>
+&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>ByteBuf buf &lt;span style="color:#f92672">=&lt;/span> ByteBufAllocator.&lt;span style="color:#a6e22e">DEFAULT&lt;/span>.&lt;span style="color:#a6e22e">buffer&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> capacity &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">capacity&lt;/span>();&lt;span style="color:#75715e">// 获取当前的容量&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> maxCapacity &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">maxCapacity&lt;/span>();&lt;span style="color:#75715e">// 支持的最大容量，通常为 Integer.MAX_VALUE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> readableBytes &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">readableBytes&lt;/span>();&lt;span style="color:#75715e">// writerIndex - readerIndex&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> writableBytes &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">writableBytes&lt;/span>();&lt;span style="color:#75715e">// capacity - writerIndex&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">boolean&lt;/span> readable;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readable &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">isReadable&lt;/span>(8);&lt;span style="color:#75715e">// isReadable(int), writerIndex - readerIndex &amp;gt;= size&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>readable &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">isReadable&lt;/span>();&lt;span style="color:#75715e">// 相当于 isReadable(1)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">boolean&lt;/span> writable;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writable &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">isWritable&lt;/span>(8); &lt;span style="color:#75715e">// isWritable(int), capacity - writerIndex &amp;gt;= size&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>writable &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">isWritable&lt;/span>(); &lt;span style="color:#75715e">// 相当于 isWritable(1)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> maxWritableBytes &lt;span style="color:#f92672">=&lt;/span> buf.&lt;span style="color:#a6e22e">maxWritableBytes&lt;/span>();&lt;span style="color:#75715e">// maxCapacity - writerIndex&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="读写">
+ 读写
+ &lt;a class="anchor" href="#%e8%af%bb%e5%86%99">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>readType()&lt;/code> 用于读取 &lt;code>Type&lt;/code> 类型的数据，&lt;code>writeType()&lt;/code> 用于写入 &lt;code>Type&lt;/code> 类型的值。&lt;/p></description></item><item><title>Git 分支</title><link>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/ProGit/Git-%E5%88%86%E6%94%AF/</guid><description>&lt;h1 id="git-分支">
  Git 分支
  &lt;a class="anchor" href="#git-%e5%88%86%e6%94%af">#&lt;/a>
 &lt;/h1>
@@ -198,7 +459,32 @@
 &lt;/h2>
 &lt;p>要切换到一个已存在的分支，需要使用 &lt;code>$ git switch&lt;/code> 命令。&lt;/p>
 &lt;pre tabindex="0">&lt;code>$ git switch testing
-&lt;/code>&lt;/pr</description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>&lt;h1 id="mapper">
+&lt;/code>&lt;/pre>&lt;p>这样 &lt;code>HEAD&lt;/code> 就指向 testing 分支了。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/head-to-testing.png" alt="" />&lt;/p>
+&lt;h2 id="分支合并">
+ 分支合并
+ &lt;a class="anchor" href="#%e5%88%86%e6%94%af%e5%90%88%e5%b9%b6">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="testing-分支提交">
+ testing 分支提交
+ &lt;a class="anchor" href="#testing-%e5%88%86%e6%94%af%e6%8f%90%e4%ba%a4">#&lt;/a>
+&lt;/h3>
+&lt;pre tabindex="0">&lt;code>$ touch 1.txt
+$ git commit -a -m &amp;#39;add: 1.txt&amp;#39;
+&lt;/code>&lt;/pre>&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/advance-testing.png" alt="" />&lt;/p>
+&lt;h3 id="master-分支提交">
+ master 分支提交
+ &lt;a class="anchor" href="#master-%e5%88%86%e6%94%af%e6%8f%90%e4%ba%a4">#&lt;/a>
+&lt;/h3>
+&lt;pre tabindex="0">&lt;code>$ git switch master
+&lt;/code>&lt;/pre>&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/checkout-master.png" alt="" />&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ touch 2.txt
+$ git commit -a -m &amp;#39;add: 2.txt&amp;#39;
+&lt;/code>&lt;/pre>&lt;p>
+ &lt;img src="https://ileonli.github.io/img/ProGit/advance-master.png" alt="" />&lt;/p></description></item><item><title>Mapper</title><link>https://ileonli.github.io/docs/MyBatis/Mapper/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Mapper/</guid><description>&lt;h1 id="mapper">
  Mapper
  &lt;a class="anchor" href="#mapper">#&lt;/a>
 &lt;/h1>
@@ -215,7 +501,37 @@
 &lt;p>&lt;code>MapperRegistry&lt;/code> 类中的 &lt;code>knownMappers&lt;/code> 用做具体保存。&lt;/p>
 &lt;p>&lt;code>key&lt;/code> 是 &lt;code>Mapper&lt;/code> 接口对应的 &lt;code>Class&lt;/code> 对象，&lt;code>value&lt;/code> 为 &lt;code>MapperProxyFactory&lt;/code> 工厂对象。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Map&lt;span style="color:#f92672">&amp;lt;&lt;/span>Class&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&lt;/span>, MapperProxyFactory&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&amp;gt;&lt;/span> knownMappers &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ConcurrentHashMap&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>();
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>&lt;h1 id="resultsethandler">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="addmapper">
+ addMapper
+ &lt;a class="anchor" href="#addmapper">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>addMapper&lt;/code> 会将接口类和包装后的对象放入到 &lt;code>knownMappers&lt;/code> 对象中。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">addMapper&lt;/span>(Class&lt;span style="color:#f92672">&amp;lt;&lt;/span>T&lt;span style="color:#f92672">&amp;gt;&lt;/span> type) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (type.&lt;span style="color:#a6e22e">isInterface&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (hasMapper(type)) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> BindingException(&lt;span style="color:#e6db74">&amp;#34;Type &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> type &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34; is already known to the MapperRegistry.&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">boolean&lt;/span> loadCompleted &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> knownMappers.&lt;span style="color:#a6e22e">put&lt;/span>(type, &lt;span style="color:#66d9ef">new&lt;/span> MapperProxyFactory&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>(type));
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// It&amp;#39;s important that the type is added before the parser is run&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// otherwise the binding may automatically be attempted by the&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// mapper parser. If the type is already known, it won&amp;#39;t try.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MapperAnnotationBuilder parser &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> MapperAnnotationBuilder(config, type);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> parser.&lt;span style="color:#a6e22e">parse&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> loadCompleted &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span>loadCompleted) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> knownMappers.&lt;span style="color:#a6e22e">remove&lt;/span>(type);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="getmapper">
+ getMapper
+ &lt;a class="anchor" href="#getmapper">#&lt;/a>
+&lt;/h3>
+&lt;p>当使用 &lt;code>SqlSession&lt;/code> 类中的 &lt;code>&amp;lt;T&amp;gt; T getMapper(Class&amp;lt;T&amp;gt; type);&lt;/code> 方法获取 Mapper 时，会转发到 &lt;code>MapperRegistry&lt;/code> 的 &lt;code>getMapper&lt;/code> 方法进行具体处理。&lt;/p></description></item><item><title>ResultSetHandler</title><link>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/ResultSetHandler/</guid><description>&lt;h1 id="resultsethandler">
  ResultSetHandler
  &lt;a class="anchor" href="#resultsethandler">#&lt;/a>
 &lt;/h1>
@@ -236,7 +552,38 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">handleOutputParameters&lt;/span>(CallableStatement cs) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>&lt;h1 id="statementhandler">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="multiqueries">
+ MultiQueries
+ &lt;a class="anchor" href="#multiqueries">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="jdbc">
+ JDBC
+ &lt;a class="anchor" href="#jdbc">#&lt;/a>
+&lt;/h3>
+&lt;p>为了同时执行多条查询语句，需要设置 &lt;code>allowMultiQueries=true&lt;/code>。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>Connection conn &lt;span style="color:#f92672">=&lt;/span> DriverManager.&lt;span style="color:#a6e22e">getConnection&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;jdbc:mysql://localhost/db?allowMultiQueries=true&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;root&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;0987654321&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String sql &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">SELECT * FROM `user`;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">SELECT * FROM `blog`;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;&amp;#34;&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (Statement stmt &lt;span style="color:#f92672">=&lt;/span> conn.&lt;span style="color:#a6e22e">createStatement&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt.&lt;span style="color:#a6e22e">execute&lt;/span>(sql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> cnt &lt;span style="color:#f92672">=&lt;/span> 0;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultSet rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">getResultSet&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (rs &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (stmt.&lt;span style="color:#a6e22e">getMoreResults&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">getResultSet&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rs &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cnt&lt;span style="color:#f92672">++&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(cnt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>每一个查询语句会返回一个 &lt;code>ResultSet&lt;/code>。上边的代码执行后，会返回两个 &lt;code>ResultSet&lt;/code>。因此，&lt;code>cnt&lt;/code> 的结果为 2（一共有两个 &lt;code>SELECT&lt;/code> 查询）。&lt;/p></description></item><item><title>StatementHandler</title><link>https://ileonli.github.io/docs/MyBatis/StatementHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/StatementHandler/</guid><description>&lt;h1 id="statementhandler">
  StatementHandler
  &lt;a class="anchor" href="#statementhandler">#&lt;/a>
 &lt;/h1>
@@ -262,7 +609,24 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ParameterHandler &lt;span style="color:#a6e22e">getParameterHandler&lt;/span>();
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>prepare&lt;/code>：从 &lt;code>Connection&lt;/code> 中创建 &lt;code>Statement&lt;/code> 对象。&lt;/li>
+&lt;li>&lt;code>parameterize&lt;/code>：绑定 &lt;code>statement&lt;/code> 执行时需要的参数。&lt;/li>
+&lt;li>&lt;code>batch&lt;/code>：批量执行 SQL 语句。&lt;/li>
+&lt;li>&lt;code>update&lt;/code>：执行 insert、update 和 delete 操作。&lt;/li>
+&lt;li>&lt;code>query&lt;/code> 和 &lt;code>queryCursor&lt;/code>：用于执行 select 操作。&lt;/li>
+&lt;li>&lt;code>getBoundSql&lt;/code>：获取绑定的 SQL。&lt;/li>
+&lt;li>&lt;code>getParameterHandler&lt;/code>：负责处理 SQL 语句中的参数的处理器。&lt;/li>
+&lt;/ul>
+&lt;h2 id="basestatementhandler">
+ BaseStatementHandler
+ &lt;a class="anchor" href="#basestatementhandler">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="prepare">
+ prepare
+ &lt;a class="anchor" href="#prepare">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>BaseStatementHandler&lt;/code> 中设计了模板方法 &lt;code>prepare&lt;/code>，通过该方法可以获取 &lt;code>Statement&lt;/code> 对象。&lt;/p></description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
  常量池
  &lt;a class="anchor" href="#%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
 &lt;/h1>
@@ -282,7 +646,83 @@
 &lt;/h3>
 &lt;p>常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。&lt;/p>
 &lt;hr>
-&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p></description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>&lt;h1 id="网络地址族">
+&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Main&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String str &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Hello World!&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(str);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Hello World!&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>public class io.github.ileonli.Main
+ minor version: 0
+ major version: 65
+ flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+ this_class: #21 // io/github/ileonli/Main
+ super_class: #2 // java/lang/Object
+ interfaces: 0, fields: 0, methods: 2, attributes: 1
+Constant pool:
+ #1 = Methodref #2.#3 // java/lang/Object.&amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ #2 = Class #4 // java/lang/Object
+ #3 = NameAndType #5:#6 // &amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ #4 = Utf8 java/lang/Object
+ #5 = Utf8 &amp;lt;init&amp;gt;
+ #6 = Utf8 ()V
+ #7 = String #8 // Hello World!
+ #8 = Utf8 Hello World!
+ #9 = Fieldref #10.#11 // java/lang/System.out:Ljava/io/PrintStream;
+ #10 = Class #12 // java/lang/System
+ #11 = NameAndType #13:#14 // out:Ljava/io/PrintStream;
+ #12 = Utf8 java/lang/System
+ #13 = Utf8 out
+ #14 = Utf8 Ljava/io/PrintStream;
+ #15 = Methodref #16.#17 // java/io/PrintStream.println:(Ljava/lang/String;)V
+ #16 = Class #18 // java/io/PrintStream
+ #17 = NameAndType #19:#20 // println:(Ljava/lang/String;)V
+ #18 = Utf8 java/io/PrintStream
+ #19 = Utf8 println
+ #20 = Utf8 (Ljava/lang/String;)V
+ #21 = Class #22 // io/github/ileonli/Main
+ #22 = Utf8 io/github/ileonli/Main
+ #23 = Utf8 Code
+ #24 = Utf8 LineNumberTable
+ #25 = Utf8 main
+ #26 = Utf8 ([Ljava/lang/String;)V
+ #27 = Utf8 SourceFile
+ #28 = Utf8 Main.java
+{
+ public io.github.ileonli.Main();
+ descriptor: ()V
+ flags: (0x0001) ACC_PUBLIC
+ Code:
+ stack=1, locals=1, args_size=1
+ 0: aload_0
+ 1: invokespecial #1 // Method java/lang/Object.&amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ 4: return
+ LineNumberTable:
+ line 3: 0
+
+ public static void main(java.lang.String[]);
+ descriptor: ([Ljava/lang/String;)V
+ flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+ Code:
+ stack=2, locals=2, args_size=1
+ 0: ldc #7 // String Hello World!
+ 2: astore_1
+ 3: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream;
+ 6: aload_1
+ 7: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+ 10: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream;
+ 13: ldc #7 // String Hello World!
+ 15: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+ 18: return
+ LineNumberTable:
+ line 5: 0
+ line 6: 3
+ line 7: 10
+ line 8: 18
+}
+&lt;/code>&lt;/pre>&lt;p>从 class 文件的反编译结果可以看出 &lt;code>main&lt;/code> 方法中有大量的复用：&lt;/p></description></item><item><title>网络地址族</title><link>https://ileonli.github.io/docs/system-programming/address-families/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/address-families/</guid><description>&lt;h1 id="网络地址族">
  网络地址族
  &lt;a class="anchor" href="#%e7%bd%91%e7%bb%9c%e5%9c%b0%e5%9d%80%e6%97%8f">#&lt;/a>
 &lt;/h1>
@@ -308,7 +748,15 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> in_addr {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">uint32_t&lt;/span> s_addr; &lt;span style="color:#75715e">/* address in network byte order */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>&lt;h1 id="eventloop">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>sin_family&lt;/code>：在 IPv4 中设为 &lt;code>AF_INET&lt;/code>。&lt;/li>
+&lt;li>&lt;code>sin_port&lt;/code>：&lt;strong>网络字节序&lt;/strong>保存的端口（0～65535）。&lt;/li>
+&lt;li>&lt;code>sin_addr&lt;/code>：&lt;strong>网络字节序&lt;/strong>保存的 32 位 IP 地址信息。&lt;/li>
+&lt;li>&lt;code>sin_zero&lt;/code>：使 &lt;code>sockaddr_in&lt;/code> 和 &lt;code>sockaddr&lt;/code> 结构体大小保持一致而插入的填充位，需手动设为 0。&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://man7.org/linux/man-pages/man7/ip.7.html">https://man7.org/linux/man-pages/man7/ip.7.html&lt;/a>&lt;/p></description></item><item><title>EventLoop</title><link>https://ileonli.github.io/docs/Netty/EventLoop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoop/</guid><description>&lt;h1 id="eventloop">
  EventLoop
  &lt;a class="anchor" href="#eventloop">#&lt;/a>
 &lt;/h1>
@@ -325,7 +773,14 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> });
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>&lt;h1 id="executor">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>使用 &lt;code>EventLoop&lt;/code> 的定时调度功能。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (EventLoop loop &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> DefaultEventLoop()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ScheduledFuture&lt;span style="color:#f92672">&amp;lt;?&amp;gt;&lt;/span> future &lt;span style="color:#f92672">=&lt;/span> loop.&lt;span style="color:#a6e22e">schedule&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> () &lt;span style="color:#f92672">-&amp;gt;&lt;/span> LocalDateTime.&lt;span style="color:#a6e22e">now&lt;/span>(), 3, TimeUnit.&lt;span style="color:#a6e22e">SECONDS&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(future.&lt;span style="color:#a6e22e">get&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果（当前）调用线程正是支撑 EventLoop 的线程，那么所提交的代码块将会被（直接）执行。否则，EventLoop 将调度该任务以便稍后执行，并将它放入到内部队列中。当&lt;/p></description></item><item><title>Executor</title><link>https://ileonli.github.io/docs/MyBatis/Executor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Executor/</guid><description>&lt;h1 id="executor">
  Executor
  &lt;a class="anchor" href="#executor">#&lt;/a>
 &lt;/h1>
@@ -341,7 +796,85 @@
  ExecutorType
  &lt;a class="anchor" href="#executortype">#&lt;/a>
 &lt;/h2>
-&lt;p>&lt;code>Executor&lt;/code> 一共有三种类型：&lt;/p></description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>&lt;h1 id="一级缓存和二级缓存">
+&lt;p>&lt;code>Executor&lt;/code> 一共有三种类型：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>SIMPLE&lt;/code>：&lt;/li>
+&lt;li>&lt;code>REUSE&lt;/code>：&lt;/li>
+&lt;li>&lt;code>BATCH&lt;/code>：&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">enum&lt;/span> ExecutorType {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SIMPLE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> REUSE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BATCH
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="baseexecutor">
+ BaseExecutor
+ &lt;a class="anchor" href="#baseexecutor">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>BaseExecutor&lt;/code> 是继承自 &lt;code>Executor&lt;/code> 接口的抽象类。该类实现了 &lt;code>Executor&lt;/code> 中的大部分方法。&lt;/p>
+&lt;p>该类使用了模板方法模式，继承 &lt;code>BaseExecutor&lt;/code> 的子类只需要实现下边的四个基本方法即可完成数据库的相关操作。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">BaseExecutor&lt;/span> &lt;span style="color:#66d9ef">implements&lt;/span> Executor {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">doUpdate&lt;/span>(MappedStatement ms, Object parameter) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>BatchResult&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doFlushStatements&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> isRollback) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQuery&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultHandler resultHandler, BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#66d9ef">abstract&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQueryCursor&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="simpleexecutor">
+ SimpleExecutor
+ &lt;a class="anchor" href="#simpleexecutor">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">doUpdate&lt;/span>(MappedStatement ms, Object parameter) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(&lt;span style="color:#66d9ef">this&lt;/span>, ms, parameter, RowBounds.&lt;span style="color:#a6e22e">DEFAULT&lt;/span>, &lt;span style="color:#66d9ef">null&lt;/span>, &lt;span style="color:#66d9ef">null&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> handler.&lt;span style="color:#a6e22e">update&lt;/span>(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closeStatement(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQuery&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> BoundSql boundSql) &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(wrapper, ms, parameter, rowBounds, resultHandler,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> handler.&lt;span style="color:#a6e22e">query&lt;/span>(stmt, resultHandler);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">finally&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> closeStatement(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">protected&lt;/span> &lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doQueryCursor&lt;/span>(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> SQLException {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Configuration configuration &lt;span style="color:#f92672">=&lt;/span> ms.&lt;span style="color:#a6e22e">getConfiguration&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> StatementHandler handler &lt;span style="color:#f92672">=&lt;/span> configuration.&lt;span style="color:#a6e22e">newStatementHandler&lt;/span>(wrapper, ms, parameter, rowBounds, &lt;span style="color:#66d9ef">null&lt;/span>, boundSql);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Statement stmt &lt;span style="color:#f92672">=&lt;/span> prepareStatement(handler, ms.&lt;span style="color:#a6e22e">getStatementLog&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Cursor&lt;span style="color:#f92672">&amp;lt;&lt;/span>E&lt;span style="color:#f92672">&amp;gt;&lt;/span> cursor &lt;span style="color:#f92672">=&lt;/span> handler.&lt;span style="color:#a6e22e">queryCursor&lt;/span>(stmt);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> stmt.&lt;span style="color:#a6e22e">closeOnCompletion&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> cursor;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> List&lt;span style="color:#f92672">&amp;lt;&lt;/span>BatchResult&lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#a6e22e">doFlushStatements&lt;/span>(&lt;span style="color:#66d9ef">boolean&lt;/span> isRollback) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> Collections.&lt;span style="color:#a6e22e">emptyList&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>listen 中的 backlog 参数</title><link>https://ileonli.github.io/docs/system-programming/backlog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/backlog/</guid><description/></item><item><title>Cache</title><link>https://ileonli.github.io/docs/MyBatis/Cache/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/MyBatis/Cache/</guid><description>&lt;h1 id="一级缓存和二级缓存">
  一级缓存和二级缓存
  &lt;a class="anchor" href="#%e4%b8%80%e7%ba%a7%e7%bc%93%e5%ad%98%e5%92%8c%e4%ba%8c%e7%ba%a7%e7%bc%93%e5%ad%98">#&lt;/a>
 &lt;/h1>
@@ -401,7 +934,11 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> list;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description>&lt;h1 id="eventloopgroup">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="cachekey">
+ CacheKey
+ &lt;a class="anchor" href="#cachekey">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>CacheKey&lt;/code> 由 &lt;code>MappedStatement&lt;/code> 的 &lt;code>id&lt;/code>、对应的 &lt;code>offset&lt;/code> 和 &lt;code>limit&lt;/code>、SQL 语句（包含 ? 占位符）、用户传入的参数和 &lt;code>Environment&lt;/code> 的 &lt;code>id&lt;/code> 组成。&lt;/p></description></item><item><title>EventLoopGroup</title><link>https://ileonli.github.io/docs/Netty/EventLoopGroup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/EventLoopGroup/</guid><description>&lt;h1 id="eventloopgroup">
  EventLoopGroup
  &lt;a class="anchor" href="#eventloopgroup">#&lt;/a>
 &lt;/h1></description></item><item><title>（非）阻塞 I/O</title><link>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="非阻塞-io-和-epoll翻译">
@@ -422,7 +959,18 @@
  阻塞模式
  &lt;a class="anchor" href="#%e9%98%bb%e5%a1%9e%e6%a8%a1%e5%bc%8f">#&lt;/a>
 &lt;/h2>
-&lt;p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 &lt;code>read&lt;/code>、&lt;code>write&lt;/code> 或 &lt;code>connect&lt;/code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 &lt;code>stdin&lt;/code> 读取数据时会发生什么。如果你在 &lt;code>stdin&lt;/code>上调用 &lt;code>read&lt;/code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 &lt;code>stdin&lt;/code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 &lt;code>read&lt;/code> 调用将会阻塞，直到连接的另一端实际上发送数据。&lt;/p></description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description>&lt;h1 id="channel">
+&lt;p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 &lt;code>read&lt;/code>、&lt;code>write&lt;/code> 或 &lt;code>connect&lt;/code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 &lt;code>stdin&lt;/code> 读取数据时会发生什么。如果你在 &lt;code>stdin&lt;/code>上调用 &lt;code>read&lt;/code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 &lt;code>stdin&lt;/code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 &lt;code>read&lt;/code> 调用将会阻塞，直到连接的另一端实际上发送数据。&lt;/p>
+&lt;p>阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：&lt;/p>
+&lt;ol>
+&lt;li>非阻塞模式。&lt;/li>
+&lt;li>I/O 多路复用系统调用，例如 &lt;code>select&lt;/code> 和 &lt;code>epoll&lt;/code>。&lt;/li>
+&lt;/ol>
+&lt;p>这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。&lt;/p>
+&lt;h2 id="非阻塞模式">
+ 非阻塞模式
+ &lt;a class="anchor" href="#%e9%9d%9e%e9%98%bb%e5%a1%9e%e6%a8%a1%e5%bc%8f">#&lt;/a>
+&lt;/h2>
+&lt;p>通过 &lt;code>fcntl&lt;/code> 函数在文件描述符的标志集中添加 &lt;code>O_NONBLOCK&lt;/code>，可以将文件描述符设置为“非阻塞模式”：&lt;/p></description></item><item><title>Channel</title><link>https://ileonli.github.io/docs/Netty/Channel/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/Channel/</guid><description>&lt;h1 id="channel">
  Channel
  &lt;a class="anchor" href="#channel">#&lt;/a>
 &lt;/h1></description></item><item><title>I/O 多路复用</title><link>https://ileonli.github.io/docs/system-programming/multiplexing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/multiplexing/</guid><description>&lt;h1 id="io-多路复用">
@@ -442,7 +990,28 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> writefds,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fd_set&lt;span style="color:#f92672">*&lt;/span> exceptfds,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> timeval &lt;span style="color:#f92672">*&lt;/span> timeout);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>&lt;h1 id="channelhandler">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="函数参数">
+ 函数参数
+ &lt;a class="anchor" href="#%e5%87%bd%e6%95%b0%e5%8f%82%e6%95%b0">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>nfds&lt;/code>：指定被监听的文件描述符的总数。这个参数应该被设置为三个集合中编号最高的文件描述符，再加 1，因为文件描述符是从 0 开始的。&lt;/p>
+&lt;hr>
+&lt;p>&lt;code>readfds&lt;/code>、&lt;code>writefds&lt;/code> 和 &lt;code>exceptfds&lt;/code>：分别指向可读、可写和异常事件对应的文件描述符集合。如果没有文件描述符要监听，则可以将对应的 &lt;code>fd_set&lt;/code> 参数设为 &lt;code>NULL&lt;/code>。&lt;/p>
+&lt;p>&lt;code>fd_set&lt;/code> 结构体仅包含一个数组，数组每一位标记一个文件描述符，最大容纳长度由 &lt;code>FD_SETSIZE&lt;/code> 指定。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* fd_set for select and pselect. */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">typedef&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">/* XPG4.2 requires this member name. Otherwise avoid the name
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> from the global namespace. */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#ifdef __USE_XOPEN
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> __fd_mask fds_bits[__FD_SETSIZE &lt;span style="color:#f92672">/&lt;/span> __NFDBITS];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># define __FDS_BITS(set) ((set)-&amp;gt;fds_bits)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#else
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> __fd_mask __fds_bits[__FD_SETSIZE &lt;span style="color:#f92672">/&lt;/span> __NFDBITS];
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#endif
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } fd_set;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>为方便对此结构体进行操作，提供了以下几个宏函数对其进行操作，宏函数如下：&lt;/p></description></item><item><title>ChannelHandler</title><link>https://ileonli.github.io/docs/Netty/ChannelHandler/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/ChannelHandler/</guid><description>&lt;h1 id="channelhandler">
  ChannelHandler
  &lt;a class="anchor" href="#channelhandler">#&lt;/a>
 &lt;/h1>
@@ -487,7 +1056,15 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description>&lt;h1 id="reactor-模型">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="channelinboundhandler">
+ ChannelInboundHandler
+ &lt;a class="anchor" href="#channelinboundhandler">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="channelinboundhandleradapter">
+ ChannelInboundHandlerAdapter
+ &lt;a class="anchor" href="#channelinboundhandleradapter">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>ChannelInboundHandlerAdapter&lt;/code> 中的所有方法默认会调用 &lt;code>ctx.fireChannel*()&lt;/code> 传递到下一个 &lt;code>Handler&lt;/code>。&lt;/p></description></item><item><title>Reactor 模型</title><link>https://ileonli.github.io/docs/system-programming/reactor-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/reactor-pattern/</guid><description>&lt;h1 id="reactor-模型">
  Reactor 模型
  &lt;a class="anchor" href="#reactor-%e6%a8%a1%e5%9e%8b">#&lt;/a>
 &lt;/h1>
@@ -530,7 +1107,32 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>会返回文件描述符，&lt;strong>失败时&lt;/strong>会返回 -1。&lt;/p>
 &lt;blockquote>
 &lt;p>
- &lt;a href="https://man7.org/linux/man-pages/man2/socket.2.html">https://man7.org/linux/man-pages/man2/socket.2.html&lt;/a>&lt;/p></description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>&lt;h1 id="echo-服务器">
+ &lt;a href="https://man7.org/linux/man-pages/man2/socket.2.html">https://man7.org/linux/man-pages/man2/socket.2.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="bind">
+ bind
+ &lt;a class="anchor" href="#bind">#&lt;/a>
+&lt;/h3>
+&lt;p>当使用 &lt;code>socket&lt;/code> 函数创建套接字后，会存在于名称空间（地址族）中，但没有为其分配地址。&lt;code>bind&lt;/code> 函数将 &lt;code>addr&lt;/code> 指定的地址分配给文件描述符 &lt;code>sockfd&lt;/code> 引用的套接字。&lt;/p>
+&lt;p>服务器可以不先调用 &lt;code>bind()&lt;/code> 而直接调用 &lt;code>listen()&lt;/code>，此时会为该 &lt;code>socket&lt;/code> 分配一个 &lt;strong>&lt;code>INADDR_ANY&lt;/code> IP 地址&lt;/strong>（0.0.0.0）和&lt;strong>临时端口&lt;/strong>（可通过 &lt;code>getsockname()&lt;/code> 获取 &lt;code>socket&lt;/code> 的地址）。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/socket.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">bind&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> sockfd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> sockaddr &lt;span style="color:#f92672">*&lt;/span>addr,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">socklen_t&lt;/span> addrlen);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>返回 0，&lt;strong>失败时&lt;/strong>返回 -1。&lt;/p>
+&lt;blockquote>
+&lt;p>
+ &lt;a href="https://man7.org/linux/man-pages/man2/bind.2.html">https://man7.org/linux/man-pages/man2/bind.2.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="listen">
+ listen
+ &lt;a class="anchor" href="#listen">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>listen&lt;/code> 函数将文件描述符引用的 &lt;code>socket&lt;/code> 标记为被动，该 &lt;code>socket&lt;/code> 会被用来接受来自其它主动 &lt;code>socket&lt;/code> 的连接。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;sys/socket.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">listen&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> sockfd, &lt;span style="color:#66d9ef">int&lt;/span> backlog);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>成功时&lt;/strong>返回 0，&lt;strong>失败时&lt;/strong>返回 -1。&lt;/p></description></item><item><title>echo 服务器</title><link>https://ileonli.github.io/docs/system-programming/echo-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/system-programming/echo-server/</guid><description>&lt;h1 id="echo-服务器">
  echo 服务器
  &lt;a class="anchor" href="#echo-%e6%9c%8d%e5%8a%a1%e5%99%a8">#&lt;/a>
 &lt;/h1>
@@ -548,7 +1150,49 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">exit&lt;/span>(EXIT_FAILURE);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Agent</title><link>https://ileonli.github.io/docs/Java/Agent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Agent/</guid><description>&lt;blockquote>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>readn&lt;/code> 和 &lt;code>writen&lt;/code> 函数分别用于从 &lt;code>fd&lt;/code> 处读和写 &lt;code>n&lt;/code> 个字节。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">ssize_t&lt;/span> &lt;span style="color:#a6e22e">readn&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> fd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>buf, &lt;span style="color:#66d9ef">size_t&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">ssize_t&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nread &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">read&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#75715e">// error, return -1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>; &lt;span style="color:#75715e">// error, return amount read so far
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nread &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">read&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#75715e">// error, return -1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nleft &lt;span style="color:#f92672">-=&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> buf &lt;span style="color:#f92672">+=&lt;/span> nread;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> n &lt;span style="color:#f92672">-&lt;/span> nleft;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">ssize_t&lt;/span> &lt;span style="color:#a6e22e">writen&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> fd, &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#f92672">*&lt;/span>buf, &lt;span style="color:#66d9ef">size_t&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">size_t&lt;/span> nleft &lt;span style="color:#f92672">=&lt;/span> n;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">ssize_t&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (nleft &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((nwritten &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">write&lt;/span>(fd, buf, nleft)) &lt;span style="color:#f92672">&amp;lt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (nleft &lt;span style="color:#f92672">==&lt;/span> n) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (nwritten &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> nleft &lt;span style="color:#f92672">-=&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> buf &lt;span style="color:#f92672">+=&lt;/span> nwritten;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> n &lt;span style="color:#f92672">-&lt;/span> nleft;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>read_line&lt;/code> 函数用于从用户处读取一行输入。&lt;/p></description></item><item><title>Agent</title><link>https://ileonli.github.io/docs/Java/Agent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Agent/</guid><description>&lt;blockquote>
 &lt;p>
  &lt;a href="https://www.cnblogs.com/crazymakercircle/p/16635330.html">https://www.cnblogs.com/crazymakercircle/p/16635330.html&lt;/a>&lt;/p>
 &lt;p>
@@ -647,7 +1291,113 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 事务</title><link>https://ileonli.github.io/docs/boltdb/transaction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/transaction/</guid><description>&lt;h1 id="boltdb-事务">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="合并">
+ 合并
+ &lt;a class="anchor" href="#%e5%90%88%e5%b9%b6">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// rebalance attempts to combine the node with sibling nodes if the node fill
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// size is below a threshold or if there are not enough keys.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">n&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">node&lt;/span>) &lt;span style="color:#a6e22e">rebalance&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> !&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">unbalanced&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">unbalanced&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Update statistics.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">stats&lt;/span>.&lt;span style="color:#a6e22e">Rebalance&lt;/span>&lt;span style="color:#f92672">++&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Ignore if node is above threshold (25%) and has enough keys.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">threshold&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">tx&lt;/span>.&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">pageSize&lt;/span> &lt;span style="color:#f92672">/&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">size&lt;/span>() &amp;gt; &lt;span style="color:#a6e22e">threshold&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> len(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>) &amp;gt; &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">minKeys&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Root node has special handling.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// If root node is a branch and only has one node then collapse it.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">if&lt;/span> !&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">isLeaf&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> len(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#75715e">// Move root&amp;#39;s child up.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>			&lt;span style="color:#a6e22e">child&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">node&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>[&lt;span style="color:#ae81ff">0&lt;/span>].&lt;span style="color:#a6e22e">pgid&lt;/span>, &lt;span style="color:#a6e22e">n&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">isLeaf&lt;/span> = &lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">isLeaf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> = &lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>[:]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span> = &lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#75715e">// Reparent all child nodes being moved.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>			&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">inode&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">child&lt;/span>, &lt;span style="color:#a6e22e">ok&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>[&lt;span style="color:#a6e22e">inode&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>]; &lt;span style="color:#a6e22e">ok&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>					&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#75715e">// Remove old child.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>			&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> = &lt;span style="color:#66d9ef">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			delete(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>, &lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">free&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// If node has no keys then just remove it.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">numChildren&lt;/span>() &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">del&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">removeChild&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		delete(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>, &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">free&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">rebalance&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">_assert&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">numChildren&lt;/span>() &amp;gt; &lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;parent must have at least 2 children&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Destination node is right sibling if idx == 0, otherwise left sibling.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">target&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">node&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">useNextSibling&lt;/span> = (&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">childIndex&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">useNextSibling&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">target&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">nextSibling&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	} &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">target&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">prevSibling&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// If both this node and the target node are too small then merge them.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">useNextSibling&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Reparent all child nodes being moved.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">inode&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">child&lt;/span>, &lt;span style="color:#a6e22e">ok&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>[&lt;span style="color:#a6e22e">inode&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>]; &lt;span style="color:#a6e22e">ok&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">removeChild&lt;/span>(&lt;span style="color:#a6e22e">child&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> = &lt;span style="color:#a6e22e">n&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span> = append(&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>, &lt;span style="color:#a6e22e">child&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Copy over inodes from target and remove target.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> = append(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>, &lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>&lt;span style="color:#f92672">...&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">del&lt;/span>(&lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">removeChild&lt;/span>(&lt;span style="color:#a6e22e">target&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		delete(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>, &lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">free&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	} &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Reparent all child nodes being moved.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">inode&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">child&lt;/span>, &lt;span style="color:#a6e22e">ok&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>[&lt;span style="color:#a6e22e">inode&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>]; &lt;span style="color:#a6e22e">ok&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">removeChild&lt;/span>(&lt;span style="color:#a6e22e">child&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span> = &lt;span style="color:#a6e22e">target&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>				&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span> = append(&lt;span style="color:#a6e22e">child&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">children&lt;/span>, &lt;span style="color:#a6e22e">child&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>			}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// Copy over inodes to target and remove node.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>		&lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span> = append(&lt;span style="color:#a6e22e">target&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>, &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">inodes&lt;/span>&lt;span style="color:#f92672">...&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">del&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">removeChild&lt;/span>(&lt;span style="color:#a6e22e">n&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		delete(&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">bucket&lt;/span>.&lt;span style="color:#a6e22e">nodes&lt;/span>, &lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">pgid&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">free&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Either this node or the target node was deleted from the parent so rebalance it.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">n&lt;/span>.&lt;span style="color:#a6e22e">parent&lt;/span>.&lt;span style="color:#a6e22e">rebalance&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>boltdb 事务</title><link>https://ileonli.github.io/docs/boltdb/transaction/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/transaction/</guid><description>&lt;h1 id="boltdb-事务">
  boltdb 事务
  &lt;a class="anchor" href="#boltdb-%e4%ba%8b%e5%8a%a1">#&lt;/a>
 &lt;/h1>
@@ -681,7 +1431,34 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// set the flag to syscall.O_DIRECT to avoid trashing the page cache.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">WriteFlag&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/bucket/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/bucket/</guid><description>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// bucket represents the on-file representation of a bucket.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="begin">
+ Begin
+ &lt;a class="anchor" href="#begin">#&lt;/a>
+&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Begin starts a new transaction.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Multiple read-only transactions can be used concurrently but only one
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// write transaction can be used at a time. Starting multiple write transactions
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// will cause the calls to block and be serialized until the current write
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// transaction finishes.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Transactions should not be dependent on one another. Opening a read
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// transaction and a write transaction in the same goroutine can cause the
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// writer to deadlock because the database periodically needs to re-mmap itself
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// as it grows and it cannot do that while a read transaction is open.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// If a long running read transaction (for example, a snapshot transaction) is
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// needed, you might want to set DB.InitialMmapSize to a large enough value
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// to avoid potential blocking of write transaction.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// IMPORTANT: You must close read-only transactions after you are finished or
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// else the database will not reclaim old pages.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">db&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">DB&lt;/span>) &lt;span style="color:#a6e22e">Begin&lt;/span>(&lt;span style="color:#a6e22e">writable&lt;/span> &lt;span style="color:#66d9ef">bool&lt;/span>) (&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Tx&lt;/span>, &lt;span style="color:#66d9ef">error&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">writable&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">beginRWTx&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">beginTx&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>Begin&lt;/code> 方法用于开始一个新的事务。多个只读事务可以同时执行，但同一时间只能有一个写事务。如果启动多个写事务，调用将被阻塞，直到当前写事务完成。允许多个 Goroutine 同时打开多个读事务和一个写事务。&lt;/p></description></item><item><title>boltdb 介绍</title><link>https://ileonli.github.io/docs/boltdb/bucket/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/bucket/</guid><description>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// bucket represents the on-file representation of a bucket.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// This is stored as the &amp;#34;value&amp;#34; of a bucket key. If the bucket is small enough,
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// then its root page can be stored inline in the &amp;#34;value&amp;#34;, after the bucket
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// header. In the case of inline buckets, the &amp;#34;root&amp;#34; will be 0.
@@ -689,7 +1466,23 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">root&lt;/span> &lt;span style="color:#a6e22e">pgid&lt;/span> &lt;span style="color:#75715e">// page id of the bucket&amp;#39;s root-level page
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">sequence&lt;/span> &lt;span style="color:#66d9ef">uint64&lt;/span> &lt;span style="color:#75715e">// monotonically incrementing, used by NextSequence()
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 存储</title><link>https://ileonli.github.io/docs/boltdb/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/storage/</guid><description>&lt;h1 id="boltdb-存储">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Bucket represents a collection of key/value pairs inside the database.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Bucket&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">bucket&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">tx&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Tx&lt;/span> &lt;span style="color:#75715e">// the associated transaction
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">buckets&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#66d9ef">string&lt;/span>]&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Bucket&lt;/span> &lt;span style="color:#75715e">// subbucket cache
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">page&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">page&lt;/span> &lt;span style="color:#75715e">// inline page reference
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">rootNode&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">node&lt;/span> &lt;span style="color:#75715e">// materialized node for the root page.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">nodes&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#a6e22e">pgid&lt;/span>]&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">node&lt;/span> &lt;span style="color:#75715e">// node cache
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// Sets the threshold for filling nodes when they split. By default,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// the bucket will fill to 50% but it can be useful to increase this
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// amount if you know that your write workloads are mostly append-only.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">//
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#75715e">// This is non-persisted across transactions so it must be set in every Tx.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>	&lt;span style="color:#a6e22e">FillPercent&lt;/span> &lt;span style="color:#66d9ef">float64&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>buckets&lt;/code> 不是直接加载进来的，而是使用了，才会进行加载。&lt;/p></description></item><item><title>boltdb 存储</title><link>https://ileonli.github.io/docs/boltdb/storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/storage/</guid><description>&lt;h1 id="boltdb-存储">
  boltdb 存储
  &lt;a class="anchor" href="#boltdb-%e5%ad%98%e5%82%a8">#&lt;/a>
 &lt;/h1>
@@ -716,7 +1509,30 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">MaxBatchSize&lt;/span> = &lt;span style="color:#a6e22e">DefaultMaxBatchSize&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">MaxBatchDelay&lt;/span> = &lt;span style="color:#a6e22e">DefaultMaxBatchDelay&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">AllocSize&lt;/span> = &lt;span style="color:#a6e22e">DefaultAllocSize&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>&lt;h1 id="boltdb-页结构">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="openfile">
+ OpenFile
+ &lt;a class="anchor" href="#openfile">#&lt;/a>
+&lt;/h3>
+&lt;p>使用 &lt;code>os.OpenFile()&lt;/code> 方法打开传入的数据库文件路径，不存在则创建。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">flag&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">os&lt;/span>.&lt;span style="color:#a6e22e">O_RDWR&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">options&lt;/span>.&lt;span style="color:#a6e22e">ReadOnly&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">flag&lt;/span> = &lt;span style="color:#a6e22e">os&lt;/span>.&lt;span style="color:#a6e22e">O_RDONLY&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">readOnly&lt;/span> = &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// Open data file and separate sync handler for metadata writes.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">path&lt;/span> = &lt;span style="color:#a6e22e">path&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#66d9ef">error&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">file&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> = &lt;span style="color:#a6e22e">os&lt;/span>.&lt;span style="color:#a6e22e">OpenFile&lt;/span>(&lt;span style="color:#a6e22e">db&lt;/span>.&lt;span style="color:#a6e22e">path&lt;/span>, &lt;span style="color:#a6e22e">flag&lt;/span>|&lt;span style="color:#a6e22e">os&lt;/span>.&lt;span style="color:#a6e22e">O_CREATE&lt;/span>, &lt;span style="color:#a6e22e">mode&lt;/span>); &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">_&lt;/span> = &lt;span style="color:#a6e22e">db&lt;/span>.close()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="flock">
+ flock
+ &lt;a class="anchor" href="#flock">#&lt;/a>
+&lt;/h3>
+&lt;p>boltdb 同一时刻只允许一个进程对数据库进行读写操作，因此使用 
+ &lt;a href="https%ef%bc%9a//man7.org/linux/man-pages/man2/flock.2.html">&lt;code>flock&lt;/code>&lt;/a> 对数据库文件进行加锁。&lt;/p></description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>&lt;h1 id="boltdb-页结构">
  boltdb 页结构
  &lt;a class="anchor" href="#boltdb-%e9%a1%b5%e7%bb%93%e6%9e%84">#&lt;/a>
 &lt;/h1>
@@ -731,7 +1547,40 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">overflow&lt;/span> &lt;span style="color:#66d9ef">uint32&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ptr&lt;/span> &lt;span style="color:#66d9ef">uintptr&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Cleaner 类</title><link>https://ileonli.github.io/docs/Java/Cleaner/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Cleaner/</guid><description>&lt;h1 id="参考文献">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>id&lt;/code>：是页面的标识符，每个页面在数据库文件中都有一个唯一的 ID，用于在数据库中定位和引用该页面。&lt;/li>
+&lt;li>&lt;code>flags&lt;/code>：用来表示页面的类型或其他特性。&lt;/li>
+&lt;li>&lt;code>count&lt;/code>：表示页面中存储的元素数量（通常是键值对的数量或子页面的引用数量）。&lt;/li>
+&lt;li>&lt;code>overflow&lt;/code>：表示页面溢出的数量。如果一个页面装不下所有的数据，它可能会使用多个连续的页面来存储，这些连续的页面被称为&lt;strong>溢出页面&lt;/strong>。&lt;/li>
+&lt;li>&lt;code>ptr&lt;/code>：用于指向页面的数据部分。在内存中指向实际存储键值对或其他数据的区域。这个指针使得可以通过内存地址快速访问页面中的数据。&lt;/li>
+&lt;/ul>
+&lt;p>一个 &lt;code>page&lt;/code> 页的结构如下所示：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/boltdb/point-to-element.png" alt="" />&lt;/p>
+&lt;p>根据 &lt;code>flags&lt;/code> 的设置，&lt;code>ptr&lt;/code> 会指向 4 种结构体之一。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">branchPageFlag&lt;/span> = &lt;span style="color:#ae81ff">0x01&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">leafPageFlag&lt;/span> = &lt;span style="color:#ae81ff">0x02&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">metaPageFlag&lt;/span> = &lt;span style="color:#ae81ff">0x04&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">freelistPageFlag&lt;/span> = &lt;span style="color:#ae81ff">0x10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;code>branchPageFlag&lt;/code>：&lt;code>ptr&lt;/code> 指向 &lt;code>branchPageElement[]&lt;/code> 数组。&lt;/li>
+&lt;li>&lt;code>leafPageFlag&lt;/code>：&lt;code>ptr&lt;/code> 指向 &lt;code>leafPageElement[]&lt;/code> 数组。&lt;/li>
+&lt;li>&lt;code>metaPageFlag&lt;/code>：&lt;code>ptr&lt;/code> 指向 &lt;code>meta&lt;/code> 结构体。&lt;/li>
+&lt;li>&lt;code>freelistPageFlag&lt;/code>：&lt;code>ptr&lt;/code> 指向 &lt;code>freelist&lt;/code> 结构体。&lt;/li>
+&lt;/ul>
+&lt;h3 id="branchpageelement">
+ branchPageElement
+ &lt;a class="anchor" href="#branchpageelement">#&lt;/a>
+&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Go" data-lang="Go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// branchPageElement represents a node on a branch page.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">branchPageElement&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">pos&lt;/span> &lt;span style="color:#66d9ef">uint32&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">ksize&lt;/span> &lt;span style="color:#66d9ef">uint32&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#a6e22e">pgid&lt;/span> &lt;span style="color:#a6e22e">pgid&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>branchPageElement(index)&lt;/code> 会返回 &lt;code>index&lt;/code> 位置的 &lt;code>branchPageElement&lt;/code>。&lt;/p></description></item><item><title>Cleaner 类</title><link>https://ileonli.github.io/docs/Java/Cleaner/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/Cleaner/</guid><description>&lt;h1 id="参考文献">
  参考文献
  &lt;a class="anchor" href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae">#&lt;/a>
 &lt;/h1>
@@ -766,7 +1615,31 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>String url &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;jdbc:mysql://localhost:3306/db&amp;#34;&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String username &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;root&amp;#34;&lt;/span>, password &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;0987654321&amp;#34;&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Connection conn &lt;span style="color:#f92672">=&lt;/span> DriverManager.&lt;span style="color:#a6e22e">getConnection&lt;/span>(url, username, password);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>JVM 加载-链接-初始化</title><link>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</guid><description>&lt;h1 id="jvm-加载-链接-初始化">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-jdbc-处理-sql-语句">
+ 使用 JDBC 处理 SQL 语句
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8-jdbc-%e5%a4%84%e7%90%86-sql-%e8%af%ad%e5%8f%a5">#&lt;/a>
+&lt;/h2>
+&lt;p>新建一个 &lt;code>user&lt;/code> 表，如下图所示：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/Java/User.png" alt="" />&lt;/p>
+&lt;p>使用 &lt;code>conn&lt;/code> 对象创建 &lt;code>Statement&lt;/code>，使用 &lt;code>stmt&lt;/code> 执行 SQL 语句。&lt;/p>
+&lt;p>&lt;code>ResultSet&lt;/code> 保存了执行 SQL 语句的结果，可以遍历保存的结果。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>String query &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;SELECT * FROM `user`;&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (Statement stmt &lt;span style="color:#f92672">=&lt;/span> conn.&lt;span style="color:#a6e22e">createStatement&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultSet rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">executeQuery&lt;/span>(query);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (rs.&lt;span style="color:#a6e22e">next&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> id &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getInt&lt;/span>(1);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String name &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getString&lt;/span>(2);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> age &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getInt&lt;/span>(3);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String email &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getString&lt;/span>(4);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">printf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;id: %d, name: %s, age: %d, email: %s.\n&amp;#34;&lt;/span>, id, name, age, email);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-preparedstatements">
+ 使用 PreparedStatements
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8-preparedstatements">#&lt;/a>
+&lt;/h2>
+&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>JVM 加载-链接-初始化</title><link>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/loading-linking-initializing/</guid><description>&lt;h1 id="jvm-加载-链接-初始化">
  JVM 加载-链接-初始化
  &lt;a class="anchor" href="#jvm-%e5%8a%a0%e8%bd%bd-%e9%93%be%e6%8e%a5-%e5%88%9d%e5%a7%8b%e5%8c%96">#&lt;/a>
 &lt;/h1>
@@ -796,7 +1669,27 @@
  初始化（initializes）
  &lt;a class="anchor" href="#%e5%88%9d%e5%a7%8b%e5%8c%96initializes">#&lt;/a>
 &lt;/h3>
-&lt;p>类或接口的初始化（initializes）包括执行类或接口初始化方法 &lt;code>&amp;lt;clinit&amp;gt;&lt;/code>。&lt;/p></description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>&lt;h1 id="methodhandles">
+&lt;p>类或接口的初始化（initializes）包括执行类或接口初始化方法 &lt;code>&amp;lt;clinit&amp;gt;&lt;/code>。&lt;/p>
+&lt;h2 id="类加载器class-loader">
+ 类加载器（class loader）
+ &lt;a class="anchor" href="#%e7%b1%bb%e5%8a%a0%e8%bd%bd%e5%99%a8class-loader">#&lt;/a>
+&lt;/h2>
+&lt;p>启动类加载器（bootstrap class loader）由 C++ 实现，&lt;/p>
+&lt;p>除了启动类加载器之外，其它的类加载器都是 &lt;code>java.lang.ClassLoader&lt;/code> 的子类，因此有对应的 Java 对象。这些类加载器需要先由另一个类加载器，比如说启动类加载器，加载至 Java 虚拟机中，方能执行类加载。&lt;/p>
+&lt;h2 id="双亲委派模型">
+ 双亲委派模型
+ &lt;a class="anchor" href="#%e5%8f%8c%e4%ba%b2%e5%a7%94%e6%b4%be%e6%a8%a1%e5%9e%8b">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="jdk-9-前">
+ JDK 9 前
+ &lt;a class="anchor" href="#jdk-9-%e5%89%8d">#&lt;/a>
+&lt;/h3>
+&lt;ul>
+&lt;li>启动类加载器（Bootstrap Class Loader）：用于加载&lt;/li>
+&lt;li>扩展类加载器（Extension Class Loader）:&lt;/li>
+&lt;li>应用程序类加载器（Application Class Loader）:&lt;/li>
+&lt;/ul>
+&lt;p>可输出 &lt;code>BootstrapClassLoader&lt;/code> 可加载的类。&lt;/p></description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>&lt;h1 id="methodhandles">
  MethodHandles
  &lt;a class="anchor" href="#methodhandles">#&lt;/a>
 &lt;/h1>
@@ -823,7 +1716,68 @@
  &lt;a class="anchor" href="#%e6%96%b9%e6%b3%95%e5%8f%a5%e6%9f%84%e6%9f%a5%e6%89%bemethod-handle-lookup">#&lt;/a>
 &lt;/h2>
 &lt;p>要创建方法句柄，我们首先需要创建一个 
- &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html">&lt;code>LookUp&lt;/code>&lt;/a> 对象，此为创建方法句柄的工厂。根据 &lt;code>Lookup&lt;/code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。&lt;/p></description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>&lt;h1 id="动态代理">
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html">&lt;code>LookUp&lt;/code>&lt;/a> 对象，此为创建方法句柄的工厂。根据 &lt;code>Lookup&lt;/code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。&lt;/p>
+&lt;p>例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。&lt;/p>
+&lt;p>通常我们希望避免这种情况。&lt;strong>一种办法&lt;/strong>是将 &lt;code>Lookup&lt;/code> 对象和方法句柄设为私有。&lt;strong>另一种方法&lt;/strong>是使用 
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html#publicLookup%28%29">&lt;code>MethodHandles.publicLookup&lt;/code>&lt;/a> 方法创建 &lt;code>Lookup&lt;/code> 对象，这样它只能查找公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodHandles.&lt;span style="color:#a6e22e">Lookup&lt;/span> publicLookup &lt;span style="color:#f92672">=&lt;/span> MethodHandles.&lt;span style="color:#a6e22e">publicLookup&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果我们打算将 &lt;code>Lookup&lt;/code> 对象和方法句柄设为私有，那么访问私有和受保护的成员是安全的（外部无法访问私有的方法句柄）：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodHandles.&lt;span style="color:#a6e22e">Lookup&lt;/span> lookup &lt;span style="color:#f92672">=&lt;/span> MethodHandles.&lt;span style="color:#a6e22e">lookup&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="方法类型method-type">
+ 方法类型（Method type）
+ &lt;a class="anchor" href="#%e6%96%b9%e6%b3%95%e7%b1%bb%e5%9e%8bmethod-type">#&lt;/a>
+&lt;/h2>
+&lt;p>要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息通过 
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodType.html">&lt;code>MethodType&lt;/code>&lt;/a> 类表示。为了实例化一个 &lt;code>MethodType&lt;/code> 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodType methodType &lt;span style="color:#f92672">=&lt;/span> MethodType.&lt;span style="color:#a6e22e">methodType&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* the method returns integer */&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* and accepts a single String argument*/&lt;/span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>有了 &lt;code>Lookup&lt;/code> 和 &lt;code>MethodType&lt;/code> 实例后，我们就可以查找方法句柄了。&lt;/p></description></item><item><title>Skip List</title><link>https://ileonli.github.io/docs/DataStructure/skiplist/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/DataStructure/skiplist/</guid><description>&lt;h1 id="skip-list">
+ Skip List
+ &lt;a class="anchor" href="#skip-list">#&lt;/a>
+&lt;/h1>
+&lt;h2 id="introduction">
+ Introduction
+ &lt;a class="anchor" href="#introduction">#&lt;/a>
+&lt;/h2>
+&lt;p>在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：&lt;/p>
+&lt;ul>
+&lt;li>链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。&lt;/li>
+&lt;li>对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。&lt;/li>
+&lt;/ul>
+&lt;p>为了加快链表查找过程，设计了跳表，跳表可以看作&lt;strong>可二分查找的链表&lt;/strong>。&lt;/p>
+&lt;hr>
+&lt;p>跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>概率算法（Probabilistic Algorithm）&lt;/strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。&lt;/p>
+&lt;/blockquote>
+&lt;p>每个元素在跳表中由一个节点表示（如下图所示），节点是以 &lt;code>key&lt;/code> 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。&lt;/p>
+&lt;p>当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/1.png" alt="" />&lt;/p>
+&lt;p>对于上图中的链表，我们可以发现下边的规律：&lt;/p>
+&lt;ul>
+&lt;li>第 0 层：这是完整的链表，包含所有按顺序排列的元素。&lt;/li>
+&lt;li>第 1 层：这一层包含第 0 层中大约一半的元素。通过从第 0 层中随机选择大约一半的节点，并将它们链接到第 1 层。&lt;/li>
+&lt;li>第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。&lt;/li>
+&lt;li>第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。&lt;/li>
+&lt;/ul>
+&lt;h2 id="search">
+ Search
+ &lt;a class="anchor" href="#search">#&lt;/a>
+&lt;/h2>
+&lt;blockquote>
+&lt;p>在跳表上插入的元素需要使用比较算法比较 &lt;code>key&lt;/code> 的大小。为了处理尾部节点，设定 &lt;code>null&lt;/code> 比任何 &lt;code>key&lt;/code> 都大&lt;/p>
+&lt;/blockquote>
+&lt;p>在跳表上进行&lt;strong>查找操作&lt;/strong>时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/search.jpg" alt="" />&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/DataStructure/skiplist/search-code.png" alt="" />&lt;/p>
+&lt;h2 id="insert">
+ Insert
+ &lt;a class="anchor" href="#insert">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;strong>插入操作&lt;/strong>需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 &lt;code>update&lt;/code> 数组记录存储了每一层中小于待插入键的最后一个节点。&lt;/p></description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>&lt;h1 id="动态代理">
  动态代理
  &lt;a class="anchor" href="#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86">#&lt;/a>
 &lt;/h1>
@@ -838,7 +1792,33 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> InvocationHandler h) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>&lt;h1 id="编码器和解码器">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>该方法主要有三个参数：&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>loader&lt;/code>：定义代理类的类加载器。&lt;/li>
+&lt;li>&lt;code>interfaces&lt;/code>：代理类要实现的接口列表。&lt;/li>
+&lt;li>&lt;code>h&lt;/code>：用于分发方法调用的调用处理器。&lt;/li>
+&lt;/ol>
+&lt;h2 id="invocationhandler">
+ InvocationHandler
+ &lt;a class="anchor" href="#invocationhandler">#&lt;/a>
+&lt;/h2>
+&lt;p>当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 &lt;code>InvocationHandler&lt;/code> 接口类的 &lt;code>invoke&lt;/code> 方法来调用。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">InvocationHandler&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">invoke&lt;/span>(Object proxy, Method method, Object&lt;span style="color:#f92672">[]&lt;/span> args)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> Throwable;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>该方法主要有三个参数：&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>proxy&lt;/code>：动态生成的代理类的实例。&lt;/li>
+&lt;li>&lt;code>method&lt;/code>：代理类对象调用的方法。&lt;/li>
+&lt;li>&lt;code>args&lt;/code>：调用 &lt;code>method&lt;/code> 方法的参数。&lt;/li>
+&lt;/ol>
+&lt;p>通过 &lt;code>Proxy&lt;/code> 类的 &lt;code>newProxyInstance()&lt;/code> 创建的代理对象在调用方法的时候，实际会调用到实现 &lt;code>InvocationHandler&lt;/code> 接口的类的 &lt;code>invoke()&lt;/code> 方法。&lt;/p>
+&lt;h2 id="具体步骤">
+ 具体步骤
+ &lt;a class="anchor" href="#%e5%85%b7%e4%bd%93%e6%ad%a5%e9%aa%a4">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>TargetClass&lt;/code> 类继承自 &lt;code>InterfaceA&lt;/code> 和 &lt;code>InterfaceB&lt;/code> 接口。&lt;/p></description></item><item><title>编码器和解码器</title><link>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Netty/encoder-and-decoder/</guid><description>&lt;h1 id="编码器和解码器">
  编码器和解码器
  &lt;a class="anchor" href="#%e7%bc%96%e7%a0%81%e5%99%a8%e5%92%8c%e8%a7%a3%e7%a0%81%e5%99%a8">#&lt;/a>
 &lt;/h1>
@@ -866,4 +1846,30 @@
  &lt;a class="anchor" href="#replayingdecoder">#&lt;/a>
 &lt;/h3>
 &lt;p>&lt;code>ReplayingDecoder&lt;/code> 扩展了 &lt;code>ByteToMessageDecoder&lt;/code> 类，使得我们不必调用 &lt;code>readableBytes()&lt;/code> 方法。它通过使用一个自定义的 &lt;code>ByteBuf&lt;/code> 实现，
-&lt;code>ReplayingDecoderByteBuf&lt;/code>，包装传入的 &lt;code>ByteBuf&lt;/code> 实现了这一点，其将在内部执行该调用&lt;/p></description></item></channel></rss>
+&lt;code>ReplayingDecoderByteBuf&lt;/code>，包装传入的 &lt;code>ByteBuf&lt;/code> 实现了这一点，其将在内部执行该调用&lt;/p>
+&lt;h3 id="messagetomessagedecoder">
+ MessageToMessageDecoder
+ &lt;a class="anchor" href="#messagetomessagedecoder">#&lt;/a>
+&lt;/h3>
+&lt;h2 id="编码器">
+ 编码器
+ &lt;a class="anchor" href="#%e7%bc%96%e7%a0%81%e5%99%a8">#&lt;/a>
+&lt;/h2>
+&lt;h2 id="编解码器类">
+ 编解码器类
+ &lt;a class="anchor" href="#%e7%bc%96%e8%a7%a3%e7%a0%81%e5%99%a8%e7%b1%bb">#&lt;/a>
+&lt;/h2>
+&lt;p>这些类同时实现了 &lt;code>ChannelInboundHandler&lt;/code> 和 &lt;code>ChannelOutboundHandler&lt;/code> 接口。&lt;/p>
+&lt;h3 id="bytetomessagecodec">
+ ByteToMessageCodec
+ &lt;a class="anchor" href="#bytetomessagecodec">#&lt;/a>
+&lt;/h3>
+&lt;h3 id="messagetomessagecodec">
+ MessageToMessageCodec
+ &lt;a class="anchor" href="#messagetomessagecodec">#&lt;/a>
+&lt;/h3>
+&lt;h3 id="combinedchannelduplexhandler">
+ CombinedChannelDuplexHandler
+ &lt;a class="anchor" href="#combinedchannelduplexhandler">#&lt;/a>
+&lt;/h3>
+&lt;p>&lt;code>CombinedChannelDuplexHandler&lt;/code> 可将 &lt;code>ChannelInboundHandler&lt;/code> 和 &lt;code>ChannelOutboundHandler&lt;/code> 结合在一起。&lt;/p></description></item></channel></rss>

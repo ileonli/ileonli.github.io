@@ -38,7 +38,31 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>String url &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;jdbc:mysql://localhost:3306/db&amp;#34;&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>String username &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;root&amp;#34;&lt;/span>, password &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;0987654321&amp;#34;&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Connection conn &lt;span style="color:#f92672">=&lt;/span> DriverManager.&lt;span style="color:#a6e22e">getConnection&lt;/span>(url, username, password);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>&lt;h1 id="methodhandles">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-jdbc-处理-sql-语句">
+ 使用 JDBC 处理 SQL 语句
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8-jdbc-%e5%a4%84%e7%90%86-sql-%e8%af%ad%e5%8f%a5">#&lt;/a>
+&lt;/h2>
+&lt;p>新建一个 &lt;code>user&lt;/code> 表，如下图所示：&lt;/p>
+&lt;p>
+ &lt;img src="https://ileonli.github.io/img/Java/User.png" alt="" />&lt;/p>
+&lt;p>使用 &lt;code>conn&lt;/code> 对象创建 &lt;code>Statement&lt;/code>，使用 &lt;code>stmt&lt;/code> 执行 SQL 语句。&lt;/p>
+&lt;p>&lt;code>ResultSet&lt;/code> 保存了执行 SQL 语句的结果，可以遍历保存的结果。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>String query &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;SELECT * FROM `user`;&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">try&lt;/span> (Statement stmt &lt;span style="color:#f92672">=&lt;/span> conn.&lt;span style="color:#a6e22e">createStatement&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ResultSet rs &lt;span style="color:#f92672">=&lt;/span> stmt.&lt;span style="color:#a6e22e">executeQuery&lt;/span>(query);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (rs.&lt;span style="color:#a6e22e">next&lt;/span>()) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> id &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getInt&lt;/span>(1);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String name &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getString&lt;/span>(2);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">int&lt;/span> age &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getInt&lt;/span>(3);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String email &lt;span style="color:#f92672">=&lt;/span> rs.&lt;span style="color:#a6e22e">getString&lt;/span>(4);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">printf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;id: %d, name: %s, age: %d, email: %s.\n&amp;#34;&lt;/span>, id, name, age, email);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-preparedstatements">
+ 使用 PreparedStatements
+ &lt;a class="anchor" href="#%e4%bd%bf%e7%94%a8-preparedstatements">#&lt;/a>
+&lt;/h2>
+&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>MethodHandles</title><link>https://ileonli.github.io/docs/Java/MethodHandles/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/MethodHandles/</guid><description>&lt;h1 id="methodhandles">
  MethodHandles
  &lt;a class="anchor" href="#methodhandles">#&lt;/a>
 &lt;/h1>
@@ -65,7 +89,22 @@
  &lt;a class="anchor" href="#%e6%96%b9%e6%b3%95%e5%8f%a5%e6%9f%84%e6%9f%a5%e6%89%bemethod-handle-lookup">#&lt;/a>
 &lt;/h2>
 &lt;p>要创建方法句柄，我们首先需要创建一个 
- &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html">&lt;code>LookUp&lt;/code>&lt;/a> 对象，此为创建方法句柄的工厂。根据 &lt;code>Lookup&lt;/code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。&lt;/p></description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>&lt;h1 id="动态代理">
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html">&lt;code>LookUp&lt;/code>&lt;/a> 对象，此为创建方法句柄的工厂。根据 &lt;code>Lookup&lt;/code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。&lt;/p>
+&lt;p>例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。&lt;/p>
+&lt;p>通常我们希望避免这种情况。&lt;strong>一种办法&lt;/strong>是将 &lt;code>Lookup&lt;/code> 对象和方法句柄设为私有。&lt;strong>另一种方法&lt;/strong>是使用 
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html#publicLookup%28%29">&lt;code>MethodHandles.publicLookup&lt;/code>&lt;/a> 方法创建 &lt;code>Lookup&lt;/code> 对象，这样它只能查找公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodHandles.&lt;span style="color:#a6e22e">Lookup&lt;/span> publicLookup &lt;span style="color:#f92672">=&lt;/span> MethodHandles.&lt;span style="color:#a6e22e">publicLookup&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果我们打算将 &lt;code>Lookup&lt;/code> 对象和方法句柄设为私有，那么访问私有和受保护的成员是安全的（外部无法访问私有的方法句柄）：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodHandles.&lt;span style="color:#a6e22e">Lookup&lt;/span> lookup &lt;span style="color:#f92672">=&lt;/span> MethodHandles.&lt;span style="color:#a6e22e">lookup&lt;/span>();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="方法类型method-type">
+ 方法类型（Method type）
+ &lt;a class="anchor" href="#%e6%96%b9%e6%b3%95%e7%b1%bb%e5%9e%8bmethod-type">#&lt;/a>
+&lt;/h2>
+&lt;p>要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息通过 
+ &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodType.html">&lt;code>MethodType&lt;/code>&lt;/a> 类表示。为了实例化一个 &lt;code>MethodType&lt;/code> 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodType methodType &lt;span style="color:#f92672">=&lt;/span> MethodType.&lt;span style="color:#a6e22e">methodType&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* the method returns integer */&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* and accepts a single String argument*/&lt;/span>);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>有了 &lt;code>Lookup&lt;/code> 和 &lt;code>MethodType&lt;/code> 实例后，我们就可以查找方法句柄了。&lt;/p></description></item><item><title>动态代理</title><link>https://ileonli.github.io/docs/Java/DynamicProxy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/Java/DynamicProxy/</guid><description>&lt;h1 id="动态代理">
  动态代理
  &lt;a class="anchor" href="#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86">#&lt;/a>
 &lt;/h1>
@@ -80,4 +119,30 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> InvocationHandler h) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>该方法主要有三个参数：&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>loader&lt;/code>：定义代理类的类加载器。&lt;/li>
+&lt;li>&lt;code>interfaces&lt;/code>：代理类要实现的接口列表。&lt;/li>
+&lt;li>&lt;code>h&lt;/code>：用于分发方法调用的调用处理器。&lt;/li>
+&lt;/ol>
+&lt;h2 id="invocationhandler">
+ InvocationHandler
+ &lt;a class="anchor" href="#invocationhandler">#&lt;/a>
+&lt;/h2>
+&lt;p>当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 &lt;code>InvocationHandler&lt;/code> 接口类的 &lt;code>invoke&lt;/code> 方法来调用。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">InvocationHandler&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">invoke&lt;/span>(Object proxy, Method method, Object&lt;span style="color:#f92672">[]&lt;/span> args)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> Throwable;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>该方法主要有三个参数：&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>proxy&lt;/code>：动态生成的代理类的实例。&lt;/li>
+&lt;li>&lt;code>method&lt;/code>：代理类对象调用的方法。&lt;/li>
+&lt;li>&lt;code>args&lt;/code>：调用 &lt;code>method&lt;/code> 方法的参数。&lt;/li>
+&lt;/ol>
+&lt;p>通过 &lt;code>Proxy&lt;/code> 类的 &lt;code>newProxyInstance()&lt;/code> 创建的代理对象在调用方法的时候，实际会调用到实现 &lt;code>InvocationHandler&lt;/code> 接口的类的 &lt;code>invoke()&lt;/code> 方法。&lt;/p>
+&lt;h2 id="具体步骤">
+ 具体步骤
+ &lt;a class="anchor" href="#%e5%85%b7%e4%bd%93%e6%ad%a5%e9%aa%a4">#&lt;/a>
+&lt;/h2>
+&lt;p>&lt;code>TargetClass&lt;/code> 类继承自 &lt;code>InterfaceA&lt;/code> 和 &lt;code>InterfaceB&lt;/code> 接口。&lt;/p></description></item></channel></rss>

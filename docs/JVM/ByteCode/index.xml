@@ -14,7 +14,30 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>当执行 &lt;code>$javac Main.java&lt;/code> 命令后，会生成 &lt;strong>Main.class&lt;/strong> 和 &lt;strong>Main$InnerClass.class&lt;/strong> 两个 &lt;code>class&lt;/code> 文件。&lt;/p>
+&lt;hr>
+&lt;p>&lt;code>class&lt;/code> 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。&lt;/p>
+&lt;p>使用 &lt;code>u1&lt;/code>、&lt;code>u2&lt;/code> 和 &lt;code>u4&lt;/code> 分别表示 &lt;strong>1 字节&lt;/strong>、&lt;strong>2 字节&lt;/strong>和 &lt;strong>4 字节&lt;/strong>。&lt;/p>
+&lt;h2 id="names">
+ Names
+ &lt;a class="anchor" href="#names">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="二进制类和接口名称">
+ 二进制类和接口名称
+ &lt;a class="anchor" href="#%e4%ba%8c%e8%bf%9b%e5%88%b6%e7%b1%bb%e5%92%8c%e6%8e%a5%e5%8f%a3%e5%90%8d%e7%a7%b0">#&lt;/a>
+&lt;/h3>
+&lt;p>在 Java 虚拟机中，类和接口的名称使用&lt;strong>二进制名称&lt;/strong>格式表示。此格式与源代码中的类名表示略有不同。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>类名和接口名&lt;/strong>：二进制名称使用斜杠（&lt;code>/&lt;/code>）而不是点（&lt;code>.&lt;/code>）来分隔包和类的名称。例如，&lt;code>java.lang.Object&lt;/code> 的二进制名称是 &lt;code>java/lang/Object&lt;/code>。&lt;/li>
+&lt;li>&lt;strong>内部类&lt;/strong>：对于内部类，二进制名称中使用美元符号（&lt;code>$&lt;/code>）来分隔外部类和内部类的名称。例如，&lt;code>OuterClass.InnerClass&lt;/code> 的二进制名称是 &lt;code>OuterClass$InnerClass&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;h3 id="二进制名称的使用场景">
+ 二进制名称的使用场景
+ &lt;a class="anchor" href="#%e4%ba%8c%e8%bf%9b%e5%88%b6%e5%90%8d%e7%a7%b0%e7%9a%84%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">#&lt;/a>
+&lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>字节码指令&lt;/strong>：&lt;/p></description></item><item><title>常量池</title><link>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/JVM/ByteCode/constant_pool/</guid><description>&lt;h1 id="常量池">
  常量池
  &lt;a class="anchor" href="#%e5%b8%b8%e9%87%8f%e6%b1%a0">#&lt;/a>
 &lt;/h1>
@@ -34,4 +57,80 @@
 &lt;/h3>
 &lt;p>常量池允许在类文件中共享常量数据。例如，字符串常量、类名、方法名和字段名等。可以避免了在类文件中多次存储相同的常量，从而减少类文件的大小。&lt;/p>
 &lt;hr>
-&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p></description></item></channel></rss>
+&lt;p>下边的代码，通过 &lt;code>$javac Main.java&lt;/code> 编译后，使用 &lt;code>$javap -v Main.class&lt;/code> 进行反编译。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Main&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String str &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Hello World!&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(str);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">println&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Hello World!&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>public class io.github.ileonli.Main
+ minor version: 0
+ major version: 65
+ flags: (0x0021) ACC_PUBLIC, ACC_SUPER
+ this_class: #21 // io/github/ileonli/Main
+ super_class: #2 // java/lang/Object
+ interfaces: 0, fields: 0, methods: 2, attributes: 1
+Constant pool:
+ #1 = Methodref #2.#3 // java/lang/Object.&amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ #2 = Class #4 // java/lang/Object
+ #3 = NameAndType #5:#6 // &amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ #4 = Utf8 java/lang/Object
+ #5 = Utf8 &amp;lt;init&amp;gt;
+ #6 = Utf8 ()V
+ #7 = String #8 // Hello World!
+ #8 = Utf8 Hello World!
+ #9 = Fieldref #10.#11 // java/lang/System.out:Ljava/io/PrintStream;
+ #10 = Class #12 // java/lang/System
+ #11 = NameAndType #13:#14 // out:Ljava/io/PrintStream;
+ #12 = Utf8 java/lang/System
+ #13 = Utf8 out
+ #14 = Utf8 Ljava/io/PrintStream;
+ #15 = Methodref #16.#17 // java/io/PrintStream.println:(Ljava/lang/String;)V
+ #16 = Class #18 // java/io/PrintStream
+ #17 = NameAndType #19:#20 // println:(Ljava/lang/String;)V
+ #18 = Utf8 java/io/PrintStream
+ #19 = Utf8 println
+ #20 = Utf8 (Ljava/lang/String;)V
+ #21 = Class #22 // io/github/ileonli/Main
+ #22 = Utf8 io/github/ileonli/Main
+ #23 = Utf8 Code
+ #24 = Utf8 LineNumberTable
+ #25 = Utf8 main
+ #26 = Utf8 ([Ljava/lang/String;)V
+ #27 = Utf8 SourceFile
+ #28 = Utf8 Main.java
+{
+ public io.github.ileonli.Main();
+ descriptor: ()V
+ flags: (0x0001) ACC_PUBLIC
+ Code:
+ stack=1, locals=1, args_size=1
+ 0: aload_0
+ 1: invokespecial #1 // Method java/lang/Object.&amp;#34;&amp;lt;init&amp;gt;&amp;#34;:()V
+ 4: return
+ LineNumberTable:
+ line 3: 0
+
+ public static void main(java.lang.String[]);
+ descriptor: ([Ljava/lang/String;)V
+ flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+ Code:
+ stack=2, locals=2, args_size=1
+ 0: ldc #7 // String Hello World!
+ 2: astore_1
+ 3: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream;
+ 6: aload_1
+ 7: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+ 10: getstatic #9 // Field java/lang/System.out:Ljava/io/PrintStream;
+ 13: ldc #7 // String Hello World!
+ 15: invokevirtual #15 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+ 18: return
+ LineNumberTable:
+ line 5: 0
+ line 6: 3
+ line 7: 10
+ line 8: 18
+}
+&lt;/code>&lt;/pre>&lt;p>从 class 文件的反编译结果可以看出 &lt;code>main&lt;/code> 方法中有大量的复用：&lt;/p></description></item></channel></rss>
