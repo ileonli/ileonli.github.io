@@ -356,7 +356,7 @@
  &lt;a class="anchor" href="#flock">#&lt;/a>
 &lt;/h3>
 &lt;p>boltdb 同一时刻只允许一个进程对数据库进行读写操作，因此使用 
- &lt;a href="https%ef%bc%9a//man7.org/linux/man-pages/man2/flock.2.html">&lt;code>flock&lt;/code>&lt;/a> 对数据库文件进行加锁。&lt;/p></description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>&lt;h1 id="boltdb-页结构">
+ &lt;a href="https://man7.org/linux/man-pages/man2/flock.2.html">&lt;code>flock&lt;/code>&lt;/a> 对数据库文件进行加锁。&lt;/p></description></item><item><title>boltdb 页结构</title><link>https://ileonli.github.io/docs/boltdb/page/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://ileonli.github.io/docs/boltdb/page/</guid><description>&lt;h1 id="boltdb-页结构">
  boltdb 页结构
  &lt;a class="anchor" href="#boltdb-%e9%a1%b5%e7%bb%93%e6%9e%84">#&lt;/a>
 &lt;/h1>
