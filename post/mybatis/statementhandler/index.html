@@ -1,0 +1,168 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>MyBatis StatementHandler</title>
+<link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><style>:root{--font-sans:"LXGW WenKai GB", "Hiragino Sans GB", "冬青黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Helvetica, Tahoma, Arial, sans-serif}</style></head><body class="bg:fade-84@dark font:fade-16@dark font:sans"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
+_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(code){font:90%;_v:middle}
+_:where(code:not(.highlight_*,pre_*)){p:2}
+_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(h1,h2,h3,h4,h5,h6){mt:1em}
+_:where(h1){font:40;_font:extrabold}
+_:where(h1){my:1em}
+_:where(h2){font:32}
+_:where(h3){font:24}
+_:where(h4){font:20}
+_:where(h5){font:16}
+_:where(h6){font:14}
+_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li){pl:.375em}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+>:first-child{mt:0!}
+_:where(pre){p:20;_r:8;_overflow:auto}
+_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(table){width:full;_border-spacing:0}
+_:where(td){v:baseline}
+_:where(td,th):first-child{pl:0}
+_:where(td,th):last-child{pr:0}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(ul){list-style-type:disc}
+_:where(ul,ol,blockquote){pl:1em}
+_:where(video,img){max-width:full}
+_:where(video){mx:auto}
+_:where(img){mx:auto}
+_:where(a,mark){text-underline-offset:3}
+_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=statementhandler>StatementHandler</h1><p><code>StatementHandler</code> 接口中的功能很多，例如创建 <code>Statement</code> 对象，为 SQL 语句绑定实参，执行 select、insert、update、delete 等多种类型的 SQL 语句，批量执行 SQL 语句，将结果集映射成结果对象。</p><p><img src=/img/MyBatis/StatementHandler.png alt></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>StatementHandler</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  Statement <span style=color:#a6e22e>prepare</span>(Connection connection, Integer transactionTimeout) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>parameterize</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>batch</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>update</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>query</span>(Statement statement, ResultHandler resultHandler) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> Cursor<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>queryCursor</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  BoundSql <span style=color:#a6e22e>getBoundSql</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  ParameterHandler <span style=color:#a6e22e>getParameterHandler</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li><code>prepare</code>：从 <code>Connection</code> 中创建 <code>Statement</code> 对象。</li><li><code>parameterize</code>：绑定 <code>statement</code> 执行时需要的参数。</li><li><code>batch</code>：批量执行 SQL 语句。</li><li><code>update</code>：执行 insert、update 和 delete 操作。</li><li><code>query</code> 和 <code>queryCursor</code>：用于执行 select 操作。</li><li><code>getBoundSql</code>：获取绑定的 SQL。</li><li><code>getParameterHandler</code>：负责处理 SQL 语句中的参数的处理器。</li></ul><h2 id=basestatementhandler>BaseStatementHandler</h2><h3 id=prepare>prepare</h3><p><code>BaseStatementHandler</code> 中设计了模板方法 <code>prepare</code>，通过该方法可以获取 <code>Statement</code> 对象。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> Statement <span style=color:#a6e22e>prepare</span>(Connection connection, Integer transactionTimeout) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  ErrorContext.<span style=color:#a6e22e>instance</span>().<span style=color:#a6e22e>sql</span>(boundSql.<span style=color:#a6e22e>getSql</span>());
+</span></span><span style=display:flex><span>  Statement statement <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    statement <span style=color:#f92672>=</span> instantiateStatement(connection);
+</span></span><span style=display:flex><span>    setStatementTimeout(statement, transactionTimeout);
+</span></span><span style=display:flex><span>    setFetchSize(statement);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> statement;
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (SQLException e) {
+</span></span><span style=display:flex><span>    closeStatement(statement);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> e;
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>    closeStatement(statement);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> ExecutorException(<span style=color:#e6db74>&#34;Error preparing statement.  Cause: &#34;</span> <span style=color:#f92672>+</span> e, e);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>abstract</span> Statement <span style=color:#a6e22e>instantiateStatement</span>(Connection connection) <span style=color:#66d9ef>throws</span> SQLException;
+</span></span></code></pre></div><h3 id=参数和结果处理组件>参数和结果处理组件</h3><p><code>BaseStatementHandler</code> 依赖两个重要的组件，它们分别是 <code>ParameterHandler</code> 和 <code>ResultSetHandler</code>。</p><ul><li><code>ParameterHandler</code>：<code>BoundSql</code> 中记录的 SQL 语句可能包含 ? 占位符，每个 ? 都对应了 <code>BoundSql</code> 中 <code>parameterMappings</code> 集合中的一个元素，在该 <code>ParameterMapping</code> 对象中记录了对应的参数名称以及该参数的相关属性。<code>ParameterHandler</code> 负责调用 <code>PreparedStatement</code> 的一系列 <code>set*()</code> 方法为 SQL 语句绑定实参。</li><li><code>ResultSetHandler</code>：用于将查询到的 <code>ResultSet</code> 进行处理，转为 model。</li></ul><h2 id=routingstatementhandler>RoutingStatementHandler</h2><p><code>RoutingStatementHandler</code> 内部会根据 <code>StatementType</code> 创建不同的处理对象。</p><p>后续该类的所有操作都会转发到 <code>delegate</code> 对象上进行处理。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> StatementHandler delegate;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>RoutingStatementHandler</span>(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+</span></span><span style=display:flex><span>    ResultHandler resultHandler, BoundSql boundSql) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>switch</span> (ms.<span style=color:#a6e22e>getStatementType</span>()) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> STATEMENT:
+</span></span><span style=display:flex><span>      delegate <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> PREPARED:
+</span></span><span style=display:flex><span>      delegate <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> PreparedStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> CALLABLE:
+</span></span><span style=display:flex><span>      delegate <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> CallableStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>default</span>:
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> ExecutorException(<span style=color:#e6db74>&#34;Unknown statement type: &#34;</span> <span style=color:#f92672>+</span> ms.<span style=color:#a6e22e>getStatementType</span>());
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=simplestatementhandler>SimpleStatementHandler</h2><p><code>SimpleStatementHandler</code> 中重写的 <code>instantiateStatement</code> 方法会直接使用 <code>connection.createStatement();</code> 创建一个 <code>Statement</code> 实例。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>protected</span> Statement <span style=color:#a6e22e>instantiateStatement</span>(Connection connection) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (mappedStatement.<span style=color:#a6e22e>getResultSetType</span>() <span style=color:#f92672>==</span> ResultSetType.<span style=color:#a6e22e>DEFAULT</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>createStatement</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>createStatement</span>(mappedStatement.<span style=color:#a6e22e>getResultSetType</span>().<span style=color:#a6e22e>getValue</span>(), ResultSet.<span style=color:#a6e22e>CONCUR_READ_ONLY</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>该对象上的所有操作都会直接通过 <code>java.sql.Statement</code> 对象来完成数据库的所有操作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>update</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  Object parameterObject <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getParameterObject</span>();
+</span></span><span style=display:flex><span>  KeyGenerator keyGenerator <span style=color:#f92672>=</span> mappedStatement.<span style=color:#a6e22e>getKeyGenerator</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>int</span> rows;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (keyGenerator <span style=color:#66d9ef>instanceof</span> Jdbc3KeyGenerator) {
+</span></span><span style=display:flex><span>    statement.<span style=color:#a6e22e>execute</span>(sql, Statement.<span style=color:#a6e22e>RETURN_GENERATED_KEYS</span>);
+</span></span><span style=display:flex><span>    rows <span style=color:#f92672>=</span> statement.<span style=color:#a6e22e>getUpdateCount</span>();
+</span></span><span style=display:flex><span>    keyGenerator.<span style=color:#a6e22e>processAfter</span>(executor, mappedStatement, statement, parameterObject);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (keyGenerator <span style=color:#66d9ef>instanceof</span> SelectKeyGenerator) {
+</span></span><span style=display:flex><span>    statement.<span style=color:#a6e22e>execute</span>(sql);
+</span></span><span style=display:flex><span>    rows <span style=color:#f92672>=</span> statement.<span style=color:#a6e22e>getUpdateCount</span>();
+</span></span><span style=display:flex><span>    keyGenerator.<span style=color:#a6e22e>processAfter</span>(executor, mappedStatement, statement, parameterObject);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>    statement.<span style=color:#a6e22e>execute</span>(sql);
+</span></span><span style=display:flex><span>    rows <span style=color:#f92672>=</span> statement.<span style=color:#a6e22e>getUpdateCount</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> rows;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>batch</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  statement.<span style=color:#a6e22e>addBatch</span>(sql);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>query</span>(Statement statement, ResultHandler resultHandler) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  statement.<span style=color:#a6e22e>execute</span>(sql);
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> resultSetHandler.<span style=color:#a6e22e>handleResultSets</span>(statement);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> Cursor<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>queryCursor</span>(Statement statement) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  statement.<span style=color:#a6e22e>execute</span>(sql);
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> resultSetHandler.<span style=color:#a6e22e>handleCursorResultSets</span>(statement);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=preparedstatementhandler>PreparedStatementHandler</h2><p><code>PreparedStatementHandler</code> 依赖于 <code>java.sql.PreparedStatement</code> 对象完成对数据库的操作。</p><p><code>java.sql.PreparedStatement</code> 用于执行预编译的 SQL 语句，尤其适合于执行多次的 SQL 查询或更新操作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>protected</span> Statement <span style=color:#a6e22e>instantiateStatement</span>(Connection connection) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (mappedStatement.<span style=color:#a6e22e>getKeyGenerator</span>() <span style=color:#66d9ef>instanceof</span> Jdbc3KeyGenerator) {
+</span></span><span style=display:flex><span>    String<span style=color:#f92672>[]</span> keyColumnNames <span style=color:#f92672>=</span> mappedStatement.<span style=color:#a6e22e>getKeyColumns</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (keyColumnNames <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareStatement</span>(sql, Statement.<span style=color:#a6e22e>RETURN_GENERATED_KEYS</span>);
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareStatement</span>(sql, keyColumnNames);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (mappedStatement.<span style=color:#a6e22e>getResultSetType</span>() <span style=color:#f92672>==</span> ResultSetType.<span style=color:#a6e22e>DEFAULT</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareStatement</span>(sql);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareStatement</span>(sql, mappedStatement.<span style=color:#a6e22e>getResultSetType</span>().<span style=color:#a6e22e>getValue</span>(),
+</span></span><span style=display:flex><span>        ResultSet.<span style=color:#a6e22e>CONCUR_READ_ONLY</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=callablestatementhandler>CallableStatementHandler</h2><p><code>CallableStatementHandler</code> 依赖于 <code>java.sql.CallableStatement</code> 对象完成对数据库的操作。</p><p><code>java.sql.CallableStatement</code> 专门用于调用数据库中的存储过程或函数。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>protected</span> Statement <span style=color:#a6e22e>instantiateStatement</span>(Connection connection) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  String sql <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getSql</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (mappedStatement.<span style=color:#a6e22e>getResultSetType</span>() <span style=color:#f92672>==</span> ResultSetType.<span style=color:#a6e22e>DEFAULT</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareCall</span>(sql);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> connection.<span style=color:#a6e22e>prepareCall</span>(sql, mappedStatement.<span style=color:#a6e22e>getResultSetType</span>().<span style=color:#a6e22e>getValue</span>(), ResultSet.<span style=color:#a6e22e>CONCUR_READ_ONLY</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>

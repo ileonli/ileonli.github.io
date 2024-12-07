@@ -1,0 +1,152 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>MyBatis SqlSession</title>
+<link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><style>:root{--font-sans:"LXGW WenKai GB", "Hiragino Sans GB", "冬青黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Helvetica, Tahoma, Arial, sans-serif}</style></head><body class="bg:fade-84@dark font:fade-16@dark font:sans"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
+_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(code){font:90%;_v:middle}
+_:where(code:not(.highlight_*,pre_*)){p:2}
+_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(h1,h2,h3,h4,h5,h6){mt:1em}
+_:where(h1){font:40;_font:extrabold}
+_:where(h1){my:1em}
+_:where(h2){font:32}
+_:where(h3){font:24}
+_:where(h4){font:20}
+_:where(h5){font:16}
+_:where(h6){font:14}
+_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li){pl:.375em}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+>:first-child{mt:0!}
+_:where(pre){p:20;_r:8;_overflow:auto}
+_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(table){width:full;_border-spacing:0}
+_:where(td){v:baseline}
+_:where(td,th):first-child{pl:0}
+_:where(td,th):last-child{pr:0}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(ul){list-style-type:disc}
+_:where(ul,ol,blockquote){pl:1em}
+_:where(video,img){max-width:full}
+_:where(video){mx:auto}
+_:where(img){mx:auto}
+_:where(a,mark){text-underline-offset:3}
+_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=sqlsession>SqlSession</h1><p><code>SalSession</code> 是用于操作数据库的接口，具体的操作都通过此接口。</p><p><img src=/img/MyBatis/SqlSession.png alt></p><h2 id=sqlsessionfactorybuilder>SqlSessionFactoryBuilder</h2><p>此类可以被实例化、使用和丢弃，一旦使用此类创建了 <code>SqlSessionFactory</code>，后续就不需要使用此类了。因此 <code>SqlSessionFactoryBuilder</code> 实例的最佳作用域是方法作用域（也就是局部方法变量）。</p><p>可以重用 <code>SqlSessionFactoryBuilder</code> 来创建多个 <code>SqlSessionFactory</code> 实例，但最好还是不要一直保留着它，以保证 XML 资源可以被释放。</p><h2 id=sqlsessionfactory>SqlSessionFactory</h2><p><code>SqlSessionFactory</code> 一旦被创建就应该在应用的运行期间一直存在，没有任何理由丢弃它或重新创建另一个实例。使用 <code>SqlSessionFactory</code> 的最佳实践是在应用运行期间只创建一次。</p><hr><p><code>SqlSessionFactory</code> 的作用是为了创建 <code>SqlSession</code> 实例。<code>SqlSession</code> 是 MyBatis 执行 SQL 命令的核心接口，通过此实例可以对数据库进行查询、插入、更新和删除操作。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#f92672>import</span> java.sql.Connection;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Creates an {@link SqlSession} out of a connection or a DataSource
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @author Clinton Begin
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>SqlSessionFactory</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(<span style=color:#66d9ef>boolean</span> autoCommit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(Connection connection);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(TransactionIsolationLevel level);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(ExecutorType execType);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(ExecutorType execType, <span style=color:#66d9ef>boolean</span> autoCommit);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(ExecutorType execType, TransactionIsolationLevel level);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  SqlSession <span style=color:#a6e22e>openSession</span>(ExecutorType execType, Connection connection);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  Configuration <span style=color:#a6e22e>getConfiguration</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><hr><p><code>SqlSessionFactory</code> 主要有两个具体的实现：</p><ul><li><code>DefaultSqlSessionFactory</code>：</li><li><code>SqlSessionManager</code>：</li></ul><h3 id=defaultsqlsessionfactory>DefaultSqlSessionFactory</h3><p><code>DefaultSqlSessionFactory</code> 是用于获取 <code>SqlSession</code> 的工厂类。</p><p>有下边两种创建 <code>SqlSession</code> 的具体实现：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> SqlSession <span style=color:#a6e22e>openSessionFromDataSource</span>(ExecutorType execType, TransactionIsolationLevel level, <span style=color:#66d9ef>boolean</span> autoCommit) {
+</span></span><span style=display:flex><span>  Transaction tx <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Environment environment <span style=color:#f92672>=</span> configuration.<span style=color:#a6e22e>getEnvironment</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> TransactionFactory transactionFactory <span style=color:#f92672>=</span> getTransactionFactoryFromEnvironment(environment);
+</span></span><span style=display:flex><span>    tx <span style=color:#f92672>=</span> transactionFactory.<span style=color:#a6e22e>newTransaction</span>(environment.<span style=color:#a6e22e>getDataSource</span>(), level, autoCommit);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Executor executor <span style=color:#f92672>=</span> configuration.<span style=color:#a6e22e>newExecutor</span>(tx, execType);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> DefaultSqlSession(configuration, executor, autoCommit);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>    closeTransaction(tx); <span style=color:#75715e>// may have fetched a connection so lets call close()</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> ExceptionFactory.<span style=color:#a6e22e>wrapException</span>(<span style=color:#e6db74>&#34;Error opening session.  Cause: &#34;</span> <span style=color:#f92672>+</span> e, e);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>finally</span> {
+</span></span><span style=display:flex><span>    ErrorContext.<span style=color:#a6e22e>instance</span>().<span style=color:#a6e22e>reset</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> SqlSession <span style=color:#a6e22e>openSessionFromConnection</span>(ExecutorType execType, Connection connection) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>boolean</span> autoCommit;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>      autoCommit <span style=color:#f92672>=</span> connection.<span style=color:#a6e22e>getAutoCommit</span>();
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>catch</span> (SQLException e) {
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// Failover to true, as most poor drivers</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// or databases won&#39;t support transactions</span>
+</span></span><span style=display:flex><span>      autoCommit <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Environment environment <span style=color:#f92672>=</span> configuration.<span style=color:#a6e22e>getEnvironment</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> TransactionFactory transactionFactory <span style=color:#f92672>=</span> getTransactionFactoryFromEnvironment(environment);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Transaction tx <span style=color:#f92672>=</span> transactionFactory.<span style=color:#a6e22e>newTransaction</span>(connection);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Executor executor <span style=color:#f92672>=</span> configuration.<span style=color:#a6e22e>newExecutor</span>(tx, execType);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> DefaultSqlSession(configuration, executor, autoCommit);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> ExceptionFactory.<span style=color:#a6e22e>wrapException</span>(<span style=color:#e6db74>&#34;Error opening session.  Cause: &#34;</span> <span style=color:#f92672>+</span> e, e);
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>finally</span> {
+</span></span><span style=display:flex><span>    ErrorContext.<span style=color:#a6e22e>instance</span>().<span style=color:#a6e22e>reset</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=sqlsessionmanager>SqlSessionManager</h3><p><code>SqlSessionManager</code> 内部保存了一个 <code>ThreadLocal</code> 用于保存 <code>SqlSession</code>。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SqlSessionManager</span> <span style=color:#66d9ef>implements</span> SqlSessionFactory, SqlSession {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> SqlSessionFactory sqlSessionFactory;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> SqlSession sqlSessionProxy;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> ThreadLocal<span style=color:#f92672>&lt;</span>SqlSession<span style=color:#f92672>&gt;</span> localSqlSession <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ThreadLocal<span style=color:#f92672>&lt;&gt;</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>SqlSessionManager</span>(SqlSessionFactory sqlSessionFactory) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>sqlSessionFactory</span> <span style=color:#f92672>=</span> sqlSessionFactory;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>sqlSessionProxy</span> <span style=color:#f92672>=</span> (SqlSession) Proxy.<span style=color:#a6e22e>newProxyInstance</span>(SqlSessionFactory.<span style=color:#a6e22e>class</span>.<span style=color:#a6e22e>getClassLoader</span>(),
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>new</span> Class<span style=color:#f92672>[]</span> { SqlSession.<span style=color:#a6e22e>class</span> }, <span style=color:#66d9ef>new</span> SqlSessionInterceptor());
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>sqlSessionProxy</code> 是通过动态代理代理的类，当获取 <code>SqlSession</code> 时，会先从 <code>localSqlSession</code> 中获取，如果不存在才新建 <code>SqlSession</code>。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SqlSessionInterceptor</span> <span style=color:#66d9ef>implements</span> InvocationHandler {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SqlSessionInterceptor</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Prevent Synthetic Access</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> Object <span style=color:#a6e22e>invoke</span>(Object proxy, Method method, Object<span style=color:#f92672>[]</span> args) <span style=color:#66d9ef>throws</span> Throwable {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> SqlSession sqlSession <span style=color:#f92672>=</span> SqlSessionManager.<span style=color:#a6e22e>this</span>.<span style=color:#a6e22e>localSqlSession</span>.<span style=color:#a6e22e>get</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (sqlSession <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> method.<span style=color:#a6e22e>invoke</span>(sqlSession, args);
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>catch</span> (Throwable t) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> ExceptionUtil.<span style=color:#a6e22e>unwrapThrowable</span>(t);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> (SqlSession autoSqlSession <span style=color:#f92672>=</span> openSession()) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>final</span> Object result <span style=color:#f92672>=</span> method.<span style=color:#a6e22e>invoke</span>(autoSqlSession, args);
+</span></span><span style=display:flex><span>        autoSqlSession.<span style=color:#a6e22e>commit</span>();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> result;
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>catch</span> (Throwable t) {
+</span></span><span style=display:flex><span>        autoSqlSession.<span style=color:#a6e22e>rollback</span>();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> ExceptionUtil.<span style=color:#a6e22e>unwrapThrowable</span>(t);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>当使用 <code>startManagedSession</code> 方法时，会新建一个 <code>SqlSession</code>，并保存到 <code>localSqlSession</code> 中。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>startManagedSession</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>localSqlSession</span>.<span style=color:#a6e22e>set</span>(openSession());
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><hr><p>所有操作都会通过 <code>sqlSessionProxy</code> 进行代理，复用同一个 <code>SqlSession</code>。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> T <span style=color:#a6e22e>selectOne</span>(String statement) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> sqlSessionProxy.<span style=color:#a6e22e>selectOne</span>(statement);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>下图中的操作和上边一样，同样会经过 <code>sqlSessionProxy</code> 进行代理。</p><p><img src=/img/MyBatis/SqlSession-actions.png alt></p><h2 id=sqlsession-1>SqlSession</h2><p>每个线程都应该有自己的 <code>SqlSession</code> 实例，<code>SqlSession</code> 实例不是线程安全的，因此是不能被共享的，所以它的最佳的作用域是请求或方法作用域。</p><p><code>SqlSession</code> 继承了 <code>Closeable</code> 接口，下边是使用 <code>SqlSession</code> 的最佳实践：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>try</span> (SqlSession session <span style=color:#f92672>=</span> sqlSessionFactory.<span style=color:#a6e22e>openSession</span>()) {
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// 你的应用逻辑代码</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Class 文件结构</title>
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style>
+
+</head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:800 w:full box:content-box">
+<article class="box:border-box pt:32"><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1,h2,h3,h4,h5,h6){mt:1em}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1){my:1em}
+    _:where(h2){font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1em}
+    _:where(video,img){max-width:full}
+    _:where(video){mx:auto}
+    _:where(img){mx:auto}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}
+"><h1 id="class-文件结构">Class 文件结构</h1>
+<h2 id="前言">前言</h2>
+<p>任何一个 <code>class</code> 文件都会对应一个类或接口，但并不是所有的类和接口都有对应的 <code>class</code> 文件（如：动态生成的类）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Java" data-lang="Java"><span style="display:flex;"><span><span style="color:#75715e">// Main.java</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Main</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InnerClass</span> {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当执行 <code>$javac Main.java</code> 命令后，会生成 <strong>Main.class</strong> 和 <strong>Main$InnerClass.class</strong> 两个 <code>class</code> 文件。</p>
+<hr>
+<p><code>class</code> 文件由 8-bit 字节流组成。16-bit 和 32-bit 分别由 2 个和 4 个连续的 8-bit 组成。多字节数据使用大端（bit-endian）序保存。</p>
+<p>使用 <code>u1</code>、<code>u2</code> 和 <code>u4</code> 分别表示 <strong>1 字节</strong>、<strong>2 字节</strong>和 <strong>4 字节</strong>。</p>
+<h2 id="names">Names</h2>
+<h3 id="二进制类和接口名称">二进制类和接口名称</h3>
+<p>在 Java 虚拟机中，类和接口的名称使用<strong>二进制名称</strong>格式表示。此格式与源代码中的类名表示略有不同。</p>
+<ul>
+<li><strong>类名和接口名</strong>：二进制名称使用斜杠（<code>/</code>）而不是点（<code>.</code>）来分隔包和类的名称。例如，<code>java.lang.Object</code> 的二进制名称是 <code>java/lang/Object</code>。</li>
+<li><strong>内部类</strong>：对于内部类，二进制名称中使用美元符号（<code>$</code>）来分隔外部类和内部类的名称。例如，<code>OuterClass.InnerClass</code> 的二进制名称是 <code>OuterClass$InnerClass</code>。</li>
+</ul>
+<h3 id="二进制名称的使用场景">二进制名称的使用场景</h3>
+<ul>
+<li>
+<p><strong>字节码指令</strong>：</p>
+<ul>
+<li>在字节码指令中，类和接口的引用通常使用二进制名称。例如，<code>L</code> 类型签名前缀后跟随二进制名称，如 <code>Ljava/lang/Object;</code> 表示 <code>java.lang.Object</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>类文件格式</strong>：</p>
+<ul>
+<li>在类文件的常量池中，类和接口的名称存储为二进制名称形式。例如，<code>CONSTANT_Class_info</code> 结构中引用的名称是二进制名称。</li>
+</ul>
+</li>
+</ul>
+<h4 id="示例">示例</h4>
+<ol>
+<li>
+<p><strong>普通类</strong>：</p>
+<ul>
+<li>源代码名称：<code>com.example.MyClass</code></li>
+<li>二进制名称：<code>com/example/MyClass</code></li>
+</ul>
+</li>
+<li>
+<p><strong>内部类</strong>：</p>
+<ul>
+<li>源代码名称：<code>com.example.OuterClass.InnerClass</code></li>
+<li>二进制名称：<code>com/example/OuterClass$InnerClass</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="classfile">ClassFile</h2>
+<pre tabindex="0"><code>ClassFile {
+    u4 magic;
+    u2 minor_version;
+    u2 major_version;
+    u2 constant_pool_count;
+    cp_info constant_pool[constant_pool_count-1];
+    u2 access_flags;
+    u2 this_class;
+    u2 super_class;
+    u2 interfaces_count;
+    u2 interfaces[interfaces_count];
+    u2 fields_count;
+    field_info fields[fields_count];
+    u2 methods_count;
+    method_info methods[methods_count];
+    u2 attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</code></pre><h2 id="magic">magic</h2>
+<p><code>magic</code> 用于标识 <code>class</code> 文件的魔法数字，值为：<code>0xCAFEBABE</code>。</p>
+<h2 id="minor_version-major_version">minor_version, major_version</h2>
+<p><code>minor_version</code> 和 <code>major_version</code> 分别表示 <code>class</code> 文件的<strong>次版本</strong>和<strong>主版本</strong>。使用主次版本一起表示 <code>class</code> 文件的版本，格式为：<code>major_version.minor_version</code>。</p>
+<p>每次发布新版本的 Java SE 都会有新的 <code>major_version</code>，反映重大变更和新特性引入。主版本内的 <code>minor_version</code> 通常用来指示类文件格式的次要更新和改进。</p>
+<blockquote>
+<p>高 <code>major_version</code> 的 JVM 可以支持低 <code>major_version</code> 的类文件。</p>
+</blockquote>
+<p><a href="https://javaalmanac.io/bytecode/versions/">Class File Versions</a> 可以查看所有 Java SE 对应的主版本。</p>
+<h2 id="constant_pool_count-constant_pool">constant_pool_count, constant_pool</h2>
+<p>常量池是一个包含多种结构的表，用于表示类文件结构及其子结构中引用的各种字符串常量、类和接口名称、字段名称以及其他常量。</p>
+<p><code>constant_pool_count</code> 为常量池中条目（entry）的数量加 1。<code>constant_pool</code> 表的索引为：1 至 <code>constant_pool_count - 1</code>。</p>
+<h2 id="access_flags">access_flags</h2>
+<p>访问标志 (access_flags) 是用于表示类或接口的访问权限和属性的标志掩码。每个标志位表示特定的访问权限或属性。</p>
+<p>下表为 JDK 21 的类访问和属性修饰符：</p>
+<table>
+  <thead>
+      <tr>
+          <th>Flag Name</th>
+          <th>Value</th>
+          <th>Interpretation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>ACC_PUBLIC</td>
+          <td>0x0001</td>
+          <td>Declared public; may be accessed from outside its package.</td>
+      </tr>
+      <tr>
+          <td>ACC_FINAL</td>
+          <td>0x0010</td>
+          <td>Declared final; no subclasses allowed.</td>
+      </tr>
+      <tr>
+          <td>ACC_SUPER</td>
+          <td>0x0020</td>
+          <td>Treat superclass methods specially when invoked by the <code>invokespecial</code> instruction.</td>
+      </tr>
+      <tr>
+          <td>ACC_INTERFACE</td>
+          <td>0x0200</td>
+          <td>Is an interface, not a class.</td>
+      </tr>
+      <tr>
+          <td>ACC_ABSTRACT</td>
+          <td>0x0400</td>
+          <td>Declared abstract; must not be instantiated.</td>
+      </tr>
+      <tr>
+          <td>ACC_SYNTHETIC</td>
+          <td>0x1000</td>
+          <td>Declared synthetic; not present in the source code.</td>
+      </tr>
+      <tr>
+          <td>ACC_ANNOTATION</td>
+          <td>0x2000</td>
+          <td>Declared as an annotation interface.</td>
+      </tr>
+      <tr>
+          <td>ACC_ENUM</td>
+          <td>0x4000</td>
+          <td>Declared as an enum class.</td>
+      </tr>
+      <tr>
+          <td>ACC_MODULE</td>
+          <td>0x8000</td>
+          <td>Is a module, not a class or interface.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="this_class">this_class</h2>
+<p><code>this_class</code> 项目必须是一个有效的常量池索引。该索引指向的常量池条目必须是一个 <code>CONSTANT_Class_info</code> 结构，表示由该类文件定义的类或接口。</p>
+<h2 id="super_class">super_class</h2>
+<p><code>super_class</code> 用于表示当前类或接口的父类，该索引指向常量池中的条目。</p>
+<h3 id="对于类">对于类</h3>
+<ul>
+<li>如果 <code>super_class</code> 非 0，该索引指向的常量池条目必须是一个 <code>CONSTANT_Class_info</code> 结构，表示由该类文件定义的类或接口。</li>
+<li>如果 <code>super_class</code> 为 0，表示该类为 <code>Object</code>。唯一一个没有直接父类的类。</li>
+</ul>
+<h3 id="对于接口">对于接口</h3>
+<p>对于接口来说，<code>super_class</code> 始终为指向常量池条目的合法索引。所有接口的父类都为 <code>Object</code> 类。</p>
+<hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Java" data-lang="Java"><span style="display:flex;"><span><span style="color:#75715e">// Interface.java</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Interface</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用 <code>$javap -v Interface.class</code> 反编译后的部分结果。</p>
+<pre tabindex="0"><code>// Interface.class
+public interface io.github.ileonli.Interface
+  minor version: 0
+  major version: 65
+  flags: (0x0601) ACC_PUBLIC, ACC_INTERFACE, ACC_ABSTRACT
+  this_class: #1                          // io/github/ileonli/Interface
+  super_class: #3                         // java/lang/Object
+  interfaces: 0, fields: 0, methods: 0, attributes: 1
+Constant pool:
+  #1 = Class              #2              // io/github/ileonli/Interface
+  #2 = Utf8               io/github/ileonli/Interface
+  #3 = Class              #4              // java/lang/Object
+  #4 = Utf8               java/lang/Object
+  #5 = Utf8               SourceFile
+  #6 = Utf8               Interface.java
+</code></pre><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Java" data-lang="Java"><span style="display:flex;"><span><span style="color:#75715e">// Interface.java</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Interface</span> <span style="color:#66d9ef">extends</span> Cloneable {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用 <code>$javap -v Interface.class</code> 反编译后的部分结果。</p>
+<pre tabindex="0"><code>// Interface.class
+public interface io.github.ileonli.Interface extends java.lang.Cloneable
+  minor version: 0
+  major version: 65
+  flags: (0x0601) ACC_PUBLIC, ACC_INTERFACE, ACC_ABSTRACT
+  this_class: #1                          // io/github/ileonli/Interface
+  super_class: #3                         // java/lang/Object
+  interfaces: 1, fields: 0, methods: 0, attributes: 1
+Constant pool:
+  #1 = Class              #2              // io/github/ileonli/Interface
+  #2 = Utf8               io/github/ileonli/Interface
+  #3 = Class              #4              // java/lang/Object
+  #4 = Utf8               java/lang/Object
+  #5 = Class              #6              // java/lang/Cloneable
+  #6 = Utf8               java/lang/Cloneable
+  #7 = Utf8               SourceFile
+  #8 = Utf8               Interface.java
+</code></pre><h2 id="interfaces_count-interfaces">interfaces_count, interfaces[]</h2>
+</div></article>
+
+        </div>
+    </div>
+</body>
+
+</html>

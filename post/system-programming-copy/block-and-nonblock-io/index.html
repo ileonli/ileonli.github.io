@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>（非）阻塞 I/O</title>
+
+    <link href="https://unpkg.com/@master/normal.css" rel="stylesheet">
+    <script src="https://unpkg.com/@master/style@1.5.0"></script>
+    <script src="https://unpkg.com/@master/styles@1.13.0"></script>
+    <script src="https://unpkg.com/master-styles-group"></script>
+
+    <style>
+        :root {
+            --font-sans: "Inter var", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        }
+    </style>
+
+</head>
+<body class="bg:fade-84@dark font:fade-16@dark font:sans">
+    <div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word">
+        <div class="max-w:800 w:full box:content-box">
+<article class="box:border-box pt:32"><div class="
+    _:where(a):hover{text-decoration-color:fade}
+    _:where(a){text-decoration:2;underline;fade-10;_text-decoration-color:fade-70@dark}
+    _:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+    _:where(code){font:90%;_v:middle}
+    _:where(code:not(.highlight_*,pre_*)){p:2;6;_r:4}
+    _:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+    _:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+    _:where(h1,h2,h3,h4,h5,h6){mt:1em}
+    _:where(h1){font:40;_font:extrabold}
+    _:where(h1){my:1em}
+    _:where(h2){font:32}
+    _:where(h3){font:24}
+    _:where(h4){font:20}
+    _:where(h5){font:16}
+    _:where(h6){font:14}
+    _:where(li)::marker{font:fade-44;_font:fade-68@dark}
+    _:where(li){pl:.375em}
+    _:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+    _:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+    _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+    >:first-child{mt:0!}
+    _:where(pre){p:20;_r:8;_overflow:auto}
+    _:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+    _:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+    _:where(table){width:full;_border-spacing:0}
+    _:where(td){v:baseline}
+    _:where(td,th):first-child{pl:0}
+    _:where(td,th):last-child{pr:0}
+    _:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+    _:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+    _:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+    _:where(ul){list-style-type:disc}
+    _:where(ul,ol,blockquote){pl:1em}
+    _:where(video,img){max-width:full}
+    _:where(video){mx:auto}
+    _:where(img){mx:auto}
+    _:where(a,mark){text-underline-offset:3}
+    _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}
+"><h1 id="非阻塞-io-和-epoll翻译">（非）阻塞 I/O 和 epoll（翻译）</h1>
+<blockquote>
+<p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll</p>
+</blockquote>
+<p>在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:</p>
+<ol>
+<li>使用 <code>fcntl</code> 函数设置文件描述符的 <code>O_NONBLOCK</code> 时的语义。</li>
+<li>非阻塞（nonblocking） I/O 与异步（asynchronous） I/O 的区别。</li>
+<li>为什么非阻塞 I/O 经常与诸如 <code>select</code>、<code>epoll</code> 和 <code>kqueue</code> 等 I/O 多路复用器一起使用。</li>
+<li>非阻塞模式如何与 <code>epoll</code> 中的边缘触发轮询交互。</li>
+</ol>
+<h2 id="阻塞模式">阻塞模式</h2>
+<p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 <code>read</code>、<code>write</code> 或 <code>connect</code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 <code>stdin</code> 读取数据时会发生什么。如果你在 <code>stdin</code>上调用 <code>read</code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 <code>stdin</code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 <code>read</code> 调用将会阻塞，直到连接的另一端实际上发送数据。</p>
+<p>阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：</p>
+<ol>
+<li>非阻塞模式。</li>
+<li>I/O 多路复用系统调用，例如 <code>select</code> 和 <code>epoll</code>。</li>
+</ol>
+<p>这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。</p>
+<h2 id="非阻塞模式">非阻塞模式</h2>
+<p>通过 <code>fcntl</code> 函数在文件描述符的标志集中添加 <code>O_NONBLOCK</code>，可以将文件描述符设置为“非阻塞模式”：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">/* set O_NONBLOCK on fd */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> flags <span style="color:#f92672">=</span> <span style="color:#a6e22e">fcntl</span>(fd, F_GETFL, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fcntl</span>(fd, F_SETFL, flags <span style="color:#f92672">|</span> O_NONBLOCK);
+</span></span></code></pre></div><p>从这一点开始，文件描述符被视为非阻塞的。当发生这种情况时，像 <code>read</code> 和 <code>write</code> 这样的 I/O 系统调用将返回 -1，并且 <code>errno</code> 将被设置为 <code>EWOULDBLOCK</code>。</p>
+<p>这很有趣，但单独使用实际上并不是那么有用。仅仅使用这种基本方法是没有有效方式同时在多个文件描述符上进行 I/O 的。例如，假设我们有两个文件描述符，并希望同时读取它们。这可以通过循环检查每个文件描述符是否有数据，然后在再次检查之前短暂休眠来实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> timespec sleep_interval{.tv_sec <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, .tv_nsec <span style="color:#f92672">=</span> <span style="color:#ae81ff">1000</span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ssize_t</span> nbytes;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (;;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* try fd1 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ((nbytes <span style="color:#f92672">=</span> <span style="color:#a6e22e">read</span>(fd1, buf, <span style="color:#66d9ef">sizeof</span>(buf))) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (errno <span style="color:#f92672">!=</span> EWOULDBLOCK) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;read/fd1&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">handle_data</span>(buf, nbytes);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* try fd2 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ((nbytes <span style="color:#f92672">=</span> <span style="color:#a6e22e">read</span>(fd2, buf, <span style="color:#66d9ef">sizeof</span>(buf))) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (errno <span style="color:#f92672">!=</span> EWOULDBLOCK) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;read/fd2&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">handle_data</span>(buf, nbytes);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* sleep for a bit; real version needs error checking! */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">nanosleep</span>(sleep_interval, NULL);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这种方法确实有效，但存在很多缺点：</p>
+<ol>
+<li>当数据传入速度很慢时，程序会频繁而不必要地唤醒，这会浪费 CPU 资源。</li>
+<li>当数据到达时，如果程序正在睡眠，可能不会立即读取数据，因此程序的延迟会很高。</li>
+<li>使用这种模式处理大量文件描述符会变得繁琐。</li>
+</ol>
+<p>为了解决这些问题，我们需要 I/O 多路复用。</p>
+<h2 id="io-多路复用select-epoll-kqueue">I/O 多路复用（select, epoll, kqueue）</h2>
+<p>有几种I/O多路复用系统调用。例如，POSIX 定义的 <code>select</code>，Linux 上的 <code>epoll</code> 系列，以及 BSD 上的 <code>kqueue</code> 系列都是 I/O 多路复用的例子。它们在基本原理上都是相同的：它们让内核知道一组文件描述符上感兴趣的事件（通常是读事件和写事件），然后它们会阻塞，直到发生感兴趣的事件。例如，你可以告诉内核你只对文件描述符 <code>X</code> 上的读事件感兴趣，对文件描述符 <code>Y</code> 上的读和写事件都感兴趣，以及对文件描述符 <code>Z</code> 上的写事件感兴趣。</p>
+<p>这些 I/O 多路复用系统调用通常不关心文件描述符是处于阻塞模式还是非阻塞模式。你可以将所有的文件描述符都保留在阻塞模式下，它们仍然可以与 <code>select</code> 或 <code>epoll</code> 一起正常工作。如果你只对 <code>select</code> 或 <code>epoll</code> 返回的文件描述符调用 <code>read</code> 和 <code>write</code>，那么即使这些文件描述符处于阻塞模式，这些调用也不会阻塞。但有一个重要的例外，文件描述符的阻塞或非阻塞状态对于边缘触发轮询是重要的，下面会进一步解释。</p>
+<p>并发的多路复用方法是我所谓的“异步 I/O”。有时人们也会将这种方法称为“非阻塞 I/O”，我认为这是对系统编程层面中“非阻塞”含义的混淆。我建议将术语“非阻塞”保留用于指代文件描述符是否实际处于非阻塞模式。</p>
+<h2 id="o_nonblock-与-io-多路复用的交互方式">O_NONBLOCK 与 I/O 多路复用的交互方式</h2>
+<p>假设我们正在使用带有阻塞文件描述符的 <code>select</code> 编写一个简单的套接字服务器。为简单起见，在此示例中，我们只有要从中读取的文件描述符，这些文件描述符存储在 <code>read_fds</code> 中。事件循环的核心部分将调用 <code>select</code>，然后针对每个具有数据的文件描述符调用一次 <code>read</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">ssize_t</span> nbytes;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (;;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* select call happens here */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">select</span>(FD_SETSIZE, <span style="color:#f92672">&amp;</span>read_fds, NULL, NULL, NULL) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;select&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exit</span>(EXIT_FAILURE);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> FD_SETSIZE; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">FD_ISSET</span>(i, <span style="color:#f92672">&amp;</span>read_fds)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* read call happens here */</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> ((nbytes <span style="color:#f92672">=</span> <span style="color:#a6e22e">read</span>(i, buf, <span style="color:#66d9ef">sizeof</span>(buf))) <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">handle_read</span>(nbytes, buf);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* real version needs to handle EINTR correctly */</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;read&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">exit</span>(EXIT_FAILURE);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这样做是有效的，而且完全没问题。但是，如果 <code>buf</code> 很小，而且有大量数据同时传输会发生什么？具体来说，假设 <code>buf</code> 是一个 1024 字节的缓冲区，但一次传输了 64KB 的数据。为了处理这个请求，我们将调用 <code>select</code>，然后调用 64 次 <code>read</code>。总共需要 128 次系统调用，这是相当多的。</p>
+<p>如果缓冲区大小太小，就必须调用很多次 <code>read</code>，这是无法避免的。但也许我们可以减少调用 <code>select</code> 的次数？在这个例子中，理想情况下我们只会调用一次 <code>select</code>。</p>
+<p>事实上，这是可能的，而且可以通过将文件描述符设置为非阻塞模式来实现。基本思想是你可以在一个循环中不断调用 <code>read</code>，直到它返回 <code>EWOULDBLOCK</code> 为止。实现如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">ssize_t</span> nbytes;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (;;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* select call happens here */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">select</span>(FD_SETSIZE, <span style="color:#f92672">&amp;</span>read_fds, NULL, NULL, NULL) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;select&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exit</span>(EXIT_FAILURE);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> FD_SETSIZE; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">FD_ISSET</span>(i, <span style="color:#f92672">&amp;</span>read_fds)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* NEW: loop until EWOULDBLOCK is encountered */</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (;;) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* read call happens here */</span>
+</span></span><span style="display:flex;"><span>                nbytes <span style="color:#f92672">=</span> <span style="color:#a6e22e">read</span>(i, buf, <span style="color:#66d9ef">sizeof</span>(buf));
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (nbytes <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">handle_read</span>(nbytes, buf);
+</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (errno <span style="color:#f92672">!=</span> EWOULDBLOCK) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#75715e">/* real version needs to handle EINTR correctly */</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;read&#34;</span>);
+</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">exit</span>(EXIT_FAILURE);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在这个例子中（1024 字节缓冲区，传入 64KB 的数据），我们将进行 66 次系统调用：<code>select</code> 将被调用一次，<code>read</code> 将被调用 64 次而不会出错，<code>read</code> 将被调用并返回 <code>EWOULDBLOCK</code> 一次。这要比之前的例子好得多！这几乎是前一个例子的一半，这将显著提高性能和可伸缩性。</p>
+<p>这种方法的缺点是由于新的循环，至少会有一次额外的 <code>read</code> 调用，因为它被调用直到返回 <code>EWOULDBLOCK</code>。假设通常情况下读取缓冲区足够大，可以在一个 <code>read</code> 调用中读取所有传入的数据。那么在循环中，通常情况下会有三次系统调用而不是只有两次：<code>select</code> 等待数据，<code>read</code> 实际读取数据，然后再次调用 <code>read</code> 以获取 <code>EWOULDBLOCK</code>。</p>
+<h2 id="边缘触发轮询edge-triggered-polling">边缘触发轮询（Edge-Triggered Polling）</h2>
+<p>边缘触发轮询是非阻塞 I/O 的另一个重要用途，特别是在 <code>epoll</code> 系统调用中。这个系统调用有两种模式：水平触发和边缘触发。水平触发是一种更简单的编程模型，类似于经典的 <code>select</code> 系统调用。为了解释它们之间的区别，我们需要了解 <code>epoll</code> 在内核中的工作方式。</p>
+<p>假设你告诉内核你有兴趣使用 <code>epoll</code> 来监视某个文件描述符上的读事件。内核为每个文件描述符维护这些兴趣的列表。当数据到达文件描述符时，内核遍历兴趣列表，并唤醒每个在 <code>epoll_wait</code> 中被阻塞的进程，其中包含了该文件描述符在事件列表中。</p>
+<p>上述内容无论 <code>epoll</code> 处于哪种触发模式都会发生。水平触发和边缘触发轮询的区别在于调用 <code>epoll_wait</code> 时内核的行为。在水平触发模式中，内核将遍历兴趣列表中的每个文件描述符，以查看它是否已满足兴趣条件。例如，如果你在文件描述符 8 上注册了一个读事件，调用 <code>epoll_wait</code> 时内核将首先检查：文件描述符 8 是否已经有数据准备好读取？如果任何文件描述符匹配兴趣条件，则 <code>epoll_wait</code> 可以立即返回而不阻塞。</p>
+<p>相比之下，在边缘触发模式中，内核跳过这个检查，并在调用 <code>epoll_wait</code> 时立即将进程置于睡眠状态。这使得程序员必须完全负责，需要完全读取和写入每个文件描述符的所有数据，然后才能等待。</p>
+<p>边缘触发模式使得 <code>epoll</code> 成为时间复杂度为 O(1) 的 I/O 多路复用器：<code>epoll_wait</code> 调用会立即挂起，由于事先为每个文件描述符维护了一个列表，当新数据到达时，内核会在 O(1) 时间知道必须要唤醒的进程。</p>
+<p>以下是边缘触发和水平触发模式之间差异的更详细示例。假设你的读取缓冲区是 100 字节，而文件描述符上传入了 200 字节的数据。然后假设你只调用了一次 <code>read</code>，然后再次调用了 <code>epoll_wait</code>。仍然有 100 字节的数据准备好读取。在水平触发模式中，内核会注意到这一点，并通知进程应该再次调用 <code>read</code>。相比之下，在边缘触发模式中，内核将立即进入睡眠状态。如果另一侧正在期待响应（例如，发送的数据是某种 RPC），那么两侧将会“死锁”，因为服务器将等待客户端发送更多数据，但客户端将等待服务器发送响应。</p>
+<p>要使用边缘触发轮询，你必须将文件描述符设置为非阻塞模式。然后你必须每次调用 <code>read</code> 或 <code>write</code> 直到它们返回 <code>EWOULDBLOCK</code> 为止。如果你未能满足这些条件，你将错过内核的通知。但这样做有一个很大的好处：每次调用 <code>epoll_wait</code> 都会更有效率，这对于具有极高并发性的程序来说非常重要。如果你想了解更多细节，我强烈建议你阅读 <a href="https://man7.org/linux/man-pages/man7/epoll.7.html">epoll(7)</a> 手册页。</p>
+</div></article>
+
+        </div>
+    </div>
+</body>
+
+</html>

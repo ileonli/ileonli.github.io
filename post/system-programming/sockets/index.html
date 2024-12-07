@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>套接字（socket）</title>
+<link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><style>:root{--font-sans:"LXGW WenKai GB", "Hiragino Sans GB", "冬青黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Helvetica, Tahoma, Arial, sans-serif}</style></head><body class="bg:fade-84@dark font:fade-16@dark font:sans"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
+_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(code){font:90%;_v:middle}
+_:where(code:not(.highlight_*,pre_*)){p:2}
+_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(h1,h2,h3,h4,h5,h6){mt:1em}
+_:where(h1){font:40;_font:extrabold}
+_:where(h1){my:1em}
+_:where(h2){font:32}
+_:where(h3){font:24}
+_:where(h4){font:20}
+_:where(h5){font:16}
+_:where(h6){font:14}
+_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li){pl:.375em}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+>:first-child{mt:0!}
+_:where(pre){p:20;_r:8;_overflow:auto}
+_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(table){width:full;_border-spacing:0}
+_:where(td){v:baseline}
+_:where(td,th):first-child{pl:0}
+_:where(td,th):last-child{pr:0}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(ul){list-style-type:disc}
+_:where(ul,ol,blockquote){pl:1em}
+_:where(video,img){max-width:full}
+_:where(video){mx:auto}
+_:where(img){mx:auto}
+_:where(a,mark){text-underline-offset:3}
+_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=套接字socket>套接字（socket）</h1><p><strong>网络编程</strong>即编写程序使两台联网的计算机相互交换数据。计算机之间会通过网线、路由器和交换机等设备连接在一起，我们无需直接操控硬件，而使用操作系统提供的<strong>套接字（socket）</strong>。</p><h2 id=基本函数>基本函数</h2><h3 id=socket>socket</h3><p>为了使用套接字，可以使用 <code>socket</code> 函数，创建用于通信的端点（endpoint）。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>socket</span>(<span style=color:#66d9ef>int</span> domain, <span style=color:#66d9ef>int</span> type, <span style=color:#66d9ef>int</span> protocol);
+</span></span></code></pre></div><p><strong>成功时</strong>会返回文件描述符，<strong>失败时</strong>会返回 -1。</p><blockquote><p><a href=https://man7.org/linux/man-pages/man2/socket.2.html target=_blank rel="noopener noreferrer">https://man7.org/linux/man-pages/man2/socket.2.html</a></p></blockquote><h3 id=bind>bind</h3><p>当使用 <code>socket</code> 函数创建套接字后，会存在于名称空间（地址族）中，但没有为其分配地址。<code>bind</code> 函数将 <code>addr</code> 指定的地址分配给文件描述符 <code>sockfd</code> 引用的套接字。</p><p>服务器可以不先调用 <code>bind()</code> 而直接调用 <code>listen()</code>，此时会为该 <code>socket</code> 分配一个 <strong><code>INADDR_ANY</code> IP 地址</strong>（0.0.0.0）和<strong>临时端口</strong>（可通过 <code>getsockname()</code> 获取 <code>socket</code> 的地址）。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>bind</span>(<span style=color:#66d9ef>int</span> sockfd, <span style=color:#66d9ef>const</span> <span style=color:#66d9ef>struct</span> sockaddr <span style=color:#f92672>*</span>addr,
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>socklen_t</span> addrlen);
+</span></span></code></pre></div><p><strong>成功时</strong>返回 0，<strong>失败时</strong>返回 -1。</p><blockquote><p><a href=https://man7.org/linux/man-pages/man2/bind.2.html target=_blank rel="noopener noreferrer">https://man7.org/linux/man-pages/man2/bind.2.html</a></p></blockquote><h3 id=listen>listen</h3><p><code>listen</code> 函数将文件描述符引用的 <code>socket</code> 标记为被动，该 <code>socket</code> 会被用来接受来自其它主动 <code>socket</code> 的连接。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>listen</span>(<span style=color:#66d9ef>int</span> sockfd, <span style=color:#66d9ef>int</span> backlog);
+</span></span></code></pre></div><p><strong>成功时</strong>返回 0，<strong>失败时</strong>返回 -1。</p><blockquote><p><a href=https://man7.org/linux/man-pages/man2/listen.2.html target=_blank rel="noopener noreferrer">https://man7.org/linux/man-pages/man2/listen.2.html</a></p></blockquote><h3 id=accept>accept</h3><p>执行 <code>accept</code> 函数会创建一个新的 <code>socket</code>，此 <code>socket</code> 会与执行 <code>connect</code> 函数的 <code>socket</code> 进行连接。此函数调用返回值是已连接的 <code>socket</code> 的文件描述符。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>accept</span>(<span style=color:#66d9ef>int</span> sockfd, <span style=color:#66d9ef>struct</span> sockaddr <span style=color:#f92672>*</span>_Nullable <span style=color:#66d9ef>restrict</span> addr,
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>socklen_t</span> <span style=color:#f92672>*</span>_Nullable <span style=color:#66d9ef>restrict</span> addrlen);
+</span></span></code></pre></div><p><strong>成功时</strong>会返回文件描述符，<strong>失败时</strong>会返回 -1。</p><blockquote><p><a href=https://man7.org/linux/man-pages/man2/accept.2.html target=_blank rel="noopener noreferrer">https://man7.org/linux/man-pages/man2/accept.2.html</a></p></blockquote><h3 id=connect>connect</h3><p><code>connect</code> 函数将文件描述符 <code>sockfd</code> 引用的套接字连接到由 <code>addr</code> 指定的地址。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>connect</span>(<span style=color:#66d9ef>int</span> sockfd, <span style=color:#66d9ef>const</span> <span style=color:#66d9ef>struct</span> sockaddr <span style=color:#f92672>*</span>addr,
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>socklen_t</span> addrlen);
+</span></span></code></pre></div><blockquote><p><a href=https://man7.org/linux/man-pages/man2/connect.2.html target=_blank rel="noopener noreferrer">https://man7.org/linux/man-pages/man2/connect.2.html</a></p></blockquote><h2 id=套接字协议>套接字协议</h2><p><code>socket</code> 函数（<code>int socket(int domain, int type, int protocol)</code>）有三个参数用于选择传输协议和方式。</p><h3 id=协议族domain>协议族（domain）</h3><p>所有的协议族可以点击 <a href=https://man7.org/linux/man-pages/man7/address_families.7.html target=_blank rel="noopener noreferrer">address_families</a> 查看，主要的协议族分类如下：</p><table><thead><tr><th>协议族</th><th>描述</th></tr></thead><tbody><tr><td>AF_INET</td><td>使用 IPv4 地址</td></tr><tr><td>AF_INET6</td><td>使用 IPv6 地址</td></tr><tr><td>AF_UNIX</td><td>本地通信，用于同一台机器上的进程间通信</td></tr><tr><td>AF_PACKET</td><td>原始数据包捕获和注入，需要特殊权限</td></tr><tr><td>AF_NETLINK</td><td>用于 Linux 内核与用户空间进程之间的通信</td></tr></tbody></table><hr><p><code>AF_常量</code> 和 <code>PF_常量</code> 的区别？</p><blockquote><p>AF 表示地址族（address family），PF 表示协议族（protocol family）。在一开始的时候，设计人员相信单个协议族可以支持多个地址族。但在实践中，没有哪一个协议族能够支持多个已经被定义的地址族，并且所有既有实现都将 <code>PF_常量</code> 定义成对应的 <code>AF_常量</code> 的同义词。</p></blockquote><h3 id=数据传输方式type>数据传输方式（type）</h3><p>数据传输类型主要有以下两种：</p><ul><li><strong>面向连接</strong>的套接字（SOCK_STREAM）：提供有序的、可靠的、双向的、基于连接的字节流。可以支持带外（<a href=https://en.wikipedia.org/wiki/Out-of-band_data target=_blank rel="noopener noreferrer">out-of-band</a>）数据传输机制。</li><li><strong>面向消息</strong>的套接字（SOCK_DGRAM）：支持数据报（无连接、最大长度固定的不可靠消息）。</li></ul><h3 id=协议protocol>协议（protocol）</h3><p>在给定的协议族中，通常只有一个协议存在以支持特定的套接字类型，在这种情况下，可以将 <code>protocol</code> 指定为 0。</p><p>在大部分情况下，第三个参数传递 0 即可。然而，协议族下可能存在许多协议，在这种情况下，必须使用 <code>protocol</code> 指定一个特定的协议。</p></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>

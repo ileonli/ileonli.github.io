@@ -1,0 +1,121 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>MyBatis Cache</title>
+<link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><style>:root{--font-sans:"LXGW WenKai GB", "Hiragino Sans GB", "冬青黑", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", Helvetica, Tahoma, Arial, sans-serif}</style></head><body class="bg:fade-84@dark font:fade-16@dark font:sans"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
+_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(code){font:90%;_v:middle}
+_:where(code:not(.highlight_*,pre_*)){p:2}
+_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(h1,h2,h3,h4,h5,h6){mt:1em}
+_:where(h1){font:40;_font:extrabold}
+_:where(h1){my:1em}
+_:where(h2){font:32}
+_:where(h3){font:24}
+_:where(h4){font:20}
+_:where(h5){font:16}
+_:where(h6){font:14}
+_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li){pl:.375em}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+>:first-child{mt:0!}
+_:where(pre){p:20;_r:8;_overflow:auto}
+_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(table){width:full;_border-spacing:0}
+_:where(td){v:baseline}
+_:where(td,th):first-child{pl:0}
+_:where(td,th):last-child{pr:0}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(ul){list-style-type:disc}
+_:where(ul,ol,blockquote){pl:1em}
+_:where(video,img){max-width:full}
+_:where(video){mx:auto}
+_:where(img){mx:auto}
+_:where(a,mark){text-underline-offset:3}
+_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=一级缓存和二级缓存>一级缓存和二级缓存</h1><p>MyBatis 提供了二层缓存架构，分别为：<strong>一级缓存</strong>和<strong>二级缓存</strong>。</p><h2 id=一级缓存>一级缓存</h2><p>一级缓存是会话级别的，MyBatis 每创建一个 <code>SqlSession</code>，就表示开启了一次数据库会话。在一次会话内，可能会在短时间内反复执行完全相同的查询语句。</p><p><code>Executor</code> 对象内会建立一个简单的缓存，在执行查询操作时，会先查询一级缓存，如果其中存在完全一样的查询语句，则直接从一级缓存中取出结果。</p><p>一级缓存的生命周期与 <code>SqlSession</code> 相同，<code>SqlSession</code> 内部有 <code>Executor</code> 对象，当调用 <code>SqlSession</code> 的 <code>close()</code> 方法时，会调用 <code>Executor</code> 的 <code>close()</code> 方法。</p><h3 id=具体流程>具体流程</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>query</span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  BoundSql boundSql <span style=color:#f92672>=</span> ms.<span style=color:#a6e22e>getBoundSql</span>(parameter);
+</span></span><span style=display:flex><span>  CacheKey key <span style=color:#f92672>=</span> createCacheKey(ms, parameter, rowBounds, boundSql);
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@SuppressWarnings</span>(<span style=color:#e6db74>&#34;unchecked&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>query</span>(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
+</span></span><span style=display:flex><span>    CacheKey key, BoundSql boundSql) <span style=color:#66d9ef>throws</span> SQLException {
+</span></span><span style=display:flex><span>  ErrorContext.<span style=color:#a6e22e>instance</span>().<span style=color:#a6e22e>resource</span>(ms.<span style=color:#a6e22e>getResource</span>()).<span style=color:#a6e22e>activity</span>(<span style=color:#e6db74>&#34;executing a query&#34;</span>).<span style=color:#a6e22e>object</span>(ms.<span style=color:#a6e22e>getId</span>());
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (closed) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> ExecutorException(<span style=color:#e6db74>&#34;Executor was closed.&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (queryStack <span style=color:#f92672>==</span> 0 <span style=color:#f92672>&amp;&amp;</span> ms.<span style=color:#a6e22e>isFlushCacheRequired</span>()) {
+</span></span><span style=display:flex><span>    clearLocalCache();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span> list;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>try</span> {
+</span></span><span style=display:flex><span>    queryStack<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>    list <span style=color:#f92672>=</span> resultHandler <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>?</span> (List<span style=color:#f92672>&lt;</span>E<span style=color:#f92672>&gt;</span>) localCache.<span style=color:#a6e22e>getObject</span>(key) : <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (list <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>      handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>      list <span style=color:#f92672>=</span> queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  } <span style=color:#66d9ef>finally</span> {
+</span></span><span style=display:flex><span>    queryStack<span style=color:#f92672>--</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (queryStack <span style=color:#f92672>==</span> 0) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (DeferredLoad deferredLoad : deferredLoads) {
+</span></span><span style=display:flex><span>      deferredLoad.<span style=color:#a6e22e>load</span>();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// issue #601</span>
+</span></span><span style=display:flex><span>    deferredLoads.<span style=color:#a6e22e>clear</span>();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (configuration.<span style=color:#a6e22e>getLocalCacheScope</span>() <span style=color:#f92672>==</span> LocalCacheScope.<span style=color:#a6e22e>STATEMENT</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// issue #482</span>
+</span></span><span style=display:flex><span>      clearLocalCache();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> list;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=cachekey>CacheKey</h3><p><code>CacheKey</code> 由 <code>MappedStatement</code> 的 <code>id</code>、对应的 <code>offset</code> 和 <code>limit</code>、SQL 语句（包含 ? 占位符）、用户传入的参数和 <code>Environment</code> 的 <code>id</code> 组成。</p><p>下边为用于创建 <code>CacheKey</code> 的参数例子：</p><ul><li><code>ms.getId()</code>：<code>io.github.ileonli.mapper.UserMapper.findById</code></li><li><code>boundSql.getSql()</code>：<code>SELECT * FROM user WHERE id = ?</code></li><li><code>parameterMappings</code>：传入到 SQL 中的参数</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>public</span> CacheKey <span style=color:#a6e22e>createCacheKey</span>(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (closed) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> ExecutorException(<span style=color:#e6db74>&#34;Executor was closed.&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  CacheKey cacheKey <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> CacheKey();
+</span></span><span style=display:flex><span>  cacheKey.<span style=color:#a6e22e>update</span>(ms.<span style=color:#a6e22e>getId</span>());
+</span></span><span style=display:flex><span>  cacheKey.<span style=color:#a6e22e>update</span>(rowBounds.<span style=color:#a6e22e>getOffset</span>());
+</span></span><span style=display:flex><span>  cacheKey.<span style=color:#a6e22e>update</span>(rowBounds.<span style=color:#a6e22e>getLimit</span>());
+</span></span><span style=display:flex><span>  cacheKey.<span style=color:#a6e22e>update</span>(boundSql.<span style=color:#a6e22e>getSql</span>());
+</span></span><span style=display:flex><span>  List<span style=color:#f92672>&lt;</span>ParameterMapping<span style=color:#f92672>&gt;</span> parameterMappings <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getParameterMappings</span>();
+</span></span><span style=display:flex><span>  TypeHandlerRegistry typeHandlerRegistry <span style=color:#f92672>=</span> ms.<span style=color:#a6e22e>getConfiguration</span>().<span style=color:#a6e22e>getTypeHandlerRegistry</span>();
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// mimic DefaultParameterHandler logic</span>
+</span></span><span style=display:flex><span>  MetaObject metaObject <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> (ParameterMapping parameterMapping : parameterMappings) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (parameterMapping.<span style=color:#a6e22e>getMode</span>() <span style=color:#f92672>!=</span> ParameterMode.<span style=color:#a6e22e>OUT</span>) {
+</span></span><span style=display:flex><span>      Object value;
+</span></span><span style=display:flex><span>      String propertyName <span style=color:#f92672>=</span> parameterMapping.<span style=color:#a6e22e>getProperty</span>();
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>if</span> (boundSql.<span style=color:#a6e22e>hasAdditionalParameter</span>(propertyName)) {
+</span></span><span style=display:flex><span>        value <span style=color:#f92672>=</span> boundSql.<span style=color:#a6e22e>getAdditionalParameter</span>(propertyName);
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (parameterObject <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>        value <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (typeHandlerRegistry.<span style=color:#a6e22e>hasTypeHandler</span>(parameterObject.<span style=color:#a6e22e>getClass</span>())) {
+</span></span><span style=display:flex><span>        value <span style=color:#f92672>=</span> parameterObject;
+</span></span><span style=display:flex><span>      } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (metaObject <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>          metaObject <span style=color:#f92672>=</span> configuration.<span style=color:#a6e22e>newMetaObject</span>(parameterObject);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        value <span style=color:#f92672>=</span> metaObject.<span style=color:#a6e22e>getValue</span>(propertyName);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>      cacheKey.<span style=color:#a6e22e>update</span>(value);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (configuration.<span style=color:#a6e22e>getEnvironment</span>() <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// issue #176</span>
+</span></span><span style=display:flex><span>    cacheKey.<span style=color:#a6e22e>update</span>(configuration.<span style=color:#a6e22e>getEnvironment</span>().<span style=color:#a6e22e>getId</span>());
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> cacheKey;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=二级缓存>二级缓存</h2></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>
