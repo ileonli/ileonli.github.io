@@ -276,7 +276,7 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-preparedstatements">使用 PreparedStatements&lt;/h2>
-&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>Java 方法句柄（MethodHandles）（翻译）</title><link>https://ileonli.github.io/post/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/post/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄methodhandles翻译">Java 方法句柄（MethodHandles）（翻译）&lt;/h1>
+&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>Java 方法句柄（翻译）</title><link>https://ileonli.github.io/post/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/post/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄翻译">Java 方法句柄（翻译）&lt;/h1>
 &lt;blockquote>
 &lt;p>翻译自：&lt;a href="https://dev.java/learn/introduction_to_method_handles/" target="_blank" rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/&lt;/a>&lt;/p>
 &lt;/blockquote>
