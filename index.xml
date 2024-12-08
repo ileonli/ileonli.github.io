@@ -121,7 +121,7 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-preparedstatements">使用 PreparedStatements&lt;/h2>
-&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>阻塞与非阻塞 I/O 和 epoll（翻译）</title><link>https://ileonli.github.io/posts/system-programming/block-and-nonblock-io/</link><pubDate>Fri, 12 Jul 2024 22:59:06 +0800</pubDate><guid>https://ileonli.github.io/posts/system-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="阻塞与非阻塞-io-和-epoll翻译">阻塞与非阻塞 I/O 和 epoll（翻译）&lt;/h1>
+&lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>阻塞与非阻塞 I/O 和 epoll（翻译）</title><link>https://ileonli.github.io/posts/network-programming/block-and-nonblock-io/</link><pubDate>Fri, 12 Jul 2024 22:59:06 +0800</pubDate><guid>https://ileonli.github.io/posts/network-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="阻塞与非阻塞-io-和-epoll翻译">阻塞与非阻塞 I/O 和 epoll（翻译）&lt;/h1>
 &lt;blockquote>
 &lt;p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll&lt;/p>
 &lt;/blockquote>
@@ -145,7 +145,7 @@
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-C" data-lang="C">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* set O_NONBLOCK on fd */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> flags &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">fcntl&lt;/span>(fd, F_GETFL, &lt;span style="color:#ae81ff">0&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">fcntl&lt;/span>(fd, F_SETFL, flags &lt;span style="color:#f92672">|&lt;/span> O_NONBLOCK);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>从这一点开始，文件描述符被视为非阻塞的。当发生这种情况时，像 &lt;code>read&lt;/code> 和 &lt;code>write&lt;/code> 这样的 I/O 系统调用将返回 -1，并且 &lt;code>errno&lt;/code> 将被设置为 &lt;code>EWOULDBLOCK&lt;/code>。&lt;/p></description></item><item><title>Linux 网络编程</title><link>https://ileonli.github.io/posts/system-programming/network-programming/</link><pubDate>Wed, 10 Jul 2024 15:20:00 +0800</pubDate><guid>https://ileonli.github.io/posts/system-programming/network-programming/</guid><description>&lt;h1 id="linux-网络编程">Linux 网络编程&lt;/h1>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>从这一点开始，文件描述符被视为非阻塞的。当发生这种情况时，像 &lt;code>read&lt;/code> 和 &lt;code>write&lt;/code> 这样的 I/O 系统调用将返回 -1，并且 &lt;code>errno&lt;/code> 将被设置为 &lt;code>EWOULDBLOCK&lt;/code>。&lt;/p></description></item><item><title>Linux 网络编程</title><link>https://ileonli.github.io/posts/network-programming/network-programming/</link><pubDate>Wed, 10 Jul 2024 15:20:00 +0800</pubDate><guid>https://ileonli.github.io/posts/network-programming/network-programming/</guid><description>&lt;h1 id="linux-网络编程">Linux 网络编程&lt;/h1>
 &lt;h2 id="网络字节序">网络字节序&lt;/h2>
 &lt;h3 id="大小端">大小端&lt;/h3>
 &lt;p>不同架构的 CPU 中，4 字节整数 1 在内存中存储的方式是不同的。&lt;/p>
