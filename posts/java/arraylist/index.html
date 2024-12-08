@@ -1,0 +1,235 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Java ArrayList 源码</title>
+<link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
+_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(code){font:90%;_v:middle}
+_:where(code:not(.highlight_*,pre_*)){p:2}
+_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(h1,h2,h3,h4,h5,h6){mt:1em}
+_:where(h1){font:40;_font:extrabold}
+_:where(h1){my:1em}
+_:where(h2){font:32}
+_:where(h3){font:24}
+_:where(h4){font:20}
+_:where(h5){font:16}
+_:where(h6){font:14}
+_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li){pl:.375em}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
+>:first-child{mt:0!}
+_:where(pre){p:20;_r:8;_overflow:auto}
+_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(table){width:full;_border-spacing:0}
+_:where(td){v:baseline}
+_:where(td,th):first-child{pl:0}
+_:where(td,th):last-child{pr:0}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
+_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
+_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(ul){list-style-type:disc}
+_:where(ul,ol,blockquote){pl:1em}
+_:where(video,img){max-width:full}
+_:where(video){mx:auto}
+_:where(img){mx:auto}
+_:where(a,mark){text-underline-offset:3}
+_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-arraylist-源码>Java ArrayList 源码</h1><h2 id=属性>属性</h2><p>从类中的属性中可以看到，<code>ArrayList</code> 默认容量为 10，底层使用一个 <code>Object[]</code> 数组保存所有元素。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Default initial capacity.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> DEFAULT_CAPACITY <span style=color:#f92672>=</span> 10;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Shared empty array instance used for empty instances.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Object<span style=color:#f92672>[]</span> EMPTY_ELEMENTDATA <span style=color:#f92672>=</span> {};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Shared empty array instance used for default sized empty instances. We
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * first element is added.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Object<span style=color:#f92672>[]</span> DEFAULTCAPACITY_EMPTY_ELEMENTDATA <span style=color:#f92672>=</span> {};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * The array buffer into which the elements of the ArrayList are stored.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * The capacity of the ArrayList is the length of this array buffer. Any
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * will be expanded to DEFAULT_CAPACITY when the first element is added.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>transient</span> Object<span style=color:#f92672>[]</span> elementData; <span style=color:#75715e>// non-private to simplify nested class access</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * The size of the ArrayList (the number of elements it contains).
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @serial
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> size;
+</span></span></code></pre></div><h2 id=构造器>构造器</h2><h3 id=默认构造器>默认构造器</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Constructs an empty list with an initial capacity of ten.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ArrayList</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>elementData</span> <span style=color:#f92672>=</span> DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=指定长度>指定长度</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Constructs an empty list with the specified initial capacity.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param  initialCapacity  the initial capacity of the list
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @throws IllegalArgumentException if the specified initial capacity
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *         is negative
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ArrayList</span>(<span style=color:#66d9ef>int</span> initialCapacity) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (initialCapacity <span style=color:#f92672>&gt;</span> 0) {
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// 新建长度为 initialCapacity 的数组</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>elementData</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[</span>initialCapacity<span style=color:#f92672>]</span>;
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (initialCapacity <span style=color:#f92672>==</span> 0) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>elementData</span> <span style=color:#f92672>=</span> EMPTY_ELEMENTDATA;
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> IllegalArgumentException(<span style=color:#e6db74>&#34;Illegal Capacity: &#34;</span><span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>                                           initialCapacity);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=传入集合>传入集合</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Constructs a list containing the elements of the specified
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * collection, in the order they are returned by the collection&#39;s
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * iterator.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param c the collection whose elements are to be placed into this list
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @throws NullPointerException if the specified collection is null
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>ArrayList</span>(Collection<span style=color:#f92672>&lt;?</span> <span style=color:#66d9ef>extends</span> E<span style=color:#f92672>&gt;</span> c) {
+</span></span><span style=display:flex><span>    elementData <span style=color:#f92672>=</span> c.<span style=color:#a6e22e>toArray</span>();
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 如果传入的集合长度不为 0 ，则把集合中的元素 copy 到 elementData 中</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> ((size <span style=color:#f92672>=</span> elementData.<span style=color:#a6e22e>length</span>) <span style=color:#f92672>!=</span> 0) {
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// defend against c.toArray (incorrectly) not returning Object[]</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// (see e.g. https://bugs.openjdk.java.net/browse/JDK-6260652)</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (elementData.<span style=color:#a6e22e>getClass</span>() <span style=color:#f92672>!=</span> Object<span style=color:#f92672>[]</span>.<span style=color:#a6e22e>class</span>)
+</span></span><span style=display:flex><span>            elementData <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>copyOf</span>(elementData, size, Object<span style=color:#f92672>[]</span>.<span style=color:#a6e22e>class</span>);
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// replace with empty array.</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>elementData</span> <span style=color:#f92672>=</span> EMPTY_ELEMENTDATA;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=扩容>扩容</h2><h3 id=最大长度>最大长度</h3><p>根据注释可以看到，有些虚拟机需要在数组中保存额外信息（<a href=https://stackoverflow.com/questions/35756277/why-the-maximum-array-size-of-arraylist-is-integer-max-value-8 target=_blank rel="noopener noreferrer">保存的额外信息</a>）需要占用一定的空间，所以 <code>ArrayList</code> 的最大长度为 <code>2^32 - 8</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * The maximum size of array to allocate (unless necessary).
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Some VMs reserve some header words in an array.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Attempts to allocate larger arrays may result in
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * OutOfMemoryError: Requested array size exceeds VM limit
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> MAX_ARRAY_SIZE <span style=color:#f92672>=</span> Integer.<span style=color:#a6e22e>MAX_VALUE</span> <span style=color:#f92672>-</span> 8;
+</span></span></code></pre></div><p>每次扩容时候，<code>newCapacity</code> 为 <code>oldCapacity + (oldCapacity >> 1)</code>，相当于旧容量的 1.5 倍</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Returns a capacity at least as large as the given minimum capacity.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Returns the current capacity increased by 50% if that suffices.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Will not return a capacity greater than MAX_ARRAY_SIZE unless
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * the given minimum capacity is greater than MAX_ARRAY_SIZE.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param minCapacity the desired minimum capacity
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @throws OutOfMemoryError if minCapacity is less than zero
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>newCapacity</span>(<span style=color:#66d9ef>int</span> minCapacity) {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// overflow-conscious code</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> oldCapacity <span style=color:#f92672>=</span> elementData.<span style=color:#a6e22e>length</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> newCapacity <span style=color:#f92672>=</span> oldCapacity <span style=color:#f92672>+</span> (oldCapacity <span style=color:#f92672>&gt;&gt;</span> 1);
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 按照扩容规则计算的新容量小于预期容量</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (newCapacity <span style=color:#f92672>-</span> minCapacity <span style=color:#f92672>&lt;=</span> 0) {
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// 当使用默认构造器进行初始化时，在此处才进行底层数组的初始化</span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// 新的底层数组长度为默认容量（10）和期望容量之间最大的值</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (elementData <span style=color:#f92672>==</span> DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> Math.<span style=color:#a6e22e>max</span>(DEFAULT_CAPACITY, minCapacity);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (minCapacity <span style=color:#f92672>&lt;</span> 0) <span style=color:#75715e>// overflow</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> OutOfMemoryError();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> minCapacity;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 按照扩容规则计算出的容量是否超过默认最大容量？</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 不超过：则直接返回</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 超过：根据 hugeCapacity() 计算出新的长度</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> (newCapacity <span style=color:#f92672>-</span> MAX_ARRAY_SIZE <span style=color:#f92672>&lt;=</span> 0)
+</span></span><span style=display:flex><span>        <span style=color:#f92672>?</span> newCapacity
+</span></span><span style=display:flex><span>        : hugeCapacity(minCapacity);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>当通过默认规则扩大为原来 1.5 后如果超过默认最大容量时，则通过比较<strong>预期容量</strong>和<strong>默认最大容量</strong>来判断最大容量；
+当预期容量比默认的 <code>MAX_ARRAY_SIZE</code> 大时，则返回 <code>Integer.MAX_VALUE</code> 否则返回默认的 <code>MAX_ARRAY_SIZE</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>hugeCapacity</span>(<span style=color:#66d9ef>int</span> minCapacity) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (minCapacity <span style=color:#f92672>&lt;</span> 0) <span style=color:#75715e>// overflow</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> OutOfMemoryError();
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> (minCapacity <span style=color:#f92672>&gt;</span> MAX_ARRAY_SIZE)
+</span></span><span style=display:flex><span>        <span style=color:#f92672>?</span> Integer.<span style=color:#a6e22e>MAX_VALUE</span>
+</span></span><span style=display:flex><span>        : MAX_ARRAY_SIZE;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Increases the capacity to ensure that it can hold at least the
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * number of elements specified by the minimum capacity argument.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * 
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param minCapacity the desired minimum capacity
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @throws OutOfMemoryError if minCapacity is less than zero
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> Object<span style=color:#f92672>[]</span> <span style=color:#a6e22e>grow</span>(<span style=color:#66d9ef>int</span> minCapacity) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> elementData <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>copyOf</span>(elementData,
+</span></span><span style=display:flex><span>                                       newCapacity(minCapacity));
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> Object<span style=color:#f92672>[]</span> <span style=color:#a6e22e>grow</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> grow(size <span style=color:#f92672>+</span> 1);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=add>add()</h2><p>add 方法一共有两个公开方法，一个是在尾部添加元素的 add(E e) 和在任意位置插入元素的 add(int index, E element)</p><h3 id=尾部插入-adde-e>尾部插入 add(E e)</h3><p>该公开方法调用了 <code>add(E e, Object[] elementData, int s)</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Appends the specified element to the end of this list.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param e element to be appended to this list
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @return {@code true} (as specified by {@link Collection#add})
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>add</span>(E e) {
+</span></span><span style=display:flex><span>    modCount<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>    add(e, elementData, size);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>如果当前容量已满则进行扩容，否则直接把元素放到 <code>s (= size)</code> 的位置，数组元素长度 <code>size + 1</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * This helper method split out from add(E) to keep method
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * bytecode size under 35 (the -XX:MaxInlineSize default value),
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * which helps when add(E) is called in a C1-compiled loop.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>add</span>(E e, Object<span style=color:#f92672>[]</span> elementData, <span style=color:#66d9ef>int</span> s) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (s <span style=color:#f92672>==</span> elementData.<span style=color:#a6e22e>length</span>)
+</span></span><span style=display:flex><span>        elementData <span style=color:#f92672>=</span> grow();
+</span></span><span style=display:flex><span>    elementData<span style=color:#f92672>[</span>s<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> e;
+</span></span><span style=display:flex><span>    size <span style=color:#f92672>=</span> s <span style=color:#f92672>+</span> 1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=任意位置插入-addint-index-e-element>任意位置插入 add(int index, E element)</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Inserts the specified element at the specified position in this
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * list. Shifts the element currently at that position (if any) and
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * any subsequent elements to the right (adds one to their indices).
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param index index at which the specified element is to be inserted
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @param element element to be inserted
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @throws IndexOutOfBoundsException {@inheritDoc}
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>add</span>(<span style=color:#66d9ef>int</span> index, E element) {
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 检查要插入的位置是否越界</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 检查的范围为 [0, size]</span>
+</span></span><span style=display:flex><span>    rangeCheckForAdd(index);
+</span></span><span style=display:flex><span>    modCount<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> s;
+</span></span><span style=display:flex><span>    Object<span style=color:#f92672>[]</span> elementData;
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 数组已经放满了，需要进行扩容</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> ((s <span style=color:#f92672>=</span> size) <span style=color:#f92672>==</span> (elementData <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>elementData</span>).<span style=color:#a6e22e>length</span>)
+</span></span><span style=display:flex><span>        elementData <span style=color:#f92672>=</span> grow();
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// 把原来元素拷贝一份到新数组</span>
+</span></span><span style=display:flex><span>    System.<span style=color:#a6e22e>arraycopy</span>(elementData, index,
+</span></span><span style=display:flex><span>                     elementData, index <span style=color:#f92672>+</span> 1,
+</span></span><span style=display:flex><span>                     s <span style=color:#f92672>-</span> index);
+</span></span><span style=display:flex><span>    elementData<span style=color:#f92672>[</span>index<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> element;
+</span></span><span style=display:flex><span>    size <span style=color:#f92672>=</span> s <span style=color:#f92672>+</span> 1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=remove>remove()</h2><p><code>public E remove(int index)</code> 和 <code>public boolean remove(Object o)</code> 方法底层都依赖于 <code>fastRemove(Object[] es, int i)</code> 方法，底层原理就是把要删除元素的的索引 <code>i</code> 之后的元素拷贝到 <code>i</code> 开始的位置，直接把要删除的元素直接覆盖掉</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * Private remove method that skips bounds checking and does not
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * return the value removed.
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>fastRemove</span>(Object<span style=color:#f92672>[]</span> es, <span style=color:#66d9ef>int</span> i) {
+</span></span><span style=display:flex><span>    modCount<span style=color:#f92672>++</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> newSize;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> ((newSize <span style=color:#f92672>=</span> size <span style=color:#f92672>-</span> 1) <span style=color:#f92672>&gt;</span> i) <span style=color:#75715e>// 更新当前元素个数</span>
+</span></span><span style=display:flex><span>		<span style=color:#75715e>// 从 i + 1 的位置开始拷贝到从 i 开始的位置，覆盖掉 i 处元素</span>
+</span></span><span style=display:flex><span>        System.<span style=color:#a6e22e>arraycopy</span>(es, i <span style=color:#f92672>+</span> 1, es, i, newSize <span style=color:#f92672>-</span> i);
+</span></span><span style=display:flex><span>    es<span style=color:#f92672>[</span>size <span style=color:#f92672>=</span> newSize<span style=color:#f92672>]</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>

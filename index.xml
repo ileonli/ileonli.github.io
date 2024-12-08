@@ -202,4 +202,153 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> en.bytes[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0x02&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
-&lt;p>为什么有两种不同的字节序？&lt;/p></description></item></channel></rss>
+&lt;p>为什么有两种不同的字节序？&lt;/p></description></item><item><title>Java HashMap 源码</title><link>https://ileonli.github.io/posts/java/hashmap/</link><pubDate>Tue, 15 Feb 2022 20:37:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/hashmap/</guid><description>&lt;h1 id="java-hashmap-源码">Java HashMap 源码&lt;/h1>
+&lt;h2 id="属性">属性&lt;/h2>
+&lt;h3 id="默认长度">默认长度&lt;/h3>
+&lt;p>如不传入初始化长度，则默认长度为 16&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * The default initial capacity - MUST be a power of two.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> DEFAULT_INITIAL_CAPACITY &lt;span style="color:#f92672">=&lt;/span> 1 &lt;span style="color:#f92672">&amp;lt;&amp;lt;&lt;/span> 4; &lt;span style="color:#75715e">// aka 16&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="阈值">阈值&lt;/h3>
+&lt;p>所能容纳的 key-value 对的极限，超过此值就需要进行扩容&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * The next size value at which to resize (capacity * load factor).
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">*/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> threshold;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="底层数组">底层数组&lt;/h3>
+&lt;p>HashMap 底层存放 Node 节点的数组，在第一次使用的时候进行初始化，长度总为 2 的 N 次幂&lt;/p>
+&lt;p>HashMap 保证扩容后长度 n 总为 2 次方是因为计算 Node 所在索引时采用了 &lt;code>(n - 1) &amp;amp; hash&lt;/code> 运算进行优化（&amp;amp; 比 % 效率更高），等价于对 n 取模，也就是 h % n&lt;/p></description></item><item><title>Java ArrayList 源码</title><link>https://ileonli.github.io/posts/java/arraylist/</link><pubDate>Thu, 03 Feb 2022 15:24:06 +0800</pubDate><guid>https://ileonli.github.io/posts/java/arraylist/</guid><description>&lt;h1 id="java-arraylist-源码">Java ArrayList 源码&lt;/h1>
+&lt;h2 id="属性">属性&lt;/h2>
+&lt;p>从类中的属性中可以看到，&lt;code>ArrayList&lt;/code> 默认容量为 10，底层使用一个 &lt;code>Object[]&lt;/code> 数组保存所有元素。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Default initial capacity.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> DEFAULT_CAPACITY &lt;span style="color:#f92672">=&lt;/span> 10;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Shared empty array instance used for empty instances.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object&lt;span style="color:#f92672">[]&lt;/span> EMPTY_ELEMENTDATA &lt;span style="color:#f92672">=&lt;/span> {};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Shared empty array instance used for default sized empty instances. We
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * first element is added.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> Object&lt;span style="color:#f92672">[]&lt;/span> DEFAULTCAPACITY_EMPTY_ELEMENTDATA &lt;span style="color:#f92672">=&lt;/span> {};
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * The array buffer into which the elements of the ArrayList are stored.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * The capacity of the ArrayList is the length of this array buffer. Any
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * will be expanded to DEFAULT_CAPACITY when the first element is added.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">transient&lt;/span> Object&lt;span style="color:#f92672">[]&lt;/span> elementData; &lt;span style="color:#75715e">// non-private to simplify nested class access&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * The size of the ArrayList (the number of elements it contains).
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @serial
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> size;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="构造器">构造器&lt;/h2>
+&lt;h3 id="默认构造器">默认构造器&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Constructs an empty list with an initial capacity of ten.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">ArrayList&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">elementData&lt;/span> &lt;span style="color:#f92672">=&lt;/span> DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="指定长度">指定长度&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Constructs an empty list with the specified initial capacity.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @param initialCapacity the initial capacity of the list
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @throws IllegalArgumentException if the specified initial capacity
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * is negative
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">ArrayList&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span> initialCapacity) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (initialCapacity &lt;span style="color:#f92672">&amp;gt;&lt;/span> 0) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>		&lt;span style="color:#75715e">// 新建长度为 initialCapacity 的数组&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">elementData&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Object&lt;span style="color:#f92672">[&lt;/span>initialCapacity&lt;span style="color:#f92672">]&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (initialCapacity &lt;span style="color:#f92672">==&lt;/span> 0) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">elementData&lt;/span> &lt;span style="color:#f92672">=&lt;/span> EMPTY_ELEMENTDATA;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throw&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> IllegalArgumentException(&lt;span style="color:#e6db74">&amp;#34;Illegal Capacity: &amp;#34;&lt;/span>&lt;span style="color:#f92672">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> initialCapacity);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="传入集合">传入集合&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * Constructs a list containing the elements of the specified
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * collection, in the order they are returned by the collection&amp;#39;s
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * iterator.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @param c the collection whose elements are to be placed into this list
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> * @throws NullPointerException if the specified collection is null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">ArrayList&lt;/span>(Collection&lt;span style="color:#f92672">&amp;lt;?&lt;/span> &lt;span style="color:#66d9ef">extends&lt;/span> E&lt;span style="color:#f92672">&amp;gt;&lt;/span> c) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> elementData &lt;span style="color:#f92672">=&lt;/span> c.&lt;span style="color:#a6e22e">toArray&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#75715e">// 如果传入的集合长度不为 0 ，则把集合中的元素 copy 到 elementData 中&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> ((size &lt;span style="color:#f92672">=&lt;/span> elementData.&lt;span style="color:#a6e22e">length&lt;/span>) &lt;span style="color:#f92672">!=&lt;/span> 0) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// defend against c.toArray (incorrectly) not returning Object[]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// (see e.g. https://bugs.openjdk.java.net/browse/JDK-6260652)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (elementData.&lt;span style="color:#a6e22e">getClass&lt;/span>() &lt;span style="color:#f92672">!=&lt;/span> Object&lt;span style="color:#f92672">[]&lt;/span>.&lt;span style="color:#a6e22e">class&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> elementData &lt;span style="color:#f92672">=&lt;/span> Arrays.&lt;span style="color:#a6e22e">copyOf&lt;/span>(elementData, size, Object&lt;span style="color:#f92672">[]&lt;/span>.&lt;span style="color:#a6e22e">class&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">else&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// replace with empty array.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">elementData&lt;/span> &lt;span style="color:#f92672">=&lt;/span> EMPTY_ELEMENTDATA;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="扩容">扩容&lt;/h2>
+&lt;h3 id="最大长度">最大长度&lt;/h3>
+&lt;p>根据注释可以看到，有些虚拟机需要在数组中保存额外信息（&lt;a href="https://stackoverflow.com/questions/35756277/why-the-maximum-array-size-of-arraylist-is-integer-max-value-8" target="_blank" rel="noopener noreferrer">保存的额外信息&lt;/a>）需要占用一定的空间，所以 &lt;code>ArrayList&lt;/code> 的最大长度为 &lt;code>2^32 - 8&lt;/code>&lt;/p></description></item><item><title>Java 中的引用类型</title><link>https://ileonli.github.io/posts/java/reference/</link><pubDate>Sat, 21 Aug 2021 14:21:05 +0800</pubDate><guid>https://ileonli.github.io/posts/java/reference/</guid><description>&lt;h1 id="java-中的引用类型">Java 中的引用类型&lt;/h1>
+&lt;blockquote>
+&lt;p>为什么 JDK 中会设计这么多中引用类型呢？&lt;/p>
+&lt;/blockquote>
+&lt;p>首先，Java 是一门自带 GC 的语言，意味着我们不用像 C++ 一样手动管理内存，Java 会自动清除不需要的对象，但这样我们就无法控制对象的生命周期。&lt;/p>
+&lt;p>系统中存在大量的对象，其重要程度和生命周期是不同的。因此我们可以利用不同的引用类型控制 GC 回收对象的时间。当内存空间还足够时，对象可以保留在内存中；内存空间在进行垃圾回收后仍然紧张，就可以抛弃某些对象释放内存。&lt;/p>
+&lt;p>JDK 1.2 之后，Java 对引用对象进行了分类，从上到下引用类型逐渐变弱：&lt;/p>
+&lt;ul>
+&lt;li>Strong Reference（强引用）&lt;/li>
+&lt;li>Soft Reference（软引用）&lt;/li>
+&lt;li>Week Reference（弱引用）&lt;/li>
+&lt;li>Phantom Reference（虚引用）&lt;/li>
+&lt;/ul>
+&lt;h2 id="referencequeue">ReferenceQueue&lt;/h2>
+&lt;p>当引用的对象被清除的时候，会把用于包装对象的 &lt;code>Reference(Week, Soft, Phantom)&lt;/code> 传入到 &lt;code>ReferenceQueue&lt;/code> 中，后续可从队列中获取，进行后续处理 &lt;code>Reference&lt;/code> ，比如判断是否发生内存泄漏等。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.lang.ref.Reference;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.lang.ref.ReferenceQueue;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.lang.ref.WeakReference;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> java.util.HashMap;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Main&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>(String&lt;span style="color:#f92672">[]&lt;/span> args) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ReferenceQueue&lt;span style="color:#f92672">&amp;lt;&lt;/span>Integer&lt;span style="color:#f92672">[]&amp;gt;&lt;/span> queue &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> ReferenceQueue&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 产生大对象，使 GC 清理对象&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">new&lt;/span> Thread(() &lt;span style="color:#f92672">-&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> HashMap&lt;span style="color:#f92672">&amp;lt;&lt;/span>WeakReference&lt;span style="color:#f92672">&amp;lt;&lt;/span>Integer&lt;span style="color:#f92672">[]&amp;gt;&lt;/span>, Integer&lt;span style="color:#f92672">&amp;gt;&lt;/span> map &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> HashMap&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> (&lt;span style="color:#66d9ef">int&lt;/span> i &lt;span style="color:#f92672">=&lt;/span> 0; i &lt;span style="color:#f92672">&amp;lt;&lt;/span> 10000; i&lt;span style="color:#f92672">++&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> map.&lt;span style="color:#a6e22e">put&lt;/span>(&lt;span style="color:#66d9ef">new&lt;/span> WeakReference&lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span>(&lt;span style="color:#66d9ef">new&lt;/span> Integer&lt;span style="color:#f92672">[&lt;/span>1024 &lt;span style="color:#f92672">*&lt;/span> 1024&lt;span style="color:#f92672">]&lt;/span>, queue), i);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }).&lt;span style="color:#a6e22e">start&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 监控清理的对象，此时对象已经被清理，只剩下 WeakReference 引用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">new&lt;/span> Thread(() &lt;span style="color:#f92672">-&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Reference&lt;span style="color:#f92672">&amp;lt;?&lt;/span> &lt;span style="color:#66d9ef">extends&lt;/span> Integer&lt;span style="color:#f92672">[]&amp;gt;&lt;/span> ref;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (&lt;span style="color:#66d9ef">true&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> ((ref &lt;span style="color:#f92672">=&lt;/span> queue.&lt;span style="color:#a6e22e">remove&lt;/span>()) &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">null&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> System.&lt;span style="color:#a6e22e">out&lt;/span>.&lt;span style="color:#a6e22e">printf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;对象引用：%s, 对象：%s\n&amp;#34;&lt;/span>, ref, ref.&lt;span style="color:#a6e22e">get&lt;/span>());
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">catch&lt;/span> (InterruptedException e) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> e.&lt;span style="color:#a6e22e">printStackTrace&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }).&lt;span style="color:#a6e22e">start&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="strongreference">StrongReference&lt;/h2>
+&lt;p>当我们利用 &lt;code>new&lt;/code> 新建对象时 &lt;code>=&lt;/code> 就是强引用，只要引用关系存在，GC 就不会清除被引用的对象。&lt;/p></description></item></channel></rss>
