@@ -1,4 +1,25 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Thu, 05 Dec 2024 21:28:06 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 动态代理</title><link>https://ileonli.github.io/posts/java/dynamic-proxy/</link><pubDate>Thu, 05 Dec 2024 21:28:06 +0800</pubDate><guid>https://ileonli.github.io/posts/java/dynamic-proxy/</guid><description>&lt;h1 id="java-动态代理">Java 动态代理&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sun, 08 Dec 2024 17:33:01 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java AQS（翻译）</title><link>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</link><pubDate>Sun, 08 Dec 2024 17:33:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</guid><description>&lt;h1 id="java-aqs翻译">Java AQS（翻译）&lt;/h1>
+&lt;blockquote>
+&lt;p>本文是 Doug Lea 的 &lt;em>The java.util.concurrent Synchronizer Framework&lt;/em> 一文的翻译，该论文描述了 &lt;code>AbstractQueuedSynchronizer&lt;/code> 类的基本原理、设计、实现、使用和性能。&lt;/p>
+&lt;p>论文地址：https://gee.cs.oswego.edu/dl/papers/aqs.pdf&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="摘要">摘要&lt;/h2>
+&lt;p>J2SE 1.5 版本的 &lt;code>java.util.concurrent&lt;/code> 包中的大多数同步器（如：锁、屏障等）都是基于 &lt;code>AbstractQueuedSynchronizer&lt;/code> 类的构建的框架构建的。该框架提供了常见的机制，用于原子地管理同步状态、阻塞和解除阻塞线程以及队列操作。本文介绍了该框架的基本原理、设计、实现、使用方法和性能。&lt;/p>
+&lt;h2 id="引言">引言&lt;/h2>
+&lt;p>Java 在发布的 J2SE-1.5 版本中引入了 &lt;code>java.util.concurrent&lt;/code> 包，该包由 JCP 的 &lt;a href="https://gee.cs.oswego.edu/dl/concurrency-interest/jsr166-slides.pdf" target="_blank" rel="noopener noreferrer">JSR 166&lt;/a> 创建的一组并发支持类。其中包括一组同步器抽象数据类型，这些类维护内部同步状态（例如，表示锁是锁定还是解锁），提供更新和检查该状态的操作，并至少包含一个方法，该方法会阻塞调用的线程（如果同步状态要求阻塞），当其它线程更改同步状态以允许线程继续时，调用线程会恢复执行。示例包括各种形式的互斥锁（mutual exclusion locks）、读写锁（read-write locks）、信号量（semaphores）、屏障（barriers）、异步结果（future）、事件指示器（event indicators）和交接队列（handoff queues）。&lt;/p>
+&lt;p>众所周知，同步器可以用来实现其它任何的同步器。例如：可以使用可重入锁构建信号量，反之亦然。然而，通过此方式会导致系统较为复杂、开销大及不灵活，只能算是一种二流的工程选择。此外，从概念上来说，此方式也不具吸引力。如果这些结构之间没有比其它更为基础的，那么开发者就不应被迫选择其中一个构建其它的结构。相反，JSR166 构建了一个以 &lt;code>AbstractQueuedSynchronizer&lt;/code> 类为中心的小框架，该框架提供了通用的机制，这些机制被包中的大多数同步器以及用户可能自行定义的类所使用。&lt;/p>
+&lt;p>本文的其余部分将讨论该框架的需求、设计和实现的主要思想、示例用法以及一些展示其性能特征的测量结果。&lt;/p>
+&lt;h2 id="需求">需求&lt;/h2>
+&lt;h3 id="功能">功能&lt;/h3>
+&lt;p>同步器有两种方法：至少一个 &lt;code>acquire&lt;/code> 操作，该操作可以阻塞调用线程，除非/直到同步状态允许其执行；至少一个 &lt;code>release&lt;/code> 操作，该操作可以改变同步状态，以便允许一个或多个被阻塞的线程解除阻塞。&lt;/p>
+&lt;p>&lt;code>java.util.concurrent&lt;/code> 包没有为同步器定义一个统一的 API。一些类是通过通用的接口定义的（如：&lt;code>Lock&lt;/code>），但其它的仅包含特别的版本。因此，&lt;code>acquire&lt;/code> 和 &lt;code>release&lt;/code> 操作在不同类中使用了不同的名称。例如：&lt;code>Lock.lock&lt;/code>、&lt;code>Semaphore.acquire&lt;/code>、&lt;code>CountDownLatch.await&lt;/code> 和 &lt;code>FutureTask.get&lt;/code> 方法都映射到框架的 &lt;code>acquire&lt;/code> 方法。然而，该包在各个类之间保持一致的约定，以支持一系列常见的使用选项。在有意义的情况下，每个同步器支持：&lt;/p>
+&lt;ul>
+&lt;li>非阻塞尝试获取同步状态（例如：&lt;code>tryLock&lt;/code>）以及阻塞版本。&lt;/li>
+&lt;li>可选的超时，应用程序可放弃等待。&lt;/li>
+&lt;li>通过中断实现可取消性，通常分为一个可取消的 &lt;code>acquire&lt;/code> 版本和一个不可取消的版本。&lt;/li>
+&lt;/ul>
+&lt;p>取决于是否仅管理独占状态，同步器可能有所不同。&lt;strong>独占&lt;/strong>：一次只有一个线程可以继续执行，直到可能的阻塞点；&lt;strong>共享&lt;/strong>：多个线程至少有时可以继续执行。常规的锁需要维护独占状态，但计数信号量可能被多个线程获取，数量由计数值决定。为了广泛使用，该框架必须支持这两种操作模式。&lt;/p>
+&lt;p>&lt;code>java.util.concurrent&lt;/code> 包还定义了 &lt;code>Condition&lt;/code> 接口，支持类似 monitor 的 &lt;code>await&lt;/code> 和 &lt;code>signal&lt;/code> 操作，通常与 &lt;code>Lock&lt;/code> 类配合使用。&lt;/p></description></item><item><title>Java 动态代理</title><link>https://ileonli.github.io/posts/java/dynamic-proxy/</link><pubDate>Thu, 05 Dec 2024 21:28:06 +0800</pubDate><guid>https://ileonli.github.io/posts/java/dynamic-proxy/</guid><description>&lt;h1 id="java-动态代理">Java 动态代理&lt;/h1>
 &lt;p>在 Java 动态代理机制中，&lt;code>InvocationHandler&lt;/code> 接口和 &lt;code>Proxy&lt;/code> 类是核心。&lt;/p>
 &lt;h2 id="proxy">Proxy&lt;/h2>
 &lt;p>&lt;code>Proxy&lt;/code> 类主要使用 &lt;code>newProxyInstance()&lt;/code> 静态方法生成代理对象。&lt;/p>
