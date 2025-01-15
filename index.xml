@@ -20,7 +20,7 @@
 &lt;/ul>
 &lt;p>取决于是否仅管理独占状态，同步器可能有所不同。&lt;strong>独占&lt;/strong>：一次只有一个线程可以继续执行，直到可能的阻塞点；&lt;strong>共享&lt;/strong>：多个线程至少有时可以继续执行。常规的锁需要维护独占状态，但计数信号量可能被多个线程获取，数量由计数值决定。为了广泛使用，该框架必须支持这两种操作模式。&lt;/p>
 &lt;p>&lt;code>java.util.concurrent&lt;/code> 包还定义了 &lt;code>Condition&lt;/code> 接口，支持类似 monitor 的 &lt;code>await&lt;/code> 和 &lt;code>signal&lt;/code> 操作，通常与 &lt;code>Lock&lt;/code> 类配合使用。&lt;/p></description></item><item><title>Java 动态代理</title><link>https://ileonli.github.io/posts/java/dynamic-proxy/</link><pubDate>Thu, 05 Dec 2024 21:28:06 +0800</pubDate><guid>https://ileonli.github.io/posts/java/dynamic-proxy/</guid><description>&lt;h1 id="java-动态代理">Java 动态代理&lt;/h1>
-&lt;p>在 Java 动态代理机制中，&lt;code>InvocationHandler&lt;/code> 接口和 &lt;code>Proxy&lt;/code> 类是核心。&lt;/p>
+&lt;p>在 Java 动态代理机制中，InvocationHandler 接口和 Proxy 类是核心组件，用于在运行时动态创建代理类和代理对象。&lt;/p>
 &lt;h2 id="proxy">Proxy&lt;/h2>
 &lt;p>&lt;code>Proxy&lt;/code> 类主要使用 &lt;code>newProxyInstance()&lt;/code> 静态方法生成代理对象。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">static&lt;/span> Object &lt;span style="color:#a6e22e">newProxyInstance&lt;/span>(ClassLoader loader,
@@ -37,8 +37,7 @@
 &lt;h2 id="invocationhandler">InvocationHandler&lt;/h2>
 &lt;p>当动态代理对象调用一个方法时，此方法的调用就会被转发到实现 &lt;code>InvocationHandler&lt;/code> 接口类的 &lt;code>invoke&lt;/code> 方法来调用。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> &lt;span style="color:#a6e22e">InvocationHandler&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">invoke&lt;/span>(Object proxy, Method method, Object&lt;span style="color:#f92672">[]&lt;/span> args)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throws&lt;/span> Throwable;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> Object &lt;span style="color:#a6e22e">invoke&lt;/span>(Object proxy, Method method, Object&lt;span style="color:#f92672">[]&lt;/span> args) &lt;span style="color:#66d9ef">throws&lt;/span> Throwable;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>该方法主要有三个参数：&lt;/p>
 &lt;ol>
@@ -48,7 +47,8 @@
 &lt;/ol>
 &lt;p>通过 &lt;code>Proxy&lt;/code> 类的 &lt;code>newProxyInstance()&lt;/code> 创建的代理对象在调用方法的时候，实际会调用到实现 &lt;code>InvocationHandler&lt;/code> 接口的类的 &lt;code>invoke()&lt;/code> 方法。&lt;/p>
 &lt;h2 id="具体步骤">具体步骤&lt;/h2>
-&lt;p>&lt;code>TargetClass&lt;/code> 类继承自 &lt;code>InterfaceA&lt;/code> 和 &lt;code>InterfaceB&lt;/code> 接口。&lt;/p></description></item><item><title>Skip List</title><link>https://ileonli.github.io/posts/skiplist/</link><pubDate>Wed, 18 Sep 2024 21:09:06 +0800</pubDate><guid>https://ileonli.github.io/posts/skiplist/</guid><description>&lt;h1 id="skip-list">Skip List&lt;/h1>
+&lt;p>&lt;code>TargetClass&lt;/code> 类继承自 &lt;code>InterfaceA&lt;/code> 和 &lt;code>InterfaceB&lt;/code> 接口。&lt;/p>
+&lt;p>如果想在 &lt;code>targetA()&lt;/code> 和 &lt;code>targetB()&lt;/code> 方法调用前后进行一些额外操作。&lt;/p></description></item><item><title>Skip List</title><link>https://ileonli.github.io/posts/skiplist/</link><pubDate>Wed, 18 Sep 2024 21:09:06 +0800</pubDate><guid>https://ileonli.github.io/posts/skiplist/</guid><description>&lt;h1 id="skip-list">Skip List&lt;/h1>
 &lt;p>在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：&lt;/p>
 &lt;ul>
 &lt;li>链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。&lt;/li>
