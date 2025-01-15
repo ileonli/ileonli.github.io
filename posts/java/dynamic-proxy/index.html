@@ -189,7 +189,7 @@ _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-动态代理>
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>该代码主要依靠下边两个主要的方法和类：</p><ul><li>java.lang.reflect.Proxy.ProxyBuilder#defineProxyClass</li><li>java.lang.reflect.ProxyGenerator</li></ul><h2 id=proxy-的缺点>Proxy 的缺点</h2><p>JDK 动态代理有一个最致命的问题是其只能代理实现了接口的类。</p><p>我们对代码进行一些修改，<code>TargetClass</code> 继承了 <code>SuperClass</code> 类。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceA</span> {
+</span></span></code></pre></div><p>该代码主要依靠下边两个主要的方法和类：</p><ul><li>java.lang.reflect.Proxy.ProxyBuilder#defineProxyClass</li><li>java.lang.reflect.ProxyGenerator</li></ul><h2 id=proxy-的缺点>Proxy 的缺点</h2><p>JDK 动态代理有一个最致命的问题是其只能基于接口，<code>Proxy</code> 生成的代理类继承自 <code>java.lang.reflect.Proxy</code>，而 Java 不支持多继承，因此无法通过 <code>Proxy</code> 继承其他类。</p><p>我们对代码进行一些修改，<code>TargetClass</code> 继承了 <code>SuperClass</code> 类。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>InterfaceA</span> {
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>targetA</span>();
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
@@ -233,7 +233,7 @@ _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-动态代理>
 </span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> result;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>反编译生成的代码后发现此类只包含实现的接口中的方法。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.invoke.MethodHandles;
+</span></span></code></pre></div><p>反编译生成的代码后发现此类只包含实现的接口中的方法，且只继承自 <code>Proxy</code> 类。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.invoke.MethodHandles;
 </span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.InvocationHandler;
 </span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Method;
 </span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.lang.reflect.Proxy;
@@ -324,4 +324,4 @@ _:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-动态代理>
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2024, Leon Li.</div></footer></html>
+</span></span></code></pre></div></div></article></div></div></body><footer class="flex jc:center my:24"><div>Copyright © 2025, Leon Li.</div></footer></html>
