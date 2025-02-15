@@ -1,8 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sun, 08 Dec 2024 17:33:01 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java AQS（翻译）</title><link>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</link><pubDate>Sun, 08 Dec 2024 17:33:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</guid><description>&lt;h1 id="java-aqs翻译">Java AQS（翻译）&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Wed, 15 Jan 2025 21:11:26 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/module/</link><pubDate>Wed, 15 Jan 2025 21:11:26 +0800</pubDate><guid>https://ileonli.github.io/posts/java/module/</guid><description>&lt;h1 id="java-模块化翻译">Java 模块化（翻译）&lt;/h1>
+&lt;blockquote>
+&lt;p>本文翻译自：https://www.oracle.com/corporate/features/understanding-java-9-modules.html&lt;/p>&lt;/blockquote>
+&lt;p>在本文中，我将介绍 Java 9 平台模块系统（JPMS），这是自 Java 诞生以来最重要的新软件工程技术。模块化（即 &lt;a href="http://openjdk.java.net/projects/jigsaw/" target="_blank" rel="noopener noreferrer">Jigsaw 项目&lt;/a> 的成果）有助于各级开发人员在构建、维护和发展软件系统，特别是大型系统时，提高生产力。&lt;/p>
+&lt;h2 id="什么是模块化">什么是模块化&lt;/h2>
+&lt;p>模块化在包的基础上增加了一个更高层次的聚合。关键的新语言元素是模块（一个唯一命名且可重用的相关包的组合，以及资源（如图像和 XML 文件））和一个模块描述符，用于指定以下内容：&lt;/p>
+&lt;ul>
+&lt;li>模块的名称&lt;/li>
+&lt;li>模块的依赖关系（即该模块所依赖的其它模块）&lt;/li>
+&lt;li>它显式提供给其它模块使用的包（默认情况下，其它模块的不可使用非显示提供的包）&lt;/li>
+&lt;li>它提供的服务&lt;/li>
+&lt;li>它使用的服务&lt;/li>
+&lt;li>允许哪些模块进行反射访问&lt;/li>
+&lt;/ul>
+&lt;h2 id="历史">历史&lt;/h2>
+&lt;p>Java SE 自 1995 年问世以来，已有大约 1000 万开发者使用它来构建从资源受限设备（如物联网（IoT）和其它嵌入式设备）的小型应用程序，到大规模的关键业务和关键任务系统。尽管存在大量的遗留代码，但迄今为止，Java 主要是一个一体化的通用解决方案。多年来，人们进行了各种模块化 Java 的努力，不仅没有一个被广泛使用，而且也没有一个能够用于模块化 Java 平台的实现。&lt;/p>
+&lt;p>Java SE 平台的模块化实现一直充满挑战，这一努力花费了许多年时间。&lt;a href="https://jcp.org/en/jsr/detail?id=277" target="_blank" rel="noopener noreferrer">JSR 277: Java Module System&lt;/a> 最初于 2005 年针对 Java 7 提出。随后，该 JSR 被 &lt;a href="https://jcp.org/en/jsr/detail?id=376" target="_blank" rel="noopener noreferrer">JSR 376: Java Platform Module System&lt;/a> 取代，并计划用于 Java 8。最终，Java SE 平台在 Java 9 中实现了模块化，但这一过程导致 Java 9 的发布被推迟至 2017 年 9 月。&lt;/p></description></item><item><title>Java AQS（翻译）</title><link>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</link><pubDate>Sun, 08 Dec 2024 17:33:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/abstractqueuedsynchronizer/</guid><description>&lt;h1 id="java-aqs翻译">Java AQS（翻译）&lt;/h1>
 &lt;blockquote>
 &lt;p>本文是 Doug Lea 的 &lt;em>The java.util.concurrent Synchronizer Framework&lt;/em> 一文的翻译，该论文描述了 &lt;code>AbstractQueuedSynchronizer&lt;/code> 类的基本原理、设计、实现、使用和性能。&lt;/p>
-&lt;p>论文地址：https://gee.cs.oswego.edu/dl/papers/aqs.pdf&lt;/p>
-&lt;/blockquote>
+&lt;p>论文地址：https://gee.cs.oswego.edu/dl/papers/aqs.pdf&lt;/p>&lt;/blockquote>
 &lt;h2 id="摘要">摘要&lt;/h2>
 &lt;p>J2SE 1.5 版本的 &lt;code>java.util.concurrent&lt;/code> 包中的大多数同步器（如：锁、屏障等）都是基于 &lt;code>AbstractQueuedSynchronizer&lt;/code> 类的构建的框架构建的。该框架提供了常见的机制，用于原子地管理同步状态、阻塞和解除阻塞线程以及队列操作。本文介绍了该框架的基本原理、设计、实现、使用方法和性能。&lt;/p>
 &lt;h2 id="引言">引言&lt;/h2>
@@ -58,8 +73,7 @@
 &lt;hr>
 &lt;p>跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。&lt;/p>
 &lt;blockquote>
-&lt;p>&lt;strong>概率算法（Probabilistic Algorithm）&lt;/strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。&lt;/p>
-&lt;/blockquote>
+&lt;p>&lt;strong>概率算法（Probabilistic Algorithm）&lt;/strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。&lt;/p>&lt;/blockquote>
 &lt;p>每个元素在跳表中由一个节点表示（如下图所示），节点是以 &lt;code>key&lt;/code> 的顺序有序排列的。且每个节点都有一个高度（height）或级别（level），表示该节点拥有的前向指针的数量。&lt;/p>
 &lt;p>当插入节点时，会随机生成节点的高度，而不需要考虑当前跳表中的元素数量。&lt;/p>
 &lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/skiplist.png" alt="">&lt;/p>
@@ -72,22 +86,15 @@
 &lt;/ul>
 &lt;h2 id="search">Search&lt;/h2>
 &lt;blockquote>
-&lt;p>在跳表上插入的元素需要使用比较算法比较 &lt;code>key&lt;/code> 的大小。为了处理尾部节点，设定 &lt;code>null&lt;/code> 比任何 &lt;code>key&lt;/code> 都大&lt;/p>
-&lt;/blockquote>
+&lt;p>在跳表上插入的元素需要使用比较算法比较 &lt;code>key&lt;/code> 的大小。为了处理尾部节点，设定 &lt;code>null&lt;/code> 比任何 &lt;code>key&lt;/code> 都大&lt;/p>&lt;/blockquote>
 &lt;p>在跳表上进行&lt;strong>查找操作&lt;/strong>时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：&lt;/p>
 &lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/search.jpg" alt="">&lt;/p>
 &lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/search-code.png" alt="">&lt;/p>
 &lt;h2 id="insert">Insert&lt;/h2>
 &lt;p>&lt;strong>插入操作&lt;/strong>需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 &lt;code>update&lt;/code> 数组记录存储了每一层中小于待插入键的最后一个节点。&lt;/p>
-&lt;p>我们使用 &lt;code>height = randomLevel()&lt;/code> 生成该节点的高度：&lt;/p>
-&lt;ul>
-&lt;li>如果 &lt;code>height&lt;/code> 高于当前跳表，我们需要把高于的部分的指向尾节点（null）。为方便操作，先把 &lt;code>update[i]&lt;/code> 指向 &lt;code>header&lt;/code>，后续使用 &lt;code>update[i].forward[i]&lt;/code> 获取尾节点。&lt;/li>
-&lt;li>如果 &lt;code>height&lt;/code> 低于当前跳表，我们把 &lt;code>update&lt;/code> 中高度小与等于 &lt;code>height&lt;/code> 的节点的 &lt;code>forward&lt;/code> 进行更新。左边索引指向当前插入的节点，当前节点指向右边索引。&lt;/li>
-&lt;/ul>
-&lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/insert.jpg" alt="">&lt;/p></description></item><item><title>Java 方法句柄（翻译）</title><link>https://ileonli.github.io/posts/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄翻译">Java 方法句柄（翻译）&lt;/h1>
+&lt;p>我们使用 &lt;code>height = randomLevel()&lt;/code> 生成该节点的高度：&lt;/p></description></item><item><title>Java 方法句柄（翻译）</title><link>https://ileonli.github.io/posts/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄翻译">Java 方法句柄（翻译）&lt;/h1>
 &lt;blockquote>
-&lt;p>翻译自：&lt;a href="https://dev.java/learn/introduction_to_method_handles/" target="_blank" rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/&lt;/a>&lt;/p>
-&lt;/blockquote>
+&lt;p>翻译自：&lt;a href="https://dev.java/learn/introduction_to_method_handles/" target="_blank" rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/&lt;/a>&lt;/p>&lt;/blockquote>
 &lt;h2 id="什么是方法句柄what-are-method-handles">什么是方法句柄（What are method handles）&lt;/h2>
 &lt;p>方法句柄是一种用于查找和调用方法的低级机制。与反射一样，方法句柄也提供了调用方法、调用构造函数以及访问字段的手段。&lt;/p>
 &lt;p>那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的引用之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。&lt;/p>
@@ -107,14 +114,10 @@
 &lt;p>要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息通过 &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodType.html" target="_blank" rel="noopener noreferrer">&lt;code>MethodType&lt;/code>&lt;/a> 类表示。为了实例化一个 &lt;code>MethodType&lt;/code> 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>MethodType methodType &lt;span style="color:#f92672">=&lt;/span> MethodType.&lt;span style="color:#a6e22e">methodType&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* the method returns integer */&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> String.&lt;span style="color:#a6e22e">class&lt;/span> &lt;span style="color:#75715e">/* and accepts a single String argument*/&lt;/span>);
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>有了 &lt;code>Lookup&lt;/code> 和 &lt;code>MethodType&lt;/code> 实例后，我们就可以查找方法句柄了。&lt;/p>
-&lt;ul>
-&lt;li>
-&lt;p>对于&lt;strong>实例方法&lt;/strong>，我们应该使用 &lt;a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html#findVirtual%28java.lang.Class,java.lang.String,java.lang.invoke.MethodType%29" target="_blank" rel="noopener noreferrer">&lt;code>Lookup.findVirtual&lt;/code>&lt;/a>。&lt;/p></description></item><item><title>Java JDBC</title><link>https://ileonli.github.io/posts/java/jdbc/</link><pubDate>Sat, 03 Aug 2024 17:25:03 +0800</pubDate><guid>https://ileonli.github.io/posts/java/jdbc/</guid><description>&lt;h1 id="java-jdbc">Java JDBC&lt;/h1>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>有了 &lt;code>Lookup&lt;/code> 和 &lt;code>MethodType&lt;/code> 实例后，我们就可以查找方法句柄了。&lt;/p></description></item><item><title>Java JDBC</title><link>https://ileonli.github.io/posts/java/jdbc/</link><pubDate>Sat, 03 Aug 2024 17:25:03 +0800</pubDate><guid>https://ileonli.github.io/posts/java/jdbc/</guid><description>&lt;h1 id="java-jdbc">Java JDBC&lt;/h1>
 &lt;blockquote>
 &lt;p>本教程使用 MySQL 数据库。&lt;/p>
-&lt;p>主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>
-&lt;/blockquote>
+&lt;p>主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html&lt;/p>&lt;/blockquote>
 &lt;h2 id="建立连接">建立连接&lt;/h2>
 &lt;p>数据源可以是数据库管理系统 (DBMS)、传统文件系统或其他带有相应 JDBC 驱动的数据源。通常，JDBC 使用以下两种类之一来连接目标数据源：&lt;/p>
 &lt;ul>
@@ -144,8 +147,7 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="使用-preparedstatements">使用 PreparedStatements&lt;/h2>
 &lt;p>如果需要多次执行一个 &lt;code>Statement&lt;/code> 对象，使用 &lt;code>PreparedStatement&lt;/code> 对象可以减少执行时间。&lt;/p></description></item><item><title>阻塞与非阻塞 I/O 和 epoll（翻译）</title><link>https://ileonli.github.io/posts/network-programming/block-and-nonblock-io/</link><pubDate>Fri, 12 Jul 2024 22:59:06 +0800</pubDate><guid>https://ileonli.github.io/posts/network-programming/block-and-nonblock-io/</guid><description>&lt;h1 id="阻塞与非阻塞-io-和-epoll翻译">阻塞与非阻塞 I/O 和 epoll（翻译）&lt;/h1>
 &lt;blockquote>
-&lt;p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll&lt;/p>
-&lt;/blockquote>
+&lt;p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll&lt;/p>&lt;/blockquote>
 &lt;p>在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:&lt;/p>
 &lt;ol>
 &lt;li>使用 &lt;code>fcntl&lt;/code> 函数设置文件描述符的 &lt;code>O_NONBLOCK&lt;/code> 时的语义。&lt;/li>
@@ -326,8 +328,7 @@
 &lt;h3 id="最大长度">最大长度&lt;/h3>
 &lt;p>根据注释可以看到，有些虚拟机需要在数组中保存额外信息（&lt;a href="https://stackoverflow.com/questions/35756277/why-the-maximum-array-size-of-arraylist-is-integer-max-value-8" target="_blank" rel="noopener noreferrer">保存的额外信息&lt;/a>）需要占用一定的空间，所以 &lt;code>ArrayList&lt;/code> 的最大长度为 &lt;code>2^32 - 8&lt;/code>&lt;/p></description></item><item><title>Java 中的引用类型</title><link>https://ileonli.github.io/posts/java/reference/</link><pubDate>Sat, 21 Aug 2021 14:21:05 +0800</pubDate><guid>https://ileonli.github.io/posts/java/reference/</guid><description>&lt;h1 id="java-中的引用类型">Java 中的引用类型&lt;/h1>
 &lt;blockquote>
-&lt;p>为什么 JDK 中会设计这么多中引用类型呢？&lt;/p>
-&lt;/blockquote>
+&lt;p>为什么 JDK 中会设计这么多中引用类型呢？&lt;/p>&lt;/blockquote>
 &lt;p>首先，Java 是一门自带 GC 的语言，意味着我们不用像 C++ 一样手动管理内存，Java 会自动清除不需要的对象，但这样我们就无法控制对象的生命周期。&lt;/p>
 &lt;p>系统中存在大量的对象，其重要程度和生命周期是不同的。因此我们可以利用不同的引用类型控制 GC 回收对象的时间。当内存空间还足够时，对象可以保留在内存中；内存空间在进行垃圾回收后仍然紧张，就可以抛弃某些对象释放内存。&lt;/p>
 &lt;p>JDK 1.2 之后，Java 对引用对象进行了分类，从上到下引用类型逐渐变弱：&lt;/p>
