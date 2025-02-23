@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Java AQS（翻译）</title>
 <link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
-_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
-_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(a){text-decoration:2;underline;fade-30}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid}
 _:where(code){font:90%;_v:middle}
 _:where(code:not(.highlight_*,pre_*)){p:2}
-_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
-_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(del){text-decoration:1;line-through;fade-68}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56}
 _:where(h1,h2,h3,h4,h5,h6){mt:1em}
 _:where(h1){font:40;_font:extrabold}
 _:where(h1){my:1em}
@@ -14,29 +14,29 @@ _:where(h3){font:24}
 _:where(h4){font:20}
 _:where(h5){font:16}
 _:where(h6){font:14}
-_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li)::marker{font:fade-44}
 _:where(li){pl:.375em}
-_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
-_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65}
 _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
 >:first-child{mt:0!}
 _:where(pre){p:20;_r:8;_overflow:auto}
-_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
-_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(pre,code:not(.highlight_*)){bg:fade-2}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92}
 _:where(table){width:full;_border-spacing:0}
 _:where(td){v:baseline}
 _:where(td,th):first-child{pl:0}
 _:where(td,th):last-child{pr:0}
-_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
-_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
-_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;}
+_:where(th){font:fade-78;_font:14;_text:left}
+_:where(th,p_code,li_code,a,mark){font:semibold}
 _:where(ul){list-style-type:disc}
 _:where(ul,ol,blockquote){pl:1em}
 _:where(video,img){max-width:full}
 _:where(video){mx:auto}
 _:where(img){mx:auto}
 _:where(a,mark){text-underline-offset:3}
-_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-aqs翻译>Java AQS（翻译）</h1><blockquote><p>本文是 Doug Lea 的 <em>The java.util.concurrent Synchronizer Framework</em> 一文的翻译，该论文描述了 <code>AbstractQueuedSynchronizer</code> 类的基本原理、设计、实现、使用和性能。</p><p>论文地址：https://gee.cs.oswego.edu/dl/papers/aqs.pdf</p></blockquote><h2 id=摘要>摘要</h2><p>J2SE 1.5 版本的 <code>java.util.concurrent</code> 包中的大多数同步器（如：锁、屏障等）都是基于 <code>AbstractQueuedSynchronizer</code> 类的构建的框架构建的。该框架提供了常见的机制，用于原子地管理同步状态、阻塞和解除阻塞线程以及队列操作。本文介绍了该框架的基本原理、设计、实现、使用方法和性能。</p><h2 id=引言>引言</h2><p>Java 在发布的 J2SE-1.5 版本中引入了 <code>java.util.concurrent</code> 包，该包由 JCP 的 <a href=https://gee.cs.oswego.edu/dl/concurrency-interest/jsr166-slides.pdf target=_blank rel="noopener noreferrer">JSR 166</a> 创建的一组并发支持类。其中包括一组同步器抽象数据类型，这些类维护内部同步状态（例如，表示锁是锁定还是解锁），提供更新和检查该状态的操作，并至少包含一个方法，该方法会阻塞调用的线程（如果同步状态要求阻塞），当其它线程更改同步状态以允许线程继续时，调用线程会恢复执行。示例包括各种形式的互斥锁（mutual exclusion locks）、读写锁（read-write locks）、信号量（semaphores）、屏障（barriers）、异步结果（future）、事件指示器（event indicators）和交接队列（handoff queues）。</p><p>众所周知，同步器可以用来实现其它任何的同步器。例如：可以使用可重入锁构建信号量，反之亦然。然而，通过此方式会导致系统较为复杂、开销大及不灵活，只能算是一种二流的工程选择。此外，从概念上来说，此方式也不具吸引力。如果这些结构之间没有比其它更为基础的，那么开发者就不应被迫选择其中一个构建其它的结构。相反，JSR166 构建了一个以 <code>AbstractQueuedSynchronizer</code> 类为中心的小框架，该框架提供了通用的机制，这些机制被包中的大多数同步器以及用户可能自行定义的类所使用。</p><p>本文的其余部分将讨论该框架的需求、设计和实现的主要思想、示例用法以及一些展示其性能特征的测量结果。</p><h2 id=需求>需求</h2><h3 id=功能>功能</h3><p>同步器有两种方法：至少一个 <code>acquire</code> 操作，该操作可以阻塞调用线程，除非/直到同步状态允许其执行；至少一个 <code>release</code> 操作，该操作可以改变同步状态，以便允许一个或多个被阻塞的线程解除阻塞。</p><p><code>java.util.concurrent</code> 包没有为同步器定义一个统一的 API。一些类是通过通用的接口定义的（如：<code>Lock</code>），但其它的仅包含特别的版本。因此，<code>acquire</code> 和 <code>release</code> 操作在不同类中使用了不同的名称。例如：<code>Lock.lock</code>、<code>Semaphore.acquire</code>、<code>CountDownLatch.await</code> 和 <code>FutureTask.get</code> 方法都映射到框架的 <code>acquire</code> 方法。然而，该包在各个类之间保持一致的约定，以支持一系列常见的使用选项。在有意义的情况下，每个同步器支持：</p><ul><li>非阻塞尝试获取同步状态（例如：<code>tryLock</code>）以及阻塞版本。</li><li>可选的超时，应用程序可放弃等待。</li><li>通过中断实现可取消性，通常分为一个可取消的 <code>acquire</code> 版本和一个不可取消的版本。</li></ul><p>取决于是否仅管理独占状态，同步器可能有所不同。<strong>独占</strong>：一次只有一个线程可以继续执行，直到可能的阻塞点；<strong>共享</strong>：多个线程至少有时可以继续执行。常规的锁需要维护独占状态，但计数信号量可能被多个线程获取，数量由计数值决定。为了广泛使用，该框架必须支持这两种操作模式。</p><p><code>java.util.concurrent</code> 包还定义了 <code>Condition</code> 接口，支持类似 monitor 的 <code>await</code> 和 <code>signal</code> 操作，通常与 <code>Lock</code> 类配合使用。</p><h3 id=执行目标>执行目标</h3><p>长期以来，Java 内置的锁（<code>synchronized</code>）一直存在性能问题。然而，这类工作的主要关注点是最小化空间开销（任何 Java 对象都可以作为锁）以及在主要是单线程的上下文中，针对单处理器的情况，最小化时间开销。对于同步器来说，这两点并不是特别重要的问题：程序员只有在需要时才会构造同步器，因此无需压缩本可能会浪费的空间；而且同步器几乎专门用于多线程设计（在多处理器系统上使用的频率越来越高），在这种情况下，偶尔会出现竞争的情况。因此，JVM 主要针对零竞争场景来优化锁，即假设大多数情况下没有多个线程竞争同一个锁。而将其它情况交给不太可预测的<strong>慢路径</strong>的策略上，这种策略并不适用于典型的多线程服务器应用程序，尤其是那些在 <code>java.util.concurrent</code> 库上高度依赖的应用。</p><p>此处的主要性能目标是<strong>可扩展性</strong>：即使同步器出现竞争，也要保持可预测的效率。理想情况下，无论有多少线程尝试通过同步点，所需的开销都应该是恒定的。主要目标之一是要最小化某个线程被允许通过同步点但尚未完成所花费的总时间。然而，这必须要与资源考虑因素取得平衡，包括总 CPU 时间需求、内存流量和线程调度开销。例如，自旋锁通常比阻塞锁消耗更短的获取时间，但通常会浪费 CPU 周期并产生内存竞争，所以通常情况下并不适用。</p><p>这些目标包含了两种使用风格。大多数应用程序应该最大化总吞吐量，不保证永不进入饥饿状态。然而，在资源控制等应用中，维护线程之间的访问公平性要重要得多，可以容忍较差的总体吞吐量。没有任何框架能够替用户在这些相互冲突的目标之间做出选择；相反，必须适应不同的公平性策略。</p><p>无论内部设计的多么精良，同步器也会在某些应用程序中造成性能瓶颈。因此，该框架必须能够对基本操作进行监控和检查，以便用户发现并缓解性能瓶颈。至少（也是最有用的）需要提供一种方法来确定有多少线程处于阻塞状态。</p><h2 id=设计和实现>设计和实现</h2><p>同步器背后的实现是非常简单的。</p><p><code>acquire</code> 操作如下：</p><pre tabindex=0><code>while (synchronization state does not allow acquire) {
+_:where(hr){h:2;_bg:fade-30;_my:1em}"><h1 id=java-aqs翻译>Java AQS（翻译）</h1><blockquote><p>本文是 Doug Lea 的 <em>The java.util.concurrent Synchronizer Framework</em> 一文的翻译，该论文描述了 <code>AbstractQueuedSynchronizer</code> 类的基本原理、设计、实现、使用和性能。</p><p>论文地址：https://gee.cs.oswego.edu/dl/papers/aqs.pdf</p></blockquote><h2 id=摘要>摘要</h2><p>J2SE 1.5 版本的 <code>java.util.concurrent</code> 包中的大多数同步器（如：锁、屏障等）都是基于 <code>AbstractQueuedSynchronizer</code> 类的构建的框架构建的。该框架提供了常见的机制，用于原子地管理同步状态、阻塞和解除阻塞线程以及队列操作。本文介绍了该框架的基本原理、设计、实现、使用方法和性能。</p><h2 id=引言>引言</h2><p>Java 在发布的 J2SE-1.5 版本中引入了 <code>java.util.concurrent</code> 包，该包由 JCP 的 <a href=https://gee.cs.oswego.edu/dl/concurrency-interest/jsr166-slides.pdf target=_blank rel="noopener noreferrer">JSR 166</a> 创建的一组并发支持类。其中包括一组同步器抽象数据类型，这些类维护内部同步状态（例如，表示锁是锁定还是解锁），提供更新和检查该状态的操作，并至少包含一个方法，该方法会阻塞调用的线程（如果同步状态要求阻塞），当其它线程更改同步状态以允许线程继续时，调用线程会恢复执行。示例包括各种形式的互斥锁（mutual exclusion locks）、读写锁（read-write locks）、信号量（semaphores）、屏障（barriers）、异步结果（future）、事件指示器（event indicators）和交接队列（handoff queues）。</p><p>众所周知，同步器可以用来实现其它任何的同步器。例如：可以使用可重入锁构建信号量，反之亦然。然而，通过此方式会导致系统较为复杂、开销大及不灵活，只能算是一种二流的工程选择。此外，从概念上来说，此方式也不具吸引力。如果这些结构之间没有比其它更为基础的，那么开发者就不应被迫选择其中一个构建其它的结构。相反，JSR166 构建了一个以 <code>AbstractQueuedSynchronizer</code> 类为中心的小框架，该框架提供了通用的机制，这些机制被包中的大多数同步器以及用户可能自行定义的类所使用。</p><p>本文的其余部分将讨论该框架的需求、设计和实现的主要思想、示例用法以及一些展示其性能特征的测量结果。</p><h2 id=需求>需求</h2><h3 id=功能>功能</h3><p>同步器有两种方法：至少一个 <code>acquire</code> 操作，该操作可以阻塞调用线程，除非/直到同步状态允许其执行；至少一个 <code>release</code> 操作，该操作可以改变同步状态，以便允许一个或多个被阻塞的线程解除阻塞。</p><p><code>java.util.concurrent</code> 包没有为同步器定义一个统一的 API。一些类是通过通用的接口定义的（如：<code>Lock</code>），但其它的仅包含特别的版本。因此，<code>acquire</code> 和 <code>release</code> 操作在不同类中使用了不同的名称。例如：<code>Lock.lock</code>、<code>Semaphore.acquire</code>、<code>CountDownLatch.await</code> 和 <code>FutureTask.get</code> 方法都映射到框架的 <code>acquire</code> 方法。然而，该包在各个类之间保持一致的约定，以支持一系列常见的使用选项。在有意义的情况下，每个同步器支持：</p><ul><li>非阻塞尝试获取同步状态（例如：<code>tryLock</code>）以及阻塞版本。</li><li>可选的超时，应用程序可放弃等待。</li><li>通过中断实现可取消性，通常分为一个可取消的 <code>acquire</code> 版本和一个不可取消的版本。</li></ul><p>取决于是否仅管理独占状态，同步器可能有所不同。<strong>独占</strong>：一次只有一个线程可以继续执行，直到可能的阻塞点；<strong>共享</strong>：多个线程至少有时可以继续执行。常规的锁需要维护独占状态，但计数信号量可能被多个线程获取，数量由计数值决定。为了广泛使用，该框架必须支持这两种操作模式。</p><p><code>java.util.concurrent</code> 包还定义了 <code>Condition</code> 接口，支持类似 monitor 的 <code>await</code> 和 <code>signal</code> 操作，通常与 <code>Lock</code> 类配合使用。</p><h3 id=执行目标>执行目标</h3><p>长期以来，Java 内置的锁（<code>synchronized</code>）一直存在性能问题。然而，这类工作的主要关注点是最小化空间开销（任何 Java 对象都可以作为锁）以及在主要是单线程的上下文中，针对单处理器的情况，最小化时间开销。对于同步器来说，这两点并不是特别重要的问题：程序员只有在需要时才会构造同步器，因此无需压缩本可能会浪费的空间；而且同步器几乎专门用于多线程设计（在多处理器系统上使用的频率越来越高），在这种情况下，偶尔会出现竞争的情况。因此，JVM 主要针对零竞争场景来优化锁，即假设大多数情况下没有多个线程竞争同一个锁。而将其它情况交给不太可预测的<strong>慢路径</strong>的策略上，这种策略并不适用于典型的多线程服务器应用程序，尤其是那些在 <code>java.util.concurrent</code> 库上高度依赖的应用。</p><p>此处的主要性能目标是<strong>可扩展性</strong>：即使同步器出现竞争，也要保持可预测的效率。理想情况下，无论有多少线程尝试通过同步点，所需的开销都应该是恒定的。主要目标之一是要最小化某个线程被允许通过同步点但尚未完成所花费的总时间。然而，这必须要与资源考虑因素取得平衡，包括总 CPU 时间需求、内存流量和线程调度开销。例如，自旋锁通常比阻塞锁消耗更短的获取时间，但通常会浪费 CPU 周期并产生内存竞争，所以通常情况下并不适用。</p><p>这些目标包含了两种使用风格。大多数应用程序应该最大化总吞吐量，不保证永不进入饥饿状态。然而，在资源控制等应用中，维护线程之间的访问公平性要重要得多，可以容忍较差的总体吞吐量。没有任何框架能够替用户在这些相互冲突的目标之间做出选择；相反，必须适应不同的公平性策略。</p><p>无论内部设计的多么精良，同步器也会在某些应用程序中造成性能瓶颈。因此，该框架必须能够对基本操作进行监控和检查，以便用户发现并缓解性能瓶颈。至少（也是最有用的）需要提供一种方法来确定有多少线程处于阻塞状态。</p><h2 id=设计和实现>设计和实现</h2><p>同步器背后的实现是非常简单的。</p><p><code>acquire</code> 操作如下：</p><pre tabindex=0><code>while (synchronization state does not allow acquire) {
     enqueue current thread if not already queued;
     possibly block current thread;
 }

@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>阻塞与非阻塞 I/O 和 epoll（翻译）</title>
 <link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
-_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
-_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(a){text-decoration:2;underline;fade-30}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid}
 _:where(code){font:90%;_v:middle}
 _:where(code:not(.highlight_*,pre_*)){p:2}
-_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
-_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(del){text-decoration:1;line-through;fade-68}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56}
 _:where(h1,h2,h3,h4,h5,h6){mt:1em}
 _:where(h1){font:40;_font:extrabold}
 _:where(h1){my:1em}
@@ -14,29 +14,29 @@ _:where(h3){font:24}
 _:where(h4){font:20}
 _:where(h5){font:16}
 _:where(h6){font:14}
-_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li)::marker{font:fade-44}
 _:where(li){pl:.375em}
-_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
-_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65}
 _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
 >:first-child{mt:0!}
 _:where(pre){p:20;_r:8;_overflow:auto}
-_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
-_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(pre,code:not(.highlight_*)){bg:fade-2}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92}
 _:where(table){width:full;_border-spacing:0}
 _:where(td){v:baseline}
 _:where(td,th):first-child{pl:0}
 _:where(td,th):last-child{pr:0}
-_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
-_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
-_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;}
+_:where(th){font:fade-78;_font:14;_text:left}
+_:where(th,p_code,li_code,a,mark){font:semibold}
 _:where(ul){list-style-type:disc}
 _:where(ul,ol,blockquote){pl:1em}
 _:where(video,img){max-width:full}
 _:where(video){mx:auto}
 _:where(img){mx:auto}
 _:where(a,mark){text-underline-offset:3}
-_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=阻塞与非阻塞-io-和-epoll翻译>阻塞与非阻塞 I/O 和 epoll（翻译）</h1><blockquote><p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll</p></blockquote><p>在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:</p><ol><li>使用 <code>fcntl</code> 函数设置文件描述符的 <code>O_NONBLOCK</code> 时的语义。</li><li>非阻塞（nonblocking） I/O 与异步（asynchronous） I/O 的区别。</li><li>为什么非阻塞 I/O 经常与诸如 <code>select</code>、<code>epoll</code> 和 <code>kqueue</code> 等 I/O 多路复用器一起使用。</li><li>非阻塞模式如何与 <code>epoll</code> 中的边缘触发轮询交互。</li></ol><h2 id=阻塞模式>阻塞模式</h2><p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 <code>read</code>、<code>write</code> 或 <code>connect</code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 <code>stdin</code> 读取数据时会发生什么。如果你在 <code>stdin</code>上调用 <code>read</code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 <code>stdin</code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 <code>read</code> 调用将会阻塞，直到连接的另一端实际上发送数据。</p><p>阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：</p><ol><li>非阻塞模式。</li><li>I/O 多路复用系统调用，例如 <code>select</code> 和 <code>epoll</code>。</li></ol><p>这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。</p><h2 id=非阻塞模式>非阻塞模式</h2><p>通过 <code>fcntl</code> 函数在文件描述符的标志集中添加 <code>O_NONBLOCK</code>，可以将文件描述符设置为“非阻塞模式”：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>/* set O_NONBLOCK on fd */</span>
+_:where(hr){h:2;_bg:fade-30;_my:1em}"><h1 id=阻塞与非阻塞-io-和-epoll翻译>阻塞与非阻塞 I/O 和 epoll（翻译）</h1><blockquote><p>原文：https://eklitzke.org/blocking-io-nonblocking-io-and-epoll</p></blockquote><p>在这篇文章中，我想解释使用非阻塞 I/O 时会发生什么。我特别想说明的是:</p><ol><li>使用 <code>fcntl</code> 函数设置文件描述符的 <code>O_NONBLOCK</code> 时的语义。</li><li>非阻塞（nonblocking） I/O 与异步（asynchronous） I/O 的区别。</li><li>为什么非阻塞 I/O 经常与诸如 <code>select</code>、<code>epoll</code> 和 <code>kqueue</code> 等 I/O 多路复用器一起使用。</li><li>非阻塞模式如何与 <code>epoll</code> 中的边缘触发轮询交互。</li></ol><h2 id=阻塞模式>阻塞模式</h2><p>默认情况下，Unix 系统所有的文件描述符都以“阻塞模式”启动。这意味着像 <code>read</code>、<code>write</code> 或 <code>connect</code> 这样的 I/O 系统调用可能会阻塞。一个很容易理解的方法是当你从一个普通的基于 TTY 的程序中的 <code>stdin</code> 读取数据时会发生什么。如果你在 <code>stdin</code>上调用 <code>read</code>，那么你的程序将会阻塞，直到数据实际上可用，比如当用户实际上在键盘上键入字符时。具体来说，内核会将进程置于“睡眠”状态，直到 <code>stdin</code> 上的数据可用。其他类型的文件描述符也是如此。例如，如果你尝试从 TCP 套接字中读取数据，那么 <code>read</code> 调用将会阻塞，直到连接的另一端实际上发送数据。</p><p>阻塞对于应该并发运行的程序来说是一个问题，因为被阻塞的进程会被挂起。解决这个问题有两种不同但互补的方式：</p><ol><li>非阻塞模式。</li><li>I/O 多路复用系统调用，例如 <code>select</code> 和 <code>epoll</code>。</li></ol><p>这两种解决方案经常一起使用，但它们是解决这个问题的独立策略，通常两者都会被使用。接下来我们将会看到它们之间的区别以及为什么它们通常都会被同时使用。</p><h2 id=非阻塞模式>非阻塞模式</h2><p>通过 <code>fcntl</code> 函数在文件描述符的标志集中添加 <code>O_NONBLOCK</code>，可以将文件描述符设置为“非阻塞模式”：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>/* set O_NONBLOCK on fd */</span>
 </span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> flags <span style=color:#f92672>=</span> <span style=color:#a6e22e>fcntl</span>(fd, F_GETFL, <span style=color:#ae81ff>0</span>);
 </span></span><span style=display:flex><span><span style=color:#a6e22e>fcntl</span>(fd, F_SETFL, flags <span style=color:#f92672>|</span> O_NONBLOCK);
 </span></span></code></pre></div><p>从这一点开始，文件描述符被视为非阻塞的。当发生这种情况时，像 <code>read</code> 和 <code>write</code> 这样的 I/O 系统调用将返回 -1，并且 <code>errno</code> 将被设置为 <code>EWOULDBLOCK</code>。</p><p>这很有趣，但单独使用实际上并不是那么有用。仅仅使用这种基本方法是没有有效方式同时在多个文件描述符上进行 I/O 的。例如，假设我们有两个文件描述符，并希望同时读取它们。这可以通过循环检查每个文件描述符是否有数据，然后在再次检查之前短暂休眠来实现：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>struct</span> timespec sleep_interval{.tv_sec <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, .tv_nsec <span style=color:#f92672>=</span> <span style=color:#ae81ff>1000</span>};

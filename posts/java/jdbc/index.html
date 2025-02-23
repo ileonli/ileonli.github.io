@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Java JDBC</title>
 <link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
-_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
-_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(a){text-decoration:2;underline;fade-30}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid}
 _:where(code){font:90%;_v:middle}
 _:where(code:not(.highlight_*,pre_*)){p:2}
-_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
-_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(del){text-decoration:1;line-through;fade-68}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56}
 _:where(h1,h2,h3,h4,h5,h6){mt:1em}
 _:where(h1){font:40;_font:extrabold}
 _:where(h1){my:1em}
@@ -14,29 +14,29 @@ _:where(h3){font:24}
 _:where(h4){font:20}
 _:where(h5){font:16}
 _:where(h6){font:14}
-_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li)::marker{font:fade-44}
 _:where(li){pl:.375em}
-_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
-_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65}
 _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
 >:first-child{mt:0!}
 _:where(pre){p:20;_r:8;_overflow:auto}
-_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
-_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(pre,code:not(.highlight_*)){bg:fade-2}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92}
 _:where(table){width:full;_border-spacing:0}
 _:where(td){v:baseline}
 _:where(td,th):first-child{pl:0}
 _:where(td,th):last-child{pr:0}
-_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
-_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
-_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;}
+_:where(th){font:fade-78;_font:14;_text:left}
+_:where(th,p_code,li_code,a,mark){font:semibold}
 _:where(ul){list-style-type:disc}
 _:where(ul,ol,blockquote){pl:1em}
 _:where(video,img){max-width:full}
 _:where(video){mx:auto}
 _:where(img){mx:auto}
 _:where(a,mark){text-underline-offset:3}
-_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-jdbc>Java JDBC</h1><blockquote><p>本教程使用 MySQL 数据库。</p><p>主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html</p></blockquote><h2 id=建立连接>建立连接</h2><p>数据源可以是数据库管理系统 (DBMS)、传统文件系统或其他带有相应 JDBC 驱动的数据源。通常，JDBC 使用以下两种类之一来连接目标数据源：</p><ul><li><code>DriverManager</code>：用于将应用程序连接到通过数据库 URL 指定的数据源。当此类首次尝试建立连接时，它会自动加载类路径中找到的任何 JDBC 4.0 驱动程序。必须手动加载任何 4.0 版本之前的 JDBC 驱动程序。</li><li><code>DataSource</code>：相比于 <code>DriverManager</code>，更推荐使用此接口，因为它允许应用程序对底层数据源的细节保持透明。<code>DataSource</code> 对象的属性被设置为表示特定的数据源。</li></ul><h3 id=使用-drivermanager-类>使用 <code>DriverManager</code> 类</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>String url <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;jdbc:mysql://localhost:3306/db&#34;</span>;
+_:where(hr){h:2;_bg:fade-30;_my:1em}"><h1 id=java-jdbc>Java JDBC</h1><blockquote><p>本教程使用 MySQL 数据库。</p><p>主要参考：https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html</p></blockquote><h2 id=建立连接>建立连接</h2><p>数据源可以是数据库管理系统 (DBMS)、传统文件系统或其他带有相应 JDBC 驱动的数据源。通常，JDBC 使用以下两种类之一来连接目标数据源：</p><ul><li><code>DriverManager</code>：用于将应用程序连接到通过数据库 URL 指定的数据源。当此类首次尝试建立连接时，它会自动加载类路径中找到的任何 JDBC 4.0 驱动程序。必须手动加载任何 4.0 版本之前的 JDBC 驱动程序。</li><li><code>DataSource</code>：相比于 <code>DriverManager</code>，更推荐使用此接口，因为它允许应用程序对底层数据源的细节保持透明。<code>DataSource</code> 对象的属性被设置为表示特定的数据源。</li></ul><h3 id=使用-drivermanager-类>使用 <code>DriverManager</code> 类</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>String url <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;jdbc:mysql://localhost:3306/db&#34;</span>;
 </span></span><span style=display:flex><span>String username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;root&#34;</span>, password <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;0987654321&#34;</span>;
 </span></span><span style=display:flex><span>Connection conn <span style=color:#f92672>=</span> DriverManager.<span style=color:#a6e22e>getConnection</span>(url, username, password);
 </span></span></code></pre></div><h2 id=使用-jdbc-处理-sql-语句>使用 JDBC 处理 SQL 语句</h2><p>新建一个 <code>user</code> 表，如下图所示：</p><p><img src=/images/JDBC/User.png alt></p><p>使用 <code>conn</code> 对象创建 <code>Statement</code>，使用 <code>stmt</code> 执行 SQL 语句。</p><p><code>ResultSet</code> 保存了执行 SQL 语句的结果，可以遍历保存的结果。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>String query <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;SELECT * FROM `user`;&#34;</span>;

@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Java HashMap 源码</title>
 <link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
-_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
-_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(a){text-decoration:2;underline;fade-30}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid}
 _:where(code){font:90%;_v:middle}
 _:where(code:not(.highlight_*,pre_*)){p:2}
-_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
-_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(del){text-decoration:1;line-through;fade-68}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56}
 _:where(h1,h2,h3,h4,h5,h6){mt:1em}
 _:where(h1){font:40;_font:extrabold}
 _:where(h1){my:1em}
@@ -14,29 +14,29 @@ _:where(h3){font:24}
 _:where(h4){font:20}
 _:where(h5){font:16}
 _:where(h6){font:14}
-_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li)::marker{font:fade-44}
 _:where(li){pl:.375em}
-_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
-_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65}
 _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
 >:first-child{mt:0!}
 _:where(pre){p:20;_r:8;_overflow:auto}
-_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
-_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(pre,code:not(.highlight_*)){bg:fade-2}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92}
 _:where(table){width:full;_border-spacing:0}
 _:where(td){v:baseline}
 _:where(td,th):first-child{pl:0}
 _:where(td,th):last-child{pr:0}
-_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
-_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
-_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;}
+_:where(th){font:fade-78;_font:14;_text:left}
+_:where(th,p_code,li_code,a,mark){font:semibold}
 _:where(ul){list-style-type:disc}
 _:where(ul,ol,blockquote){pl:1em}
 _:where(video,img){max-width:full}
 _:where(video){mx:auto}
 _:where(img){mx:auto}
 _:where(a,mark){text-underline-offset:3}
-_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-hashmap-源码>Java HashMap 源码</h1><h2 id=属性>属性</h2><h3 id=默认长度>默认长度</h3><p>如不传入初始化长度，则默认长度为 16</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>/**
+_:where(hr){h:2;_bg:fade-30;_my:1em}"><h1 id=java-hashmap-源码>Java HashMap 源码</h1><h2 id=属性>属性</h2><h3 id=默认长度>默认长度</h3><p>如不传入初始化长度，则默认长度为 16</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>/**
 </span></span></span><span style=display:flex><span><span style=color:#75715e> * The default initial capacity - MUST be a power of two.
 </span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
 </span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> DEFAULT_INITIAL_CAPACITY <span style=color:#f92672>=</span> 1 <span style=color:#f92672>&lt;&lt;</span> 4; <span style=color:#75715e>// aka 16</span>

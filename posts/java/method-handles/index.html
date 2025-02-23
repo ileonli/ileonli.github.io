@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Java 方法句柄（翻译）</title>
 <link href=https://unpkg.com/@master/normal.css rel=stylesheet><script src=https://unpkg.com/@master/style@1.5.0></script><script src=https://unpkg.com/@master/styles@1.13.0></script><script src=https://unpkg.com/master-styles-group></script><link rel=stylesheet href=https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css><style>body{font-family:source han serif cn vf}</style></head><body class="bg:fade-84@dark font:fade-16@dark"><div class="d:flex flex:column@<=sm pt:60 px:24 jc:center gap:44 word-break:break-word"><div class="max-w:800 w:full box:content-box"><article class="box:border-box pt:32"><div class="_:where(a):hover{text-decoration-color:fade}
-_:where(a){text-decoration:2;underline;fade-30;_text-decoration-color:fade-70@dark}
-_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid;fade-34/.1@dark}
+_:where(a){text-decoration:2;underline;fade-30}
+_:where(blockquote){bl:5;solid;fade-76/.1;_bl:5;solid}
 _:where(code){font:90%;_v:middle}
 _:where(code:not(.highlight_*,pre_*)){p:2}
-_:where(del){text-decoration:1;line-through;fade-68;_text-decoration-color:red-64@dark}
-_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56;_font:fade-57@dark}
+_:where(del){text-decoration:1;line-through;fade-68}
+_:where(figcaption){text:14;_p:10;20;0;_width:fit;_mx:auto;_font:fade-56}
 _:where(h1,h2,h3,h4,h5,h6){mt:1em}
 _:where(h1){font:40;_font:extrabold}
 _:where(h1){my:1em}
@@ -14,29 +14,29 @@ _:where(h3){font:24}
 _:where(h4){font:20}
 _:where(h5){font:16}
 _:where(h6){font:14}
-_:where(li)::marker{font:fade-44;_font:fade-68@dark}
+_:where(li)::marker{font:fade-44}
 _:where(li){pl:.375em}
-_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent;_text-decoration-color:rgb(252;224;22/.5)@dark}
-_:where(p,li){font:fade-76;_font:16;_line-height:1.65;_font:fade-34@dark}
+_:where(mark){text-decoration:1;underline;#fce016;_bg:transparent}
+_:where(p,li){font:fade-76;_font:16;_line-height:1.65}
 _:where(p,pre,blockquote,figure,ul,ol,table){my:1em}
 >:first-child{mt:0!}
 _:where(pre){p:20;_r:8;_overflow:auto}
-_:where(pre,code:not(.highlight_*)){bg:fade-2;_bg:fade-92!@dark}
-_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92;_font:fade-12@dark}
+_:where(pre,code:not(.highlight_*)){bg:fade-2}
+_:where(strong,b,a,code:not(.highlight_*),mark,del){font:fade-92}
 _:where(table){width:full;_border-spacing:0}
 _:where(td){v:baseline}
 _:where(td,th):first-child{pl:0}
 _:where(td,th):last-child{pr:0}
-_:where(td,th){bb:1;solid;fade-92/.06;_p:6;_b:fade-4/.04@dark}
-_:where(th){font:fade-78;_font:14;_text:left;_font:fade-12@dark}
-_:where(th,p_code,li_code,a,mark){font:semibold;_font:medium@dark}
+_:where(td,th){bb:1;solid;fade-92/.06;_p:6;}
+_:where(th){font:fade-78;_font:14;_text:left}
+_:where(th,p_code,li_code,a,mark){font:semibold}
 _:where(ul){list-style-type:disc}
 _:where(ul,ol,blockquote){pl:1em}
 _:where(video,img){max-width:full}
 _:where(video){mx:auto}
 _:where(img){mx:auto}
 _:where(a,mark){text-underline-offset:3}
-_:where(hr){h:2;_bg:fade-10;_bg:fade-70@dark;_my:1em}"><h1 id=java-方法句柄翻译>Java 方法句柄（翻译）</h1><blockquote><p>翻译自：<a href=https://dev.java/learn/introduction_to_method_handles/ target=_blank rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/</a></p></blockquote><h2 id=什么是方法句柄what-are-method-handles>什么是方法句柄（What are method handles）</h2><p>方法句柄是一种用于查找和调用方法的低级机制。与反射一样，方法句柄也提供了调用方法、调用构造函数以及访问字段的手段。</p><p>那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的引用之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。</p><p>让我们深入探讨一下方法句柄能够提供什么功能以及我们如何有效地使用它们。</p><h2 id=访问检查access-checking>访问检查（Access checking）</h2><p>方法句柄的访问检查与反射的执行方式是不同的。<strong>使用反射时</strong>，每次调用都会对调用者进行访问检查。<strong>而对于方法句柄</strong>，访问检查只在方法句柄创建时进行。</p><p>需要注意的是，如果在能够访问非公共成员的上下文中创建了方法句柄，那么当该方法句柄被传递到外部时，可以通过方法句柄访问非公共成员。</p><p>因此，非公共成员可能会被不应有访问权限的代码访问。开发者有责任将此类方法句柄限制在其创建的上下文内。另外，可以直接使用合适的查找对象来创建具有访问限制的方法句柄。</p><h2 id=方法句柄查找method-handle-lookup>方法句柄查找（Method handle lookup）</h2><p>要创建方法句柄，我们首先需要创建一个 <a href=https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html target=_blank rel="noopener noreferrer"><code>LookUp</code></a> 对象，此为创建方法句柄的工厂。根据 <code>Lookup</code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。</p><p>例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。</p><p>通常我们希望避免这种情况。<strong>一种办法</strong>是将 <code>Lookup</code> 对象和方法句柄设为私有。<strong>另一种方法</strong>是使用 <a href=https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html#publicLookup%28%29 target=_blank rel="noopener noreferrer"><code>MethodHandles.publicLookup</code></a> 方法创建 <code>Lookup</code> 对象，这样它只能查找公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>MethodHandles.<span style=color:#a6e22e>Lookup</span> publicLookup <span style=color:#f92672>=</span> MethodHandles.<span style=color:#a6e22e>publicLookup</span>();
+_:where(hr){h:2;_bg:fade-30;_my:1em}"><h1 id=java-方法句柄翻译>Java 方法句柄（翻译）</h1><blockquote><p>翻译自：<a href=https://dev.java/learn/introduction_to_method_handles/ target=_blank rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/</a></p></blockquote><h2 id=什么是方法句柄what-are-method-handles>什么是方法句柄（What are method handles）</h2><p>方法句柄是一种用于查找和调用方法的低级机制。与反射一样，方法句柄也提供了调用方法、调用构造函数以及访问字段的手段。</p><p>那么，方法句柄究竟什么是呢？它是对底层方法、构造函数或字段的可调用引用。方法句柄允许在一个简单的指向方法的引用之上进行一系列操作，这些操作包括插入或重新排列参数、转换返回值等。</p><p>让我们深入探讨一下方法句柄能够提供什么功能以及我们如何有效地使用它们。</p><h2 id=访问检查access-checking>访问检查（Access checking）</h2><p>方法句柄的访问检查与反射的执行方式是不同的。<strong>使用反射时</strong>，每次调用都会对调用者进行访问检查。<strong>而对于方法句柄</strong>，访问检查只在方法句柄创建时进行。</p><p>需要注意的是，如果在能够访问非公共成员的上下文中创建了方法句柄，那么当该方法句柄被传递到外部时，可以通过方法句柄访问非公共成员。</p><p>因此，非公共成员可能会被不应有访问权限的代码访问。开发者有责任将此类方法句柄限制在其创建的上下文内。另外，可以直接使用合适的查找对象来创建具有访问限制的方法句柄。</p><h2 id=方法句柄查找method-handle-lookup>方法句柄查找（Method handle lookup）</h2><p>要创建方法句柄，我们首先需要创建一个 <a href=https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html target=_blank rel="noopener noreferrer"><code>LookUp</code></a> 对象，此为创建方法句柄的工厂。根据 <code>Lookup</code> 对象本身或方法句柄的使用方式，我们可以决定是否需要限制其访问级别。</p><p>例如，如果我们创建了一个指向私有方法的方法句柄，并且该方法句柄可以从外部访问，那么该私有方法也就可以被外部访问（译者注：现在，外部代码可以直接调用原本受保护的私有方法，从而破坏了方法的私有性）。</p><p>通常我们希望避免这种情况。<strong>一种办法</strong>是将 <code>Lookup</code> 对象和方法句柄设为私有。<strong>另一种方法</strong>是使用 <a href=https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html#publicLookup%28%29 target=_blank rel="noopener noreferrer"><code>MethodHandles.publicLookup</code></a> 方法创建 <code>Lookup</code> 对象，这样它只能查找公共类的公共成员（译者注：未导出的包，或受保护或私有的类和成员不会被搜索到）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>MethodHandles.<span style=color:#a6e22e>Lookup</span> publicLookup <span style=color:#f92672>=</span> MethodHandles.<span style=color:#a6e22e>publicLookup</span>();
 </span></span></code></pre></div><p>如果我们打算将 <code>Lookup</code> 对象和方法句柄设为私有，那么访问私有和受保护的成员是安全的（外部无法访问私有的方法句柄）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>MethodHandles.<span style=color:#a6e22e>Lookup</span> lookup <span style=color:#f92672>=</span> MethodHandles.<span style=color:#a6e22e>lookup</span>();
 </span></span></code></pre></div><h2 id=方法类型method-type>方法类型（Method type）</h2><p>要查找方法句柄，我们还需要提供方法或字段的类型信息。方法的类型信息通过 <a href=https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodType.html target=_blank rel="noopener noreferrer"><code>MethodType</code></a> 类表示。为了实例化一个 <code>MethodType</code> 对象，需要提供函数返回类型作为第一个形参，后跟函数所有实参类型:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Java data-lang=Java><span style=display:flex><span>MethodType methodType <span style=color:#f92672>=</span> MethodType.<span style=color:#a6e22e>methodType</span>(<span style=color:#66d9ef>int</span>.<span style=color:#a6e22e>class</span> <span style=color:#75715e>/* the method returns integer */</span>,
 </span></span><span style=display:flex><span>        String.<span style=color:#a6e22e>class</span> <span style=color:#75715e>/* and accepts a single String argument*/</span>);
