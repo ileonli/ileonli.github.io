@@ -64,13 +64,15 @@
 &lt;h2 id="具体步骤">具体步骤&lt;/h2>
 &lt;p>&lt;code>TargetClass&lt;/code> 类继承自 &lt;code>InterfaceA&lt;/code> 和 &lt;code>InterfaceB&lt;/code> 接口。&lt;/p>
 &lt;p>如果想在 &lt;code>targetA()&lt;/code> 和 &lt;code>targetB()&lt;/code> 方法调用前后进行一些额外操作。&lt;/p></description></item><item><title>Skip List</title><link>https://ileonli.github.io/posts/skiplist/</link><pubDate>Wed, 18 Sep 2024 21:09:06 +0800</pubDate><guid>https://ileonli.github.io/posts/skiplist/</guid><description>&lt;h1 id="skip-list">Skip List&lt;/h1>
-&lt;p>在讨论跳表前，我们先回顾一下链表（LinkedList），链表有以下优点和缺点：&lt;/p>
+&lt;h2 id="linkedlist">LinkedList&lt;/h2>
+&lt;p>在讨论跳表前，我们先回顾一下链表（&lt;code>LinkedList&lt;/code>），链表有以下优点和缺点：&lt;/p>
 &lt;ul>
 &lt;li>链表插入和删除给定的节点，只需要更改指针的指向位置即可，因此空间复杂度为 O(1)。&lt;/li>
 &lt;li>对于搜索操作，由于链表是无序的（无法使用二分查找），只能从头部搜索到尾部，空间复杂度为 O(n)。&lt;/li>
 &lt;/ul>
-&lt;p>为了加快链表查找过程，设计了跳表，跳表可以看作&lt;strong>可二分查找的链表&lt;/strong>。&lt;/p>
-&lt;hr>
+&lt;p>为了加快链表搜索过程，跳表引入了分层的概念。跳表的每一层都是一个有序链表，且最底层是初始的有序链表（包含所有元素）。每个位于第 &lt;code>i&lt;/code> 层的节点有 &lt;code>p&lt;/code> 的概率出现在第 &lt;code>i+1&lt;/code> 层，&lt;code>p&lt;/code> 为常数。&lt;/p>
+&lt;p>跳表的多层索引机制在逻辑上模仿了二分查找的分治策略，使得链表也能实现&lt;strong>对数时间复杂度&lt;/strong>的查找。&lt;/p>
+&lt;h2 id="introduction">Introduction&lt;/h2>
 &lt;p>跳表是一种可以替代平衡树的数据结构。跳表使用概率平衡，而不是严格的平衡维护，因此，跳表中插入和删除的算法比平衡树中的等价算法要简单得多，速度也显著更快。通过在链表上添加索引，达到优化查询的目的。&lt;/p>
 &lt;blockquote>
 &lt;p>&lt;strong>概率算法（Probabilistic Algorithm）&lt;/strong>：算法的执行过程中使用随机数来影响决策或流程的算法。这意味着即使对于相同的输入，算法每次运行的结果或执行路径也可能不同。&lt;/p>&lt;/blockquote>
@@ -84,15 +86,28 @@
 &lt;li>第 2 层：这一层包含第 1 层中大约一半的元素，意味着它包含第 0 层总元素数的 1/4 左右。&lt;/li>
 &lt;li>第 3 层：这一层包含第 2 层中大约一半的元素，大约是第 0 层总元素数的 1/8，以此类推。&lt;/li>
 &lt;/ul>
-&lt;h2 id="search">Search&lt;/h2>
-&lt;blockquote>
-&lt;p>在跳表上插入的元素需要使用比较算法比较 &lt;code>key&lt;/code> 的大小。为了处理尾部节点，设定 &lt;code>null&lt;/code> 比任何 &lt;code>key&lt;/code> 都大&lt;/p>&lt;/blockquote>
-&lt;p>在跳表上进行&lt;strong>查找操作&lt;/strong>时，我们可以利用上述的规律，每次将数据分为两个区间，在数据所在的区级上继续向下层进行查询，直到查找到第 0 层：&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/search.jpg" alt="">&lt;/p>
-&lt;p>&lt;img src="https://ileonli.github.io/images/skiplist/search-code.png" alt="">&lt;/p>
-&lt;h2 id="insert">Insert&lt;/h2>
-&lt;p>&lt;strong>插入操作&lt;/strong>需要想找到要插入位置的前一个节点，把新节点放入在后边即可。使用 &lt;code>update&lt;/code> 数组记录存储了每一层中小于待插入键的最后一个节点。&lt;/p>
-&lt;p>我们使用 &lt;code>height = randomLevel()&lt;/code> 生成该节点的高度：&lt;/p></description></item><item><title>Java 方法句柄（翻译）</title><link>https://ileonli.github.io/posts/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄翻译">Java 方法句柄（翻译）&lt;/h1>
+&lt;h2 id="数据结构">数据结构&lt;/h2>
+&lt;h3 id="node-类">Node 类&lt;/h3>
+&lt;p>使用 &lt;code>Node&lt;/code> 类来表示跳表中的最底层的节点，该类有以下属性：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Node&lt;/code> 使用 &lt;code>K key&lt;/code> 和 &lt;code>V value&lt;/code> 分别表示键和值。&lt;/li>
+&lt;li>&lt;code>Node&amp;lt;K, V&amp;gt;[] forwards&lt;/code> 表示该节点上的索引，该数组的初始长度为跳表的最大高度（DEFAULT_MAX_LEVEL），如果 &lt;code>forwards[i]&lt;/code> 指向 &lt;code>null&lt;/code>，表示第 &lt;code>i&lt;/code> 层不指向下一列（没有索引）。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">Node&lt;/span>&lt;span style="color:#f92672">&amp;lt;&lt;/span>K &lt;span style="color:#66d9ef">extends&lt;/span> Comparable&lt;span style="color:#f92672">&amp;lt;&lt;/span>K&lt;span style="color:#f92672">&amp;gt;&lt;/span>, V&lt;span style="color:#f92672">&amp;gt;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> K key;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> V value;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Node&lt;span style="color:#f92672">&amp;lt;&lt;/span>K, V&lt;span style="color:#f92672">&amp;gt;[]&lt;/span> forwards;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@SuppressWarnings&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;unchecked&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">Node&lt;/span>(K key, V value, &lt;span style="color:#66d9ef">int&lt;/span> level) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">key&lt;/span> &lt;span style="color:#f92672">=&lt;/span> key;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">value&lt;/span> &lt;span style="color:#f92672">=&lt;/span> value;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">forwards&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> Node&lt;span style="color:#f92672">[&lt;/span>level&lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#75715e">// level 为跳表的最高高度&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="skiplist">SkipList&lt;/h3>
+&lt;p>使用 &lt;code>SkipList&lt;/code> 类来表示跳表，该类有以下属性：&lt;/p></description></item><item><title>Java 方法句柄（翻译）</title><link>https://ileonli.github.io/posts/java/method-handles/</link><pubDate>Thu, 08 Aug 2024 20:32:01 +0800</pubDate><guid>https://ileonli.github.io/posts/java/method-handles/</guid><description>&lt;h1 id="java-方法句柄翻译">Java 方法句柄（翻译）&lt;/h1>
 &lt;blockquote>
 &lt;p>翻译自：&lt;a href="https://dev.java/learn/introduction_to_method_handles/" target="_blank" rel="noopener noreferrer">https://dev.java/learn/introduction_to_method_handles/&lt;/a>&lt;/p>&lt;/blockquote>
 &lt;h2 id="什么是方法句柄what-are-method-handles">什么是方法句柄（What are method handles）&lt;/h2>
