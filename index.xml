@@ -1,4 +1,51 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Wed, 15 Jan 2025 21:11:26 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/module/</link><pubDate>Wed, 15 Jan 2025 21:11:26 +0800</pubDate><guid>https://ileonli.github.io/posts/java/module/</guid><description>&lt;h1 id="java-模块化翻译">Java 模块化（翻译）&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's blog</title><link>https://ileonli.github.io/</link><description>Recent content on Leon Li's blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sun, 23 Feb 2025 16:47:11 +0800</lastBuildDate><atom:link href="https://ileonli.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring 事务管理</title><link>https://ileonli.github.io/posts/spring/transaction/</link><pubDate>Sun, 23 Feb 2025 16:47:11 +0800</pubDate><guid>https://ileonli.github.io/posts/spring/transaction/</guid><description>&lt;h1 id="spring-事务管理">Spring 事务管理&lt;/h1>
+&lt;p>Spring 为事务支持提供了统一的框架，支持&lt;strong>编程式&lt;/strong>和&lt;strong>声明式&lt;/strong>事务管理方法。&lt;/p>
+&lt;h2 id="编程式事务">编程式事务&lt;/h2>
+&lt;h3 id="platformtransactionmanager">PlatformTransactionManager&lt;/h3>
+&lt;blockquote>
+&lt;p>为不同平台提供了事务支持，如：JDBC、JPA 和 JMS&lt;/p>&lt;/blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Java" data-lang="Java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.beans.factory.annotation.Autowired;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.stereotype.Service;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.transaction.PlatformTransactionManager;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.transaction.TransactionDefinition;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.transaction.TransactionStatus;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> org.springframework.transaction.support.DefaultTransactionDefinition;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">@Service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">PlatformTransactionManagerService&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">private&lt;/span> &lt;span style="color:#66d9ef">final&lt;/span> PlatformTransactionManager transactionManager;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">@Autowired&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#a6e22e">PlatformTransactionManagerService&lt;/span>(PlatformTransactionManager transactionManager) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">this&lt;/span>.&lt;span style="color:#a6e22e">transactionManager&lt;/span> &lt;span style="color:#f92672">=&lt;/span> transactionManager;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">public&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span> &lt;span style="color:#a6e22e">executeWithTransaction&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 定义事务属性&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> DefaultTransactionDefinition definition &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> DefaultTransactionDefinition();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> definition.&lt;span style="color:#a6e22e">setPropagationBehavior&lt;/span>(TransactionDefinition.&lt;span style="color:#a6e22e">PROPAGATION_REQUIRED&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> definition.&lt;span style="color:#a6e22e">setIsolationLevel&lt;/span>(TransactionDefinition.&lt;span style="color:#a6e22e">ISOLATION_READ_COMMITTED&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> definition.&lt;span style="color:#a6e22e">setTimeout&lt;/span>(30);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TransactionStatus status &lt;span style="color:#f92672">=&lt;/span> transactionManager.&lt;span style="color:#a6e22e">getTransaction&lt;/span>(definition);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 执行业务逻辑（如数据库操作）&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// userDao.insert(user);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// orderDao.create(order);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> transactionManager.&lt;span style="color:#a6e22e">commit&lt;/span>(status); &lt;span style="color:#75715e">// 提交事务&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">catch&lt;/span> (Exception e) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> transactionManager.&lt;span style="color:#a6e22e">rollback&lt;/span>(status); &lt;span style="color:#75715e">// 回滚事务&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">throw&lt;/span> e;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="transactiontemplate">TransactionTemplate&lt;/h3>
+&lt;blockquote>
+&lt;p>Spring Framework 中用于简化编程式事务管理的核心工具类&lt;/p></description></item><item><title>Java 模块化</title><link>https://ileonli.github.io/posts/java/module/</link><pubDate>Wed, 15 Jan 2025 21:11:26 +0800</pubDate><guid>https://ileonli.github.io/posts/java/module/</guid><description>&lt;h1 id="java-模块化翻译">Java 模块化（翻译）&lt;/h1>
 &lt;blockquote>
 &lt;p>本文翻译自：https://www.oracle.com/corporate/features/understanding-java-9-modules.html&lt;/p>&lt;/blockquote>
 &lt;p>在本文中，我将介绍 Java 9 平台模块系统（JPMS），这是自 Java 诞生以来最重要的新软件工程技术。模块化（即 &lt;a href="http://openjdk.java.net/projects/jigsaw/" target="_blank" rel="noopener noreferrer">Jigsaw 项目&lt;/a> 的成果）有助于各级开发人员在构建、维护和发展软件系统，特别是大型系统时，提高生产力。&lt;/p>
