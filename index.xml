@@ -1,5 +1,22 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Leon Li's Blog</title><link>/</link><description>Recent content on Leon Li's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 20 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>广告投放-基本概念（一）</title><link>/post/ad/ad-basics/</link><pubDate>Sat, 18 Apr 2026 00:00:00 +0000</pubDate><guid>/post/ad/ad-basics/</guid><description>&lt;img src="/post/ad/ad-basics/image.png" alt="Featured image of post 广告投放-基本概念（一）" /&gt;&lt;p&gt;最近工作负责了广告投放相关模块，为更好理解广告投放体系，本系列文章将介绍广告投放的一些基本概念和原理，帮助建立广告投放体系的整体认知。&lt;/p&gt;
-&lt;h2 id="广告投放发展历史"&gt;广告投放发展历史&lt;/h2&gt;
-&lt;h2 id="广告投放在做什么"&gt;广告投放在做什么&lt;/h2&gt;
-&lt;p&gt;广告投放的本质，可以拆成三步：&lt;/p&gt;</description></item><item><title>广告投放-归因（二）</title><link>/post/ad/ad-attribution/</link><pubDate>Mon, 20 Apr 2026 00:00:00 +0000</pubDate><guid>/post/ad/ad-attribution/</guid><description>&lt;p&gt;做广告投放时，最难回答的一个问题其实不是“花了多少钱”，而是“这笔转化到底是不是广告带来的”。&lt;/p&gt;
-&lt;p&gt;用户可能先在信息流里看过广告，后来又在短视频里点过一次，最后通过品牌词搜索下单。那这笔订单到底该算给谁？信息流平台会说自己先触达了用户，短视频平台会说用户是点了自己的广告才有后续动作，而搜索渠道也会说最后成交是自己完成的。&lt;/p&gt;</description></item><item><title>广告投放-RTA（三）</title><link>/post/ad/ad-rta/</link><pubDate>Mon, 20 Apr 2026 00:00:00 +0000</pubDate><guid>/post/ad/ad-rta/</guid><description>&lt;p&gt;在广告投放里，很多人先接触到的是计划、定向、出价、归因这些概念。等再深入一点，就会遇到一个更偏工程、也更偏策略的问题：&lt;strong&gt;平台能不能在一次广告请求发生的瞬间，结合广告主自己的数据，再决定这次到底要不要投？&lt;/strong&gt;&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Leon Li</title>
+    <link>https://blog.onebyte.win/</link>
+    <description>Recent content on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <atom:link href="https://blog.onebyte.win/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于</title>
+      <link>https://blog.onebyte.win/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/about/</guid>
+      <description>&lt;p&gt;👨‍💻 一名后端软件开发工程师，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;🐙 Github：&lt;a href=&#34;https://github.com/ileonli&#34;&gt;https://github.com/ileonli&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;📮 Email：&lt;a href=&#34;mailto:meetleonli@gmail.com&#34;&gt;meetleonli@gmail.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+  </channel>
+</rss>
