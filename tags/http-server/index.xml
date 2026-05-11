@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on Leon Li</title>
-    <link>https://blog.onebyte.win/post/</link>
-    <description>Recent content in Posts on Leon Li</description>
+    <title>HTTP Server on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/http-server/</link>
+    <description>Recent content in HTTP Server on Leon Li</description>
     <generator>Hugo</generator>
     <language>zh</language>
     <lastBuildDate>Mon, 11 May 2026 19:15:38 +0800</lastBuildDate>
-    <atom:link href="https://blog.onebyte.win/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.onebyte.win/tags/http-server/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Caddy HTTP Server</title>
       <link>https://blog.onebyte.win/post/caddy-http-server/</link>
       <pubDate>Wed, 06 May 2026 00:00:00 +0000</pubDate>
       <guid>https://blog.onebyte.win/post/caddy-http-server/</guid>
       <description>一篇讲清楚 Caddy 是什么、适合做什么，以及如何快速搭建 HTTP 服务和反向代理的入门文章</description>
-    </item>
-    <item>
-      <title>广告投放</title>
-      <link>https://blog.onebyte.win/post/ad-delivery-basics/</link>
-      <pubDate>Thu, 30 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>https://blog.onebyte.win/post/ad-delivery-basics/</guid>
-      <description>广告投放的基础知识</description>
     </item>
   </channel>
 </rss>
