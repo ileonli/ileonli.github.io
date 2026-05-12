@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Go on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/go/</link>
+    <description>Recent content in Go on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 12 May 2026 21:38:37 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go 错误处理机制</title>
+      <link>https://blog.onebyte.win/post/go/errors-handle/</link>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/go/errors-handle/</guid>
+      <description>深入了解 Go 错误处理机制，写出健壮的程序</description>
+    </item>
+  </channel>
+</rss>
