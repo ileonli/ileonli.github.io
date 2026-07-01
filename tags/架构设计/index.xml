@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>架构设计 on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/</link>
+    <description>Recent content in 架构设计 on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ClickHouse 架构设计</title>
+      <link>https://blog.onebyte.win/post/clickhouse/architecture/</link>
+      <pubDate>Tue, 30 Jun 2026 17:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/post/clickhouse/architecture/</guid>
+      <description>本文梳理 ClickHouse 的核心架构设计，解析其在分布式环境下的节点拓扑与查询执行机制。</description>
+    </item>
+  </channel>
+</rss>

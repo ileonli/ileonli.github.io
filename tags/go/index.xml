@@ -6,14 +6,21 @@
     <description>Recent content in Go on Leon Li</description>
     <generator>Hugo</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 12 May 2026 21:38:37 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 16:22:48 +0800</lastBuildDate>
     <atom:link href="https://blog.onebyte.win/tags/go/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Go 错误处理机制</title>
       <link>https://blog.onebyte.win/post/go/errors-handle/</link>
-      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
       <guid>https://blog.onebyte.win/post/go/errors-handle/</guid>
       <description>深入了解 Go 错误处理机制，写出健壮的程序</description>
+    </item>
+    <item>
+      <title>smux 底层原理</title>
+      <link>https://blog.onebyte.win/post/smux-principles/</link>
+      <pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/smux-principles/</guid>
+      <description>一篇讲清楚 xtaci/smux 底层原理的文章，重点拆解 Session、Stream、帧协议、流控、调度和内存复用这些核心机制</description>
     </item>
   </channel>
 </rss>

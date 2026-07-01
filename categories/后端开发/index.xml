@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>后端开发 on Leon Li</title>
+    <link>https://blog.onebyte.win/categories/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/</link>
+    <description>Recent content in 后端开发 on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/categories/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flink 流处理</title>
+      <link>https://blog.onebyte.win/post/flink/1-flink-stream-process/</link>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/flink/1-flink-stream-process/</guid>
+      <description>Flink 基本概念</description>
+    </item>
+    <item>
+      <title>Kafka Log 存储格式</title>
+      <link>https://blog.onebyte.win/post/kafka/2-kafka-storage-format/</link>
+      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/kafka/2-kafka-storage-format/</guid>
+      <description>Kafka Log 存储格式解析</description>
+    </item>
+    <item>
+      <title>Kafka 高可用原理</title>
+      <link>https://blog.onebyte.win/post/kafka/4-kafka-high-availability/</link>
+      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/kafka/4-kafka-high-availability/</guid>
+      <description>Kafka 为什么能做到高可用？副本、ISR、Leader 选举、ACK 和控制器是如何一起配合的？</description>
+    </item>
+    <item>
+      <title>Kafka 生产者-主题-消费者</title>
+      <link>https://blog.onebyte.win/post/kafka/1-kafka-producer-topic-consumer/</link>
+      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/kafka/1-kafka-producer-topic-consumer/</guid>
+      <description>Kafka 基本概念，主要包括：生产者-主题-消费者模式</description>
+    </item>
+    <item>
+      <title>Kafka 生产者-主题-消费者</title>
+      <link>https://blog.onebyte.win/post/kafka/3-kfakfa-kraft-protocol/</link>
+      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/kafka/3-kfakfa-kraft-protocol/</guid>
+      <description>Kafka 生产者-主题-消费者模式</description>
+    </item>
+  </channel>
+</rss>

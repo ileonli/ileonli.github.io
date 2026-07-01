@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Smux on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/smux/</link>
+    <description>Recent content in Smux on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Sun, 07 Jun 2026 16:22:48 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/tags/smux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>smux 底层原理</title>
+      <link>https://blog.onebyte.win/post/smux-principles/</link>
+      <pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/smux-principles/</guid>
+      <description>一篇讲清楚 xtaci/smux 底层原理的文章，重点拆解 Session、Stream、帧协议、流控、调度和内存复用这些核心机制</description>
+    </item>
+  </channel>
+</rss>

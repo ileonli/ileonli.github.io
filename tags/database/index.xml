@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Database on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/database/</link>
+    <description>Recent content in Database on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ClickHouse 基础设计</title>
+      <link>https://blog.onebyte.win/post/clickhouse/basic/</link>
+      <pubDate>Sun, 07 Jun 2026 14:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/post/clickhouse/basic/</guid>
+      <description>本文介绍 ClickHouse 的基础设计，包括存储设计、向量化执行引擎、稀疏索引等。</description>
+    </item>
+  </channel>
+</rss>

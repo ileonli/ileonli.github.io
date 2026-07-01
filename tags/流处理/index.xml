@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>流处理 on Leon Li</title>
+    <link>https://blog.onebyte.win/tags/%E6%B5%81%E5%A4%84%E7%90%86/</link>
+    <description>Recent content in 流处理 on Leon Li</description>
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <atom:link href="https://blog.onebyte.win/tags/%E6%B5%81%E5%A4%84%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flink 流处理</title>
+      <link>https://blog.onebyte.win/post/flink/1-flink-stream-process/</link>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate>
+      <guid>https://blog.onebyte.win/post/flink/1-flink-stream-process/</guid>
+      <description>Flink 基本概念</description>
+    </item>
+  </channel>
+</rss>
