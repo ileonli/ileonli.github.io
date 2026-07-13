@@ -6,8 +6,29 @@
     <description>Recent content in Tags on Leon Li</description>
     <generator>Hugo</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jul 2026 21:17:33 +0800</lastBuildDate>
     <atom:link href="https://blog.onebyte.win/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go</title>
+      <link>https://blog.onebyte.win/tags/go/</link>
+      <pubDate>Mon, 13 Jul 2026 12:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/tags/go/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>接口</title>
+      <link>https://blog.onebyte.win/tags/%E6%8E%A5%E5%8F%A3/</link>
+      <pubDate>Mon, 13 Jul 2026 12:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/tags/%E6%8E%A5%E5%8F%A3/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>类型系统</title>
+      <link>https://blog.onebyte.win/tags/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 13 Jul 2026 12:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/tags/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/</guid>
+      <description></description>
+    </item>
     <item>
       <title>ClickHouse</title>
       <link>https://blog.onebyte.win/tags/clickhouse/</link>
@@ -48,13 +69,6 @@
       <link>https://blog.onebyte.win/tags/%E6%B5%81%E5%A4%84%E7%90%86/</link>
       <pubDate>Sun, 07 Jun 2026 00:00:00 +0000</pubDate>
       <guid>https://blog.onebyte.win/tags/%E6%B5%81%E5%A4%84%E7%90%86/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Go</title>
-      <link>https://blog.onebyte.win/tags/go/</link>
-      <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
-      <guid>https://blog.onebyte.win/tags/go/</guid>
       <description></description>
     </item>
     <item>

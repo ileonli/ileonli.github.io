@@ -6,8 +6,16 @@
     <description>Recent content on Leon Li</description>
     <generator>Hugo</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 01 Jul 2026 17:43:41 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 13 Jul 2026 21:17:33 +0800</lastBuildDate>
     <atom:link href="https://blog.onebyte.win/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go 接口机制</title>
+      <link>https://blog.onebyte.win/post/go/interface/</link>
+      <pubDate>Mon, 13 Jul 2026 12:00:00 +0800</pubDate>
+      <guid>https://blog.onebyte.win/post/go/interface/</guid>
+      <description>&lt;p&gt;接口（interface）是 Go 语言的核心，是实现系统模块解耦与扩展性的核心机制。&lt;/p&gt;
+&lt;p&gt;Go 语言接口采用隐式实现机制以实现接口定义与具体类型的完全解耦。与 Java 等需要显式声明继承关系的语言不同，Go 开发者无需显式声明类型继承关系，只需实现接口定义的全部方法签名即可满足类型契约。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>ClickHouse 架构设计</title>
       <link>https://blog.onebyte.win/post/clickhouse/architecture/</link>
